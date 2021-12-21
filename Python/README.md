@@ -1,7 +1,7 @@
 # Python Repo Directory
 By Gavin Schilling
 
-<<<<<<< HEAD
+
 #### Games
 + [Dungeon Game](https://github.com/schillgc/Python/tree/master/Flask/Dungeon%20Game)
 
@@ -51,4 +51,3 @@ By Gavin Schilling
 + [Old Faithful](https://github.com/schillgc/Python/tree/master/Frameworks/Notebooks/Jupyter%20Notebooks/Old%20Faithful)
 + [Political Econometrics](https://github.com/schillgc/Python/tree/master/Frameworks/Notebooks/Jupyter%20Notebooks/Political%20Econometrics)
 + [Transcriber](https://github.com/schillgc/Python/tree/master/Frameworks/Notebooks/Jupyter%20Notebooks/Transcriber)
->>>>>>> 94ae7c67ab8fb01bd690eed6e256c116e1516b50
