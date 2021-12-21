@@ -1,0 +1,21 @@
+{% extends "website/index.html" %}
+
+{% block body %}
+    <body>
+        <div id="attorney">
+            <h1>
+                {{ attorney.first_name }} {{ attorney.last_name }}
+            </h1>
+            <h5>
+                Direct Line: {{ attorney.phone_number }}
+            <br>
+            <p>
+                Graduated from:
+            </p>
+            <h4>
+                {{ attorney.academic_institution_details.name }}  {{ attorney.graduation_year }}
+                {{ attorney.degree }}
+            </h4>
+        </div>
+    </body>
+{% endblock body %}

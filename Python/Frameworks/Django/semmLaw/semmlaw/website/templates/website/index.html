@@ -1,0 +1,12 @@
+{% extends "website/base.html" %}
+
+{% block body %}
+    {% load static %}
+    <img src="{% static 'website/logo.png' %}" class="img-thumbnail img-fluid" alt="SEMM Law logo">
+
+    <div id="newsfeed">
+        {% block newsfeed %}
+            {% include "website/base_newsfeed.html" %}
+        {% endblock newsfeed %}
+    </div>
+{% endblock body %}

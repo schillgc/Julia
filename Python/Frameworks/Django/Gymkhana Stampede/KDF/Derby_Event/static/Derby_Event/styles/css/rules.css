@@ -1,0 +1,11 @@
+body > article > center > div > div {
+    font-family: 'Calligraffitti', cursive;
+    font-size: 48px;
+    color: hotpink;
+}
+
+#list_of_rules {
+    font-family: 'Fontdiner Swanky', cursive;
+    font-size: 23px;
+    color: gold;
+}

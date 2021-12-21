@@ -1,0 +1,52 @@
+body > section.jumbotron.jumbotron-fluid {
+    background-image:
+        url('https://i.pinimg.com/736x/e3/19/2f/e3192f4e8480520952368d5c6b141e22--louisville-kentucky-kentucky-derby.jpg');
+}
+
+body > section.jumbotron.jumbotron-fluid > div > h1 {
+    color: pink;
+    text-shadow:
+		-1px -1px 0 #000,
+		1px -1px 0 #000,
+		-1px 1px 0 #000,
+		1px 1px 0 #000;
+}
+
+body > section.jumbotron.jumbotron-fluid > div > h2 {
+    color: gold;
+    text-shadow:
+		-1px -1px 0 #000,
+		1px -1px 0 #000,
+		-1px 1px 0 #000,
+		1px 1px 0 #000;
+}
+
+body > section.jumbotron.jumbotron-fluid > div > h4 {
+    color: limegreen;
+    text-shadow:
+		-1px -1px 0 #000,
+		1px -1px 0 #000,
+		-1px 1px 0 #000,
+		1px 1px 0 #000;
+}
+
+body > footer {
+    footer {
+    display: flex;
+    padding: 10px 5px;
+    background-color: #45a1ff;
+}
+
+body > footer p {
+    flex: 1;
+    margin: 0;
+}
+
+body > footer ul {
+    flex: 1;
+    display: flex;
+    justify-content: space-around;
+    margin: 0;
+    padding-left: 0;
+    list-style: none;
+}

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}
+    JobTracker - Positions
+{% endblock %}
+
+{% block body %}
+    <h2>Positions</h2>
+    <ul>
+        {% for position in object_list %}
+            <li>
+                <a href="{% url 'theanalyzer:position_detail' position.slug %}">
+                    {{ position.title }} @ {{ position.company }}
+                    {% if position.pay %}
+                        : {{ position.pay }}
+                    {% endif %}
+                </a>
+            </li>
+        {% empty %}
+            <li>No positions entered yet.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

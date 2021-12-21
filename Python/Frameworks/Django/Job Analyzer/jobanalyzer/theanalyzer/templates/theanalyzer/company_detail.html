@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ company.name }} Details
+{% endblock %}
+
+{% block body %}
+    <a href="{{ company.website }}">
+        <img src="{{ company.logo.url }}" alt="{{ company.name }}">
+    </a>
+
+    {% if company.industry %}
+        {{ company.industry }}
+    {% endif %}
+{% endblock %}

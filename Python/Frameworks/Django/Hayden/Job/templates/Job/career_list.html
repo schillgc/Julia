@@ -1,0 +1,17 @@
+{% include "base.html" %}
+
+{% block content %}
+
+{% if career_list %}
+    <ul>
+        {% for career in career_list.all %}
+            <li>
+                <h5>{{ career.profession }}</h5>
+                <p><b>{{ career.average_salary }}</b> - {{ career.required_education }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+        <p>No jobs are available.</p>
+    {% endif %}
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block title %}
+    <title>{{ company.name }} Logo Upload</title>
+{% endblock %}
+
+{% block body %}
+    <form method = "post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Upload</button>
+    </form>
+{% endblock %}

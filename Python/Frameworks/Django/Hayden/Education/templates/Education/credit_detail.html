@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <center>
+        <h1>{{ object.name }}</h1>
+        {{ form }}
+        <p>School: {{ object.school }}</p>
+        <p>Grade Level: {{ object.grade_level }}</p>
+        <p>Subject: {{ object.subject }}</p>
+        <br>
+        <p>Is A Middle School Class: {{ object.is_middleschool }}</p>
+        <p>Exam(s) Required: {{ object.required_exam }}</p>
+    </center>
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link href="https://fonts.googleapis.com/css2?family=Indie+Flower&family=Poiret+One&display=swap" rel="stylesheet">
+
+{% block title %}
+    {{ position.company }}: {{ position.title }} Details
+{% endblock %}
+
+{% block body %}
+    <main class="container">
+        <div class="row justify-content-end">
+            <div class="col-7">
+                <h1>
+                    {% if position.title %}
+                        {{ position.title }}
+                    {% endif %}
+                </h1>
+
+                <h2>
+                    {% if position.company %}
+                        <img src="{{ company.logo.url }}" alt="{{ position.company }}">
+
+                        {% if company.website %}
+                            {{ company.website_formatted }}
+                        {% endif %}
+                    {% endif %}
+                </h2>
+            </div>
+
+            <div class="col-5">
+                <h2>
+                    {% if position.pay %}
+                        {{ position.pay }}
+                    {% endif %}
+                </h2>
+
+                <h3>
+                    {% if position.duration %}
+                        {{ position.duration }}
+                    {% endif %}
+
+                    {% if position.classification %}
+                        {{ position.classification }}
+                    {% endif %}
+
+                    {% if position.remote %}
+                        on a remote basis
+                    {% endif %}
+
+                    {% if position.city and position.state %}
+                        based in {{ position.city }}, {{ position.state }}
+                    {% endif %}
+
+                    {% if position.start_date %}
+                        on {{ position.start_date }}
+                    {% endif %}
+                </h3>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <p>
+                    {% if position.recruiter %}
+                        <br>
+                        Recruiter: {{ position.recruiter }}
+                        {{ recruiter.title }}
+                        {{ recruiter.phone_number }}
+                        {{ recruiter.email_address }}
+                    {% endif %}
+
+                    {% if position.benefit %}
+                        {% for position in position_list %}
+                            {{ position }}:
+                            {% for benefit in position.benefit.all %}
+                                {{ benefit }}
+                                <br>
+                            {% endfor %}
+                        {% endfor %}
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+    </main>
+{% endblock %}

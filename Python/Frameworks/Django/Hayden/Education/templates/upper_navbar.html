@@ -1,0 +1,27 @@
+<ul class="nav nav-tabs">
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Classes</a>
+        <div class="dropdown-menu">
+            <a class="dropdown-item" href="admin/Education/credit/add">Add a class</a>
+            <a class="dropdown-item" href="admin/Education/credit">Modify a class</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="{% url 'Education:classes' %}">List classes</a>
+        </div>
+    </li>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Schools</a>
+        <div class="dropdown-menu">
+            <a class="dropdown-item" href="admin/Education/institution/add">Add a school</a>
+            <a class="dropdown-item" href="admin/Education/institution">Modify a school</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="{% url 'Education:schools' %}">List schools</a>
+        </div>
+    </li>
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Teachers</a>
+        <div class="dropdown-menu">
+            <a class="dropdown-item" href="admin/Education/instructor/add">Add a teacher</a>
+            <a class="dropdown-item" href="admin/Education/instructor">Modify a teacher</a>
+        </div>
+    </li>
+</ul>

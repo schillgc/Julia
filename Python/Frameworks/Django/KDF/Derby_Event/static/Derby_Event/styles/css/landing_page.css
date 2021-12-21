@@ -1,0 +1,30 @@
+body {
+    background-image:
+        url('https://images-na.ssl-images-amazon.com/images/I/71aDrXVa3sL._SY355_.jpg');
+        width: 100%;
+        height: auto;
+}
+
+body > section {
+    background-image:
+        url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUhrYhRvCfS0-Z9NxMO3BandtPQtk8-LqwfvLR8U2VChY6XCOGkA');
+    color: lightblue;
+    text-shadow:
+		-1px -1px 0 white,
+		1px -1px 0 white,
+		-1px 1px 0 white,
+		1px 1px 0 white;
+}
+
+body > section > div > h1 {
+    font-family: 'Fredericka the Great', cursive;
+}
+
+#Menu > div {
+    font-family: 'Cormorant', serif;
+    background-color: yellow;
+}
+
+#Menu > div > div > h6 {
+    color: lillac;
+}
