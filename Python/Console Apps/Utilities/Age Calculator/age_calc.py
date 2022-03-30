@@ -1,3 +1,4 @@
+from legal import drivers_license, drinking,consent, permit
 from datetime import date
 
 " Asks user's data "
@@ -46,106 +47,63 @@ while True:
     else:
         break
 
-legal_to_consent = {
-    'Alabama': 16,
-    'Alaska': 16,
-    'American Samoa': 16,
-    'Arizona': 18,
-    'Arkansas': 16,
-    'California': 18,
-    'Colorado': 17,
-    'Connecticut': 16,
-    'Delaware': 18,
-    'District of Columbia': 16,
-    'Florida': 18,
-    'Georgia': 16,
-    'Guam': 16,
-    'Hawaii': 16,
-    'Idaho': 18,
-    'Illinois': 17,
-    'Indiana': 16,
-    'Iowa': 16,
-    'Kansas': 16,
-    'Kentucky': 16,
-    'Louisiana': 17,
-    'Maine': 16,
-    'Maryland': 16,
-    'Massachusetts': 16,
-    'Michigan': 16,
-    'Minnesota': 16,
-    'Mississippi': 16,
-    'Missouri': 17,
-    'Montana': 16,
-    'Nebraska': 16,
-    'Nevada': 16,
-    'New Hampshire': 16,
-    'New Jersey': 16,
-    'New Mexico': 17,
-    'New York': 17,
-    'North Carolina': 16,
-    'North Dakota': 18,
-    'Ohio': 16,
-    'Oklahoma': 16,
-    'Oregon': 18,
-    'Pennsylvania': 16,
-    'Puerto Rico': 16,
-    'Rhode Island': 16,
-    'South Carolina': 16,
-    'South Dakota': 16,
-    'Tennessee': 18,
-    'Texas': 17,
-    'US Virgin Islands': 18,
-    'Utah': 18,
-    'Vermont': 16,
-    'Virginia': 18,
-    'Washington': 16,
-    'West Virginia': 16,
-    'Wisconsin': 18,
-    'Wyoming': 17,
-}
-
 ' Milestones to compute '
 their_age = date.today().year - their_year_of_birth
 your_age = date.today().year - your_year_of_birth
-milestones = [5, 10, 16, 18, 21, 22, 24, 25, 50, 75, 100]
+milestones = [5, 10, permit[state], drivers_license[state], consent[state], drinking, 22, 24, 25, 50, 75, 100]
 
 ' Outcomes '
-romeo_and_juliet = f"able to consent in {state} to {your_name} under Romeo & Juliet Laws of {state} since you are roughly {your_age} years old and {their_name} is roughly {their_age} years old"
-jail_bait = f"still jail bait until {legal_to_consent.get(state)} years old in {state}"
+romeo_and_juliet = f"able to consent in {state} to {your_name} under Romeo & Juliet Laws of {state} since {your_name} is roughly {your_age} years old and {their_name} is roughly {their_age} years old"
+jail_bait = f"still jail bait until {consent.get(state)} years old in {state}"
 
 ' Renders results '
 if their_year_of_birth + 100 < date.today().year:
     print(f"WOW {your_name}, {their_name} is roughly {their_age} years old!")
 elif their_year_of_birth > date.today().year:
-    print(f"Congratulations!  {their_name} will be born soon presumably in the year of {their_year_of_birth}!")
+    print(f"Congratulations!  {their_name} will be born soon presumably in {their_year_of_birth}!")
+elif their_year_of_birth == date.today().year:
+    print(f"{their_name} is busy fucking their way out of their Mama this year, {your_name}!")
 elif their_year_of_birth < date.today().year:
     print(f"Since {their_name} is roughly {their_age} years old, thus is ")
-    if their_age >= legal_to_consent[state] and your_age >= legal_to_consent[state]:
+    if their_age >= consent[state] and your_age >= consent[state]:
         print(f"able to freely consent in {state}")
-    elif their_age < legal_to_consent[state] or your_age < legal_to_consent[state]:
-        if int(your_age) - int(their_age) <= 2 or int(their_age) - int(your_age) <= 2:
-            if state == 'Alabama' or state == 'Arizona' or state == 'Connecticut' or state == 'Minnesota' or state == 'Mississippi' or state == 'Washington':
+    elif their_age < consent[state] or your_age < consent[state]:
+        if state == 'Alabama' or state == 'Arizona' or state == 'Connecticut' or state == 'Minnesota' or state == 'Mississippi' or state == 'Washington':
+            if int(your_age) - int(their_age) <= 2 and int(their_age) - int(your_age) <= 2 and consent[state] - int(your_age) <= 2 and consent[state] - int(their_age) <= 2:
                 print(romeo_and_juliet)
             else:
                 print(jail_bait)
-        elif int(your_age) - int(their_age) <= 3 or int(their_age) - int(your_age) <= 3:
-            if state == 'Alaska' or state == 'Arkansas' or state == 'Louisiana' or state == 'Oregon' or state == 'South Dakota' or state == 'Texas':
+        elif state == 'Alaska' or state == 'Arkansas' or state == 'Louisiana' or state == 'Oregon' or state == 'South Dakota' or state == 'Texas':
+            if int(your_age) - int(their_age) <= 3 and int(their_age) - int(your_age) <= 3 and consent[state] - int(your_age) <= 3 and consent[state] - int(their_age) <= 3:
                 print(romeo_and_juliet)
             else:
                 print(jail_bait)
-        elif int(your_age) - int(their_age) <= 4 or int(their_age) - int(your_age) <= 4:
-            if state == 'Colorado' or state == 'Iowa' or state == 'Maryland' or state == 'New Jersey' or state == 'New Mexico' or state == 'North Carolina' or state == 'Pennsylvania' or state == 'Tennessee' or state == 'West Virginia' or state == 'Wyoming':
+        elif state == 'Colorado' or state == 'Iowa' or state == 'Maryland' or state == 'New Jersey' or state == 'New Mexico' or state == 'North Carolina' or state == 'Pennsylvania' or state == 'Tennessee' or state == 'West Virginia' or state == 'Wyoming':
+            if int(your_age) - int(their_age) <= 4 and int(their_age) - int(your_age) <= 4 and consent[state] - int(your_age) <= 4 and consent[state] - int(their_age) <= 4:
                 print(romeo_and_juliet)
             else:
                 print(jail_bait)
-        elif int(your_age) - int(their_age) <= 5 or int(their_age) - int(your_age) <= 5:
-            if state == 'Hawaii' or state == 'Maine':
+        elif state == 'Hawaii' or state == 'Maine':
+            if int(your_age) - int(their_age) <= 5 and int(their_age) - int(your_age) <= 5 and consent[state] - int(your_age) <= 5 and consent[state] - int(their_age) <= 5:
                 print(romeo_and_juliet)
             else:
                 print(jail_bait)
         else:
-            print(jail_bait)
+            print(jail_bait, "as", state, "does not have any known Romeo & Juliet Laws at this time.  You may want to double check.")
 
 for milestone in milestones:
     if their_year_of_birth + milestone > date.today().year:
-        print(f"{their_name} will turn {milestone} in {str(their_year_of_birth + milestone)}")
+        if milestone == permit[state]:
+            print(f"Care to take a drive with me, {their_name} as soon as permitted by {state} in {str(their_year_of_birth + milestone)}?")
+        elif milestone == drivers_license[state]:
+            print(f"{their_name} can be designed driver as soon as licensed by {state} in {str(their_year_of_birth + milestone)}")
+        elif milestone == consent[state]:
+            print(f"Fuck yeah, {their_name} in {state} in {str(their_year_of_birth + milestone)}!")
+        elif milestone == drinking:
+            print(f"Party on in the USA, {their_name} in {str(their_year_of_birth + milestone)}!")
+        elif milestone == 100:
+            print(f"{their_name} will become an antique in {str(their_year_of_birth + milestone)}")
+        else:
+            print(f"{their_name} will turn {milestone} in {str(their_year_of_birth + milestone)}")
+
+print(date.today())
