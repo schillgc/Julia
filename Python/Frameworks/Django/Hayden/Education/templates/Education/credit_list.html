@@ -1,0 +1,41 @@
+{% include "base.html" %}
+
+{% block content %}
+    {% if credit_list %}
+        {% for credit in credit_list.all %}
+            <div class="grid">
+                <div class="container">
+                    <div class="row justify-content-md-center">
+                        <div class="col-sm-auto">
+                            <ul class="list-group list-group-horizontal">
+                                <li class="list-group-item">
+                                    {{ credit.school|title|linebreaks }}
+                                    {{ credit.grade_level|capfirst }}
+                                    <i>{{ credit.subject|title|linebreaks }}</i>
+                                    <b>{{ credit.required_exam|upper }} {{ credit.name|capfirst }}</b>
+
+                                    {% if instructor_list %}
+                                        {% for instructor in instructor_list.all %}
+                                            <h2>{{ instructor.first_name|capfirst }} {{ instructor.last_name|capfirst}}</h2>
+                                        {% empty %}
+                                            <p>Instructor not yet recorded</p>
+                                        {% endfor %}
+                                    {% endif %}
+
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <h1>No class data is available.</h1>
+        {% endfor %}
+    {% else %}
+        <h1>Class data is currently unavailable.</h1>
+    {% endif %}
+{% endblock %}
+
+<footer>
+    {% include "lower_navbar.html" %}
+</footer>

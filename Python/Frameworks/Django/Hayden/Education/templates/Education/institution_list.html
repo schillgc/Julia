@@ -1,0 +1,40 @@
+{% include "base.html" %}
+{% load mathfilters %}
+
+{% block content %}
+    {% if institution_list %}
+        <ul>
+            {% for institution in institution_list.all %}
+                <li>
+                    <h5><a href="{{ institution.website }}">{{ institution.name }}</a></h5>
+                    {% if institution.accepted == True %}
+                        <h1>ACCEPTED!</h1>
+                        <p>Net Cost: {{ institution.next_year_full_tuition|sub:institution.financial_aid_awarded }}</p>
+                    {% else %}
+                        {% if institution.application_requested == False %}
+                            <b>Contact {{ institution.name|capfirst }} for application</b>
+                        {% elif institution.application_submitted == False %}
+                            <p>Submit {{ institution.name|capfirst }}'s Application</p>
+                        {% endif %}
+
+                        {% if institution.teacher_recommendations_requested == False %}
+                            <p>Request Teacher Recommendations</p>
+                        {% elif institution.teacher_recommendations_submitted == False %}
+                            <p>Teacher Recommendations Requested</p>
+                        {% endif %}
+
+                        {% if institution.toured == False %}
+                            <p>Visit {{ institution.name|capfirst }}</p>
+                        {% endif %}
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No schools are available.</p>
+    {% endif %}
+{% endblock %}
+
+<footer>
+    {% include "lower_navbar.html" %}
+</footer>

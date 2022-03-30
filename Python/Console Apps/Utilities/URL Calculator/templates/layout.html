@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            {% block title %}URL Calculator{% endblock %}
+        </title>
+        <link rel="stylesheet" href="/static/styles.css">
+    </head>
+    <body>
+        <h1>
+            {% block content %}{% endblock %}
+        </h1>
+        <h4>
+            Instructions: the format is /math operation of choose/first number/second number to end of URI (i.e. /multiply/50/2080)
+        </h4>
+        <p>
+            Brought to you by the fine folks at 
+            <a href="https://schillingenterprises.github.io/Gavin-Schilling-Marketing/">Gavin Schilling Marketing</a>
+        </p>
+        {% block scripts %}{% endblock %}
+    </body>
+</html>

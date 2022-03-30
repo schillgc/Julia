@@ -1,0 +1,9 @@
+{% if job_list %}
+    <ul>
+        {% for job in job_list %}
+            <li><a href="{% url 'Analyst:detail' job.id %}">{{ job }}</a></li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>No jobs active at the moment.</p>
+{% endif %}
