@@ -1,29 +1,29 @@
 """ Income """
 # Job Specific Source
-company = "Material Handling Systems"
-months = 6
-job_title = "Senior Power BI Developer (" + str(months) + " Months Contract-to-Hire)"
-pay_rate = 60
+company = "LII"
+months = 12
+job_title = "Full-Stack Software Engineer (Direct Hire -- REMOTE & Lexington, KY)"
+pay_rate = 180000 / 2080
 gross_job_specific_base_income = pay_rate * (2080 * (months / 12))
 
 
 ''' Monthly Benefits Fixed Expenses '''
-medical_insurance = 311.51
-dental_insurance = 15.87
-vision_insurance = 3.61
+medical_insurance = 0
+dental_insurance = 0
+vision_insurance = 0
 monthly_fixed_benefit_expenses = medical_insurance + dental_insurance + vision_insurance
 
 
 ''' Annual Benefits '''
-health_savings_account = 3450
-voluntary_life_insurance = 110000 / 1000 * 0.15
-annual_fixed_benefit_expenses = health_savings_account + voluntary_life_insurance
+flex_spending_account = 0
+retirement_401K = gross_job_specific_base_income * .00
+annual_fixed_benefit_expenses = flex_spending_account + retirement_401K
 
 
 """" Taxes """
-federal_income_tax = gross_job_specific_base_income * 0.24
+federal_income_tax = gross_job_specific_base_income * 0.32
 state_income_tax = gross_job_specific_base_income * 0.05
-local_income_tax = gross_job_specific_base_income * 0.0295
+local_income_tax = gross_job_specific_base_income * 0.0225
 income_taxes = federal_income_tax + state_income_tax + local_income_tax
 
 social_security = gross_job_specific_base_income * 0.062

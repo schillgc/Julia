@@ -21,13 +21,13 @@ annual_fixed_benefit_expenses = flex_spending_account + retirement_401K
 
 
 """" Taxes """
-federal_income_tax = gross_job_specific_base_income * 0.0626
+federal_income_tax = gross_job_specific_base_income * 0.24
 state_income_tax = gross_job_specific_base_income * 0
 local_income_tax = gross_job_specific_base_income * 0
 income_taxes = federal_income_tax + state_income_tax + local_income_tax
 
-social_security = gross_job_specific_base_income * 0.059
-medicare = gross_job_specific_base_income * 0.0138
+social_security = gross_job_specific_base_income * 0.062
+medicare = gross_job_specific_base_income * 0.0145
 fica = social_security + medicare
 
 taxes = income_taxes + fica

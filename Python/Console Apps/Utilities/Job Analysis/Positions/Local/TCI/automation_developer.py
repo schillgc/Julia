@@ -21,13 +21,13 @@ retirement_401K = pay_rate * 0
 annual_fixed_benefit_expenses = retirement_401K
 
 """" Taxes """
-federal_income_tax = gross_job_specific_base_income * 0.1006
-state_income_tax = gross_job_specific_base_income * 0.0448
-local_income_tax = gross_job_specific_base_income * 0.0113
+federal_income_tax = gross_job_specific_base_income * 0.24
+state_income_tax = gross_job_specific_base_income * 0.05
+local_income_tax = gross_job_specific_base_income * 0.0295
 income_taxes = federal_income_tax + state_income_tax + local_income_tax
 
-social_security = gross_job_specific_base_income * 0.0572
-medicare = gross_job_specific_base_income * 0.0134
+social_security = gross_job_specific_base_income * 0.062
+medicare = gross_job_specific_base_income * 0.0145
 fica = social_security + medicare
 
 taxes = income_taxes + fica

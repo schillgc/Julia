@@ -9,19 +9,25 @@ company = input("Company: ")
 if company == "StyleSeat":
     from Positions.Local.StyleSeat.senior_data_engineer import annual_fixed_benefit_expenses, \
         gross_job_specific_base_income, job_title, monthly_fixed_benefit_expenses, months, taxes
-elif company == "HCL Technologies" or "HCL":
-    from Positions.OutOfTown.HCL.python_developer import annual_fixed_benefit_expenses, gross_job_specific_base_income, \
-        job_title, monthly_fixed_benefit_expenses, months, taxes
-elif company == "Material Handling Systems" or "MHS":
+elif company == "Creative Management Group" or company == "CMG":
+    from Positions.Local.CMG.brand_ambassador import annual_fixed_benefit_expenses, \
+        gross_job_specific_base_income, job_title, monthly_fixed_benefit_expenses, months, taxes
+elif company == "HCL Technologies" or company == "HCL":
+    from Positions.OutOfTown.HCL.python_developer import annual_fixed_benefit_expenses, \
+        gross_job_specific_base_income, job_title, monthly_fixed_benefit_expenses, months, taxes
+elif company == "Lexmark International, Inc." or company == "Lexmark" or company == "LII":
+    from Positions.OutOfTown.LII.full_stack_software_engineer import annual_fixed_benefit_expenses, \
+        gross_job_specific_base_income, job_title, monthly_fixed_benefit_expenses, months, taxes
+elif company == "Material Handling Systems" or company == "MHS":
     from Positions.Local.MHS.senior_power_bi_developer import annual_fixed_benefit_expenses, \
         gross_job_specific_base_income, job_title, monthly_fixed_benefit_expenses, months, taxes
-elif company == "Stock Yards Bank" or "SYB":
+elif company == "Stock Yards Bank" or company == "SYB":
     from Positions.Local.StockYardsBank.web_developer import annual_fixed_benefit_expenses, \
         gross_job_specific_base_income, job_title, monthly_fixed_benefit_expenses, months, taxes
-elif company == "TATA Consultantancy Services" or "TCS":
-    from Positions.OutOfTown.TCS.data_scientist import annual_fixed_benefit_expenses, gross_job_specific_base_income, \
-        job_title, monthly_fixed_benefit_expenses, months, taxes
-elif company == "Technical Consulting Inc" or "TCI":
+elif company == "TATA Consultantancy Services" or company == "TCS":
+    from Positions.OutOfTown.TCS.data_scientist import annual_fixed_benefit_expenses, \
+        gross_job_specific_base_income, job_title, monthly_fixed_benefit_expenses, months, taxes
+elif company == "Technical Consulting Inc" or company == "TCI":
     from Positions.Local.TCI.automation_developer import annual_fixed_benefit_expenses, \
         gross_job_specific_base_income, job_title, monthly_fixed_benefit_expenses, months, taxes
 else:
