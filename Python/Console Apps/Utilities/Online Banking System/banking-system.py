@@ -11,7 +11,7 @@ class Account:
 class Customer:
     name: str = input("Customer's NAME: ")
     address = postal_address.address.Address
-    social_security_number = re.compile(str(r'^\d{3}-\d{2}-\d{4}$'), input("Customer's SOCIAL SECURITY NUMBER: "))
+    social_security_number = re.compile(r'^\d{3}-\d{2}-\d{4}$'), input("Customer's SOCIAL SECURITY NUMBER: ")
     credit_rating: int = input("Customer's CREDIT RATING: ")
 
 
