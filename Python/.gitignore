@@ -369,4 +369,6 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+# Credentials
+credentials.py
 >>>>>>> 94ae7c67ab8fb01bd690eed6e256c116e1516b50
