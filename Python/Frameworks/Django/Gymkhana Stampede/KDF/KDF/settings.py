@@ -113,14 +113,11 @@ INSTALLED_APPS = [
     'allauth.socialaccount.providers.weixin',
     'allauth.socialaccount.providers.windowslive',
     'allauth.socialaccount.providers.xing',
-
-    'bootstrapform',
     'allauth_bootstrap',
-    'allauth',
-    'allauth.account',
+    'bootstrapform',
     'cities',
-    'localflavor',
     'geoposition',
+    'localflavor',
     'Derby_Event.apps.DerbyEventConfig',
 ]
 
