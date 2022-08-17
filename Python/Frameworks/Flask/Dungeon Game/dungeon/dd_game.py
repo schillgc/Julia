@@ -14,35 +14,14 @@ player = {'location': None, 'path': []}
 
 
 def clear():
-<<<<<<< HEAD
     """Clear the screen"""
-
-=======
-    
-    """Clear the screen"""
-    
->>>>>>> 94ae7c67ab8fb01bd690eed6e256c116e1516b50
     os.system('cls' if os.name == 'nt' else 'clear')
 
 
 def build_cells(width, height):
-<<<<<<< HEAD
-=======
-    
->>>>>>> 94ae7c67ab8fb01bd690eed6e256c116e1516b50
-    """Create and return a 'width' x 'height' grid of two-tuples
-    
-    >>> cells = build_cells(2, 2)
-    >>> len(cells)
-    4
-    
-    """
-<<<<<<< HEAD
+    """Create and return a 'width' x 'height' grid of two-tuples cells = build_cells(2, 2)
+    len(cells) 4 """
 
-=======
-    
-    
->>>>>>> 94ae7c67ab8fb01bd690eed6e256c116e1516b50
     cells = []
     for y in range(height):
         for x in range(width):
@@ -51,28 +30,19 @@ def build_cells(width, height):
 
 
 def get_locations(cells):
-<<<<<<< HEAD
-=======
-    
->>>>>>> 94ae7c67ab8fb01bd690eed6e256c116e1516b50
     """Randomly pick starting locations for the monster, the door,
     and the player
     
-    >>> cells = build_cells(2, 2)
-    >>> m, d, p = get_locations(cells)
-    >>> m != d and d != p
+    cells = build_cells(2, 2)
+    m, d, p = get_locations(cells)
+    m != d and d != p
     True
     
-    >>> d in cells
+    d in cells
     True
     
     """
-<<<<<<< HEAD
 
-=======
-    
-    
->>>>>>> 94ae7c67ab8fb01bd690eed6e256c116e1516b50
     monster = random.choice(cells)
     door = random.choice(cells)
     player = random.choice(cells)
@@ -84,24 +54,14 @@ def get_locations(cells):
 
 
 def get_moves(player):
-<<<<<<< HEAD
-=======
-    
->>>>>>> 94ae7c67ab8fb01bd690eed6e256c116e1516b50
     """Based on the tuple of the player's position, return the list
     of acceptable moves
     
-    >>> GAME_DIMENSIONS = (2, 2)
-    >>> get_moves((0, 2))
+    GAME_DIMENSIONS = (2, 2)
+    get_moves((0, 2))
     ['RIGHT', 'UP', 'DOWN']
-    
     """
-<<<<<<< HEAD
 
-=======
-    
-    
->>>>>>> 94ae7c67ab8fb01bd690eed6e256c116e1516b50
     x, y = player
     moves = ['LEFT', 'RIGHT', 'UP', 'DOWN']
     if x == 0:
@@ -129,13 +89,12 @@ def move_player(player, move):
     return x, y
 
 
-<<<<<<< HEAD
 def draw_map(cells):
     print(' _' * GAME_DIMENSIONS[0])
-=======
+
+
 def draw_map():
-    print(' _'*GAME_DIMENSIONS[0])
->>>>>>> 94ae7c67ab8fb01bd690eed6e256c116e1516b50
+    print('_' * GAME_DIMENSIONS[0])
     row_end = GAME_DIMENSIONS[0]
     tile = '|{}'
     for index, cell in enumerate(cells):
@@ -154,10 +113,7 @@ def draw_map():
             else:
                 print(tile.format('_|'))
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 94ae7c67ab8fb01bd690eed6e256c116e1516b50
 def play():
     cells = build_cells(*GAME_DIMENSIONS)
     monster, door, player['location'] = get_locations(cells)
@@ -193,11 +149,6 @@ def play():
             print("\n** You got eaten! **\n")
             break
 
-<<<<<<< HEAD
 
 if __name__ == '__main__':
     play()
-=======
-if __name__ == '__main__':
-    play()
->>>>>>> 94ae7c67ab8fb01bd690eed6e256c116e1516b50
