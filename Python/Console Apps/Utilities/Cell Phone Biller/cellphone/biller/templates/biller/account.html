@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+<title> {{ User.first_name User.last_name }} </title>
+
+<body>
+    {% if User.is_active %}
+        <h1> Individual Cell Phone Biller </h1>
+        <h2> {{ User.last_name }}, {{ User.first_name }} </h2>
+        <h3> {{ User.phone_number }} </h3>
+
+        <p> {{ Phone.make }} {{ Phone.model }} </p>
+    {% endif %}
+
+
+</body>
