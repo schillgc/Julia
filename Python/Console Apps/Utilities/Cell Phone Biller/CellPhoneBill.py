@@ -15,7 +15,8 @@ def bill_ingredients(family_member):
             line_one + line_two + line_for_hayden + additional_lines)
     equally_divided_base_phone_plan_charge = unlimited_basic_phone_plan / (number_of_lines - 1) \
         # does not include Hayden
-    print("Equally Divided Plan:", locale.currency(equally_divided_base_phone_plan_charge, grouping=True))
+    if not family_member == "Hayden":
+        print("Equally Divided Plan:", locale.currency(equally_divided_base_phone_plan_charge, grouping=True))
 
     ''' Auto-Payment & Other Discounts '''
     discounts = 0
@@ -73,8 +74,6 @@ def bill_ingredients(family_member):
             sprint_complete += (7 / (number_of_lines - 2))
     if not family_member == "Hayden":
         sprint_complete += 18
-    elif date.today() < date(2022, 8, 26) and family_member == "Mama":
-        sprint_complete += 15.6
     if not sprint_complete == 0:
         print("Sprint Complete:", locale.currency(
             sprint_complete, grouping=True))
@@ -82,12 +81,28 @@ def bill_ingredients(family_member):
         print("Sprint Premium Services:", locale.currency(
             sprint_premium_services, grouping=True))
 
+    ''' Usage '''
+    usage = 0
+    if family_member == "Blair":
+        international_long_distance = 27
+        roaming_minutes = 1.25
+        usage = international_long_distance + roaming_minutes
+    elif family_member == "Ian":
+        roaming_minutes = 2.50
+        usage = roaming_minutes
+    elif family_member == "Ellie":
+        roaming_minutes = 1.75
+        usage = roaming_minutes
+
+    if not usage == 0:
+        print("Usage: ", locale.currency(usage, grouping=True))
+
     ''' Surcharges Subtotal '''
     surcharges = 0
     if not family_member == "Hayden":
         administrative_charge = 0
-        federal_universal_service_access = 0
-        kentucky_state_gross_receipts_surcharge = 0.26
+        federal_universal_service_access = 8.91
+        kentucky_state_gross_receipts_surcharge = 0.54
         regulatory_charge = 0
         surcharges += (administrative_charge + federal_universal_service_access +
                        kentucky_state_gross_receipts_surcharge + regulatory_charge) / (number_of_lines - 1)
@@ -115,7 +130,7 @@ def bill_ingredients(family_member):
             government_taxes_and_fees, grouping=True))
 
     ''' Totals Due '''
-    due = sprint_premium_services
+    due = sprint_premium_services + usage
     if not family_member == "Hayden":
         due += plans_and_services + sprint_complete
     if family_member == "Ellie" or family_member == "Blair" or family_member == "Mama":
