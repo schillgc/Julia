@@ -9,14 +9,29 @@ def bill_ingredients(family_member):
     number_of_lines = len(family_members)
     line_one = 73
     line_two = 50
-    line_for_hayden = 30
-    additional_lines = line_for_hayden * (number_of_lines - 3)
+    additional_lines = number_of_lines - 3  # Lines 1 & 2 + Hayden's Free Line Excluded
     unlimited_basic_phone_plan: float = (
-            line_one + line_two + line_for_hayden + additional_lines)
+            line_one + line_two + (additional_lines * 30))
     equally_divided_base_phone_plan_charge = unlimited_basic_phone_plan / (number_of_lines - 1) \
-        # does not include Hayden
+        # Hayden exempt
     if not family_member == "Hayden":
         print("Equally Divided Plan:", locale.currency(equally_divided_base_phone_plan_charge, grouping=True))
+
+    ''' Equipment '''
+    equipment = 0
+    samsung_a11_lease = True
+    apple_iphone_13_lease = True
+    if date.today() < date(2022, 12, 31) and samsung_a11_lease:
+        if family_member == "Mama" or family_member == "Ellie" or family_member == "Blair":
+            equipment += 7.50 / 3  # Hayden's Cell Phone
+    if date.today() < date(2024, 4, 30) and apple_iphone_13_lease:
+        if family_member == "Ian":
+            equipment += 33.34
+    if date.today() < date(2024, 7, 31) and apple_iphone_13_lease:
+        if family_member == "Mama":
+            equipment += 33.34
+    if not equipment == 0:
+        print("Equipment:", locale.currency(equipment, grouping=True))
 
     ''' Auto-Payment & Other Discounts '''
     discounts = 0
@@ -34,35 +49,19 @@ def bill_ingredients(family_member):
         line_on_us_three_unlimited_service_plan = 25
         discounts += line_on_us_three_unlimited_service_plan
     elif family_member == "Mama" and date.today() < date(2024, 7, 31):
-        discounts += 16.67
+        apple_trade_in = 16.67
+        discounts += apple_trade_in
     elif family_member == "Ian" and date.today() < date(2024, 4, 30):
-        discounts += 25
+        apple_trade_in = 25
+        discounts += apple_trade_in
 
     if not discounts == 0:
         print("Discounts:", locale.currency(discounts, grouping=True))
 
-    ''' Plans & Services Subtotal '''
-    plans_and_services = equally_divided_base_phone_plan_charge - discounts
+    ''' Plan & Equipment Subtotal '''
+    net_plan_and_equipment = (equally_divided_base_phone_plan_charge + equipment) - discounts
     if not family_member == "Hayden":
-        if (equally_divided_base_phone_plan_charge - line_for_hayden) > 0:
-            plans_and_services += (equally_divided_base_phone_plan_charge - line_for_hayden) / (number_of_lines - 1)
-        print("Plans & Services (After Discounts):", locale.currency(plans_and_services, grouping=True))
-
-    ''' Hayden's Phone Payoff '''
-    equipment = 0
-    samsung_a11_lease = True
-    apple_iphone_13_lease = True
-    if date.today() < date(2022, 12, 31) and samsung_a11_lease:
-        if family_member == "Mama" or family_member == "Ellie" or family_member == "Blair":
-            equipment += 7.50 / 3  # Hayden's Cell Phone
-    if date.today() < date(2024, 4, 30) and apple_iphone_13_lease:
-        if family_member == "Ian":
-            equipment += 33.34
-    if date.today() < date(2024, 7, 31) and apple_iphone_13_lease:
-        if family_member == "Mama":
-            equipment += 33.34
-    if not equipment == 0:
-        print("Equipment:", locale.currency(equipment, grouping=True))
+        print("Plan & Equipment (After Discounts):", locale.currency(net_plan_and_equipment, grouping=True))
 
     ''' Sprint Complete & Sprint Premium Services Subtotal '''
     sprint_complete = 0
@@ -100,12 +99,10 @@ def bill_ingredients(family_member):
     ''' Surcharges Subtotal '''
     surcharges = 0
     if not family_member == "Hayden":
-        administrative_charge = 0
         federal_universal_service_access = 8.91
         kentucky_state_gross_receipts_surcharge = 0.54
-        regulatory_charge = 0
-        surcharges += (administrative_charge + federal_universal_service_access +
-                       kentucky_state_gross_receipts_surcharge + regulatory_charge) / (number_of_lines - 1)
+        surcharges += (federal_universal_service_access + kentucky_state_gross_receipts_surcharge) / (
+                    number_of_lines - 1)
     if not surcharges == 0:
         print("Surcharges:", locale.currency(surcharges, grouping=True))
 
@@ -113,28 +110,20 @@ def bill_ingredients(family_member):
     government_taxes_and_fees = 0
     sales_tax = 0
 
-    if not family_member == "Hayden":
-        emergency_tax = 4.2
-        lifeline_fee = 0.90
-        sales_tax += 0.73
-        trs_tap = 0.18
-        government_taxes_and_fees += (emergency_tax + lifeline_fee +
-                                      sales_tax + trs_tap) / (number_of_lines - 1)
-
-        if family_member == "Mama" and date.today() < date(2022, 8, 26):
-            sales_tax += 6.76
-            government_taxes_and_fees += sales_tax
+    if family_member == "Mama" or family_member == "Ellie" or family_member == "Ian" or family_member == "Blair":
+        sales_tax += 8.34
+        government_taxes_and_fees += (sales_tax / (number_of_lines - 2))
 
     if not government_taxes_and_fees == 0:
         print("Government Taxes & Fees:", locale.currency(
             government_taxes_and_fees, grouping=True))
 
     ''' Totals Due '''
-    due = sprint_premium_services + usage
+    due = sprint_premium_services
     if not family_member == "Hayden":
-        due += plans_and_services + sprint_complete
-    if family_member == "Ellie" or family_member == "Blair" or family_member == "Mama":
-        due += equipment
+        due += net_plan_and_equipment + sprint_complete + usage + surcharges + government_taxes_and_fees
+    elif family_member == "Hayden":
+        due += usage
     return locale.currency(due, grouping=True)
 
 
