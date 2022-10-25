@@ -1,6 +1,7 @@
 # for more information on how to install requests
 # http://docs.python-requests.org/en/master/user/install/#install
-import json, requests
+import json
+import requests
 
 from credentials import app_id, app_key
 
