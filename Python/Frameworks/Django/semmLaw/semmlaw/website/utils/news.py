@@ -1,6 +1,5 @@
 from newsapi import NewsApiClient
 
-
 query = 'Ellie Schilling'
 
 # Init

@@ -1,6 +1,7 @@
-from .utils.news import api
 import requests
 import universities
+
+from .utils.news import api
 
 
 def get_news(request):

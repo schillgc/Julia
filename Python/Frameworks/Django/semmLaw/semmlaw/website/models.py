@@ -1,10 +1,9 @@
+from address.models import AddressField
 from django.db import models
 from django.utils.text import slugify
+from phonenumber_field.modelfields import PhoneNumberField
 
 from .services import validate_academic_institution
-
-from address.models import AddressField
-from phonenumber_field.modelfields import PhoneNumberField
 
 
 class Education(models.Model):

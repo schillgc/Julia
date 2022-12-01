@@ -1,10 +1,8 @@
-from django.shortcuts import render
-from django.contrib import messages
-
 from django.conf import settings
+from django.contrib import messages
+from django.shortcuts import render
 from mailchimp_marketing import Client
 from mailchimp_marketing.api_client import ApiClientError
-
 
 # Mailchimp Settings
 api_key = settings.MAILCHIMP_API_KEY
