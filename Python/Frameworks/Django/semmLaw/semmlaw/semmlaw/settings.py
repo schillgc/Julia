@@ -12,8 +12,6 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 
-from .credentials import GOOGLE_API_KEY, MAILCHIMP_API_KEY, MAILCHIMP_DATA_CENTER, MAILCHIMP_EMAIL_LIST_ID
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -123,8 +121,7 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-GOOGLE_API_KEY = GOOGLE_API_KEY
-
-MAILCHIMP_API_KEY = MAILCHIMP_API_KEY
-MAILCHIMP_DATA_CENTER = MAILCHIMP_DATA_CENTER
-MAILCHIMP_EMAIL_LIST_ID = MAILCHIMP_EMAIL_LIST_ID
+GOOGLE_API_KEY = "AIzaSyCGeG-kWas0HbXWZrcHZveYbByBiV46UCI"
+MAILCHIMP_API_KEY = "369214f33146ca4e60be2a970b1cbef6-us14"
+MAILCHIMP_DATA_CENTER = "us14"
+MAILCHIMP_EMAIL_LIST_ID = "15dc97ed11"
