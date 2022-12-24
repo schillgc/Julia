@@ -9,7 +9,7 @@ def bill_ingredients(family_member):
     number_of_lines = len(family_members)
     line_one = 73
     line_two = 50
-    additional_lines = number_of_lines - 3  # Lines 1 & 2 + Hayden's Free Line Excluded
+    additional_lines = number_of_lines - 3  # Lines 1 & 2 + Hayden & Wilder's Free Lines Excluded
     unlimited_basic_phone_plan: float = (
             line_one + line_two + (additional_lines * 30))
     equally_divided_base_phone_plan_charge = unlimited_basic_phone_plan / (number_of_lines - 1) \
