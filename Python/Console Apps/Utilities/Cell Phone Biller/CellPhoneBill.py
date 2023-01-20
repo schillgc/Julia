@@ -70,7 +70,7 @@ def bill_ingredients(family_member):
     sprint_premium_services = 0
     protection_plan_for_hayden = True
     if protection_plan_for_hayden:
-        if not family_member == "Hayden" and not family_member == "Ian" and not family_member == "Wilder":
+        if not family_member == "Hayden" and not family_member == "Wilder":
             # Hayden's Protection Plan
             sprint_complete += (13 / (number_of_lines - 2))
     if not family_member == "Hayden" and not family_member == "Wilder":
