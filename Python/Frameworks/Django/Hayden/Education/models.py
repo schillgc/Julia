@@ -7,27 +7,27 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 class Institution(models.Model):
     name = models.CharField(
-        verbose_name="Name of the School",
-        max_length=250
+        verbose_name = "Name of the School",
+        max_length = 250
     )
 
     next_year_full_tuition = MoneyField(max_digits=7, decimal_places=0, default_currency='USD')
 
     headmaster = models.CharField(
-        verbose_name="Head of School's Name",
-        max_length=250,
+        verbose_name = "Head of School's Name",
+        max_length = 250,
     )
     address = AddressField(
-        on_delete=models.CASCADE,
-        verbose_name="Institution's Address",
+        on_delete = models.CASCADE,
+        verbose_name = "Institution's Address",
     )
     phone_number = PhoneNumberField()
     fax_number = PhoneNumberField(blank=True)
 
     admissions_director = models.CharField(
-        verbose_name="Admissions Director's Name",
-        max_length=250,
-        blank=True,
+        verbose_name = "Admissions Director's Name",
+        max_length = 250,
+        blank = True,
     )
 
     website = models.URLField(blank=True)
@@ -46,9 +46,9 @@ class Institution(models.Model):
     financial_aid_awarded = MoneyField(max_digits=7, decimal_places=0, default_currency='USD')
 
     description = models.TextField(
-        max_length=10000,
-        blank=True,
-        default='',
+        max_length = 10000,
+        blank = True,
+        default = '',
     )
 
     class Meta:
@@ -66,9 +66,9 @@ class Institution(models.Model):
 class Credit(models.Model):
     school = models.ForeignKey(
         Institution,
-        on_delete=models.CASCADE,
-        verbose_name="Name of Institution",
-        blank=True,
+        on_delete = models.CASCADE,
+        verbose_name = "Name of Institution",
+        blank = True,
     )
 
     name = models.CharField(max_length=100)
@@ -94,10 +94,10 @@ class Credit(models.Model):
     ]
 
     grade_level = models.CharField(
-        verbose_name="Grade Level",
-        max_length=9,
-        choices=YEAR_IN_SCHOOL_CHOICES,
-        blank=False,
+        verbose_name = "Grade Level",
+        max_length = 9,
+        choices = YEAR_IN_SCHOOL_CHOICES,
+        blank = False,
     )
 
     CAPSTONE = 'Capstone'
@@ -127,10 +127,10 @@ class Credit(models.Model):
     ]
 
     subject = models.CharField(
-        verbose_name="Subject",
-        max_length=18,
-        choices=SUBJECT_CHOICES,
-        blank=True,
+        verbose_name = "Subject",
+        max_length = 18,
+        choices = SUBJECT_CHOICES,
+        blank = True,
     )
 
     AP = 'AP'
@@ -144,34 +144,49 @@ class Credit(models.Model):
     ]
 
     required_exam = models.CharField(
-        verbose_name="Required Exam for College Credit",
-        max_length=4,
-        choices=EXAM_CHOICES,
-        blank=True,
+        verbose_name = "Required Exam for College Credit",
+        max_length = 4,
+        choices = EXAM_CHOICES,
+        blank = True,
     )
 
     registered = models.BooleanField(default=False)
 
     raw_score_grade = models.DecimalField(
-        verbose_name="Raw Class Grade Percentage",
-        max_digits=5,
-        decimal_places=2,
-        blank=True,
-        default=0.00,
+        verbose_name = "Raw Class Grade Percentage",
+        max_digits = 5,
+        decimal_places = 2,
+        blank = True,
+        default = 0.00,
     )
 
     letter_grade = models.CharField(
-        verbose_name="Letter Grade",
-        max_length=2,
-        blank=True,
+        verbose_name = "Letter Grade",
+        max_length = 2,
+        blank = True,
+    )
+
+    SEMESTER = 'Semester'
+    YEAR = 'Year'
+
+    CLASS_WEIGHT_CHOICES = [
+        (SEMESTER, 0.5),
+        (YEAR, 1),
+    ]
+
+    class_weight = models.CharField(
+        verbose_name = "Class Weight",
+        max_length = 9,
+        choices = CLASS_WEIGHT_CHOICES,
+        blank = True,
     )
 
     course_weighted_grade_point_average = models.DecimalField(
-        verbose_name="Weighted Grade Point Average (GPA)",
-        max_digits=3,
-        decimal_places=2,
-        blank=True,
-        default=0.00,
+        verbose_name = "Weighted Grade Point Average (GPA)",
+        max_digits = 3,
+        decimal_places = 2,
+        blank = True,
+        default = 0.00,
     )
 
     class Meta:
@@ -189,37 +204,37 @@ class Credit(models.Model):
 class Instructor(models.Model):
     school = models.ForeignKey(
         Institution,
-        on_delete=models.CASCADE,
-        verbose_name="School Name",
+        on_delete = models.CASCADE,
+        verbose_name = "School Name",
     )
 
     course = models.ForeignKey(
         Credit,
-        on_delete=models.CASCADE,
-        blank=True,
-        verbose_name="Name of School Credit",
+        on_delete = models.CASCADE,
+        blank = True,
+        verbose_name = "Name of School Credit",
     )
 
     first_name = models.CharField(
-        verbose_name="Instructor's First Name",
-        blank=True,
-        max_length=125,
+        verbose_name = "Instructor's First Name",
+        blank = True,
+        max_length = 125,
     )
 
     last_name = models.CharField(
-        verbose_name="Instructor's Last Name",
-        blank=True,
-        max_length=125,
+        verbose_name = "Instructor's Last Name",
+        blank = True,
+        max_length = 125,
     )
 
     email_address_of_instructor = models.EmailField(
-        verbose_name="Instructor's Email Address",
-        blank=True,
+        verbose_name = "Instructor's Email Address",
+        blank = True,
     )
 
     phone_number_of_instructor = PhoneNumberField(
-        verbose_name="Instructor's Telephone Number",
-        blank=True,
+        verbose_name = "Instructor's Telephone Number",
+        blank = True,
     )
 
     def __str__(self):
