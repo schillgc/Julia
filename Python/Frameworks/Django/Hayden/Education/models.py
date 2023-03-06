@@ -133,22 +133,28 @@ class Credit(models.Model):
         blank = True,
     )
 
-    AP = 'AP'
-    CLEP = 'CLEP'
-    PLTW = 'PLTW'
+    TRADITIONAL = 'Traditional'
+    ACADEMIC = 'Academic'
+    HONORS = 'Honors'
+    ADVANCED = 'Advanced'
+    ADVANCED_PLACEMENT = 'AP'
 
-    EXAM_CHOICES = [
-        (AP, 'Advanced Placement'),
-        (CLEP, 'College Level Examination Program'),
-        (PLTW, 'Project Lead the Way'),
+    TRACK_CHOICES = [
+        (TRADITIONAL, 'Traditional'),
+        (ACADEMIC, 'Academic'),
+        (HONORS, 'Honors'),
+        (ADVANCED, 'Advanced'),
+        (ADVANCED_PLACEMENT, 'AP'),
     ]
 
-    required_exam = models.CharField(
-        verbose_name = "Required Exam for College Credit",
-        max_length = 4,
-        choices = EXAM_CHOICES,
+    track = models.CharField(
+        verbose_name = "Course Track",
+        max_length = 18,
+        choices = TRACK_CHOICES,
         blank = True,
     )
+
+    clep_exam = models.BooleanField(verbose_name = "College-Level Examination Program®", default=False)
 
     registered = models.BooleanField(default=False)
 
@@ -190,7 +196,7 @@ class Credit(models.Model):
     )
 
     class Meta:
-        ordering = ['school', 'grade_level', 'subject', 'required_exam', 'name']
+        ordering = ['school', 'grade_level', 'subject', 'track', 'name']
         verbose_name = "Graduation Credit"
         verbose_name_plural = "Graduation Credits"
 
