@@ -42,7 +42,6 @@ class CreditIndexView(ListView):
         context['now'] = timezone.now()
         return context
 
-
 class CreditUpdate(UpdateView):
     model = Credit
     template_name_suffix = '_update_form'
