@@ -14,21 +14,29 @@ class Career(models.Model):
     HIGH_SCHOOL_DIPLOMA = "High School Diploma"
     ASSOCIATES = "Associate's Degree"
     BACHELORS = "Bachelor's Degree"
-    MASTERS = "Master's Degree"
-    PHD = "PhD"
+    MBA = "Master's of Business Administration"
+    JD = "Doctor of Jurisprudence"
+    LLM = "Master of Laws"
+    MD = "Doctor of Medicine"
+    PHD = "Doctor of Philosophy"
+    FELLOW = "Fellowship"
 
     DEGREE_CHOICES = [
         (MINIMUM_AGE, "Minimum Age"),
         (HIGH_SCHOOL_DIPLOMA, "High School Diploma"),
         (ASSOCIATES, "Associate's Degree"),
         (BACHELORS, "Bachelor's Degree"),
-        (MASTERS, "Master's Degree"),
-        (PHD, "PhD"),
+        (MBA, "Master's of Business Administration"),
+        (JD, "Doctor of Jurisprudence"),
+        (LLM, "Master of Laws"),
+        (MD, "Doctor of Medicine"),
+        (PHD, "Doctor of Philosophy"),
+        (FELLOW, "Fellowship"),
     ]
 
     required_education = models.CharField(
         verbose_name="Required Education",
-        max_length=19,
+        max_length=35,
         choices=DEGREE_CHOICES,
         blank=False,
     )
