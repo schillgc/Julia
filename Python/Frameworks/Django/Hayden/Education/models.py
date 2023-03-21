@@ -230,7 +230,9 @@ class Credit(models.Model):
             elif self.track == "AP":
                 class_gpa += 2
         if self.letter_grade:
-            if self.letter_grade == "A+" or self.letter_grade == "A":
+            if self.letter_grade == "A+":
+                class_gpa += (4 + (1 / 3))
+            elif self.letter_grade == "A":
                 class_gpa += 4
             elif self.letter_grade == "A-":
                 class_gpa += (3 + (2 / 3))
