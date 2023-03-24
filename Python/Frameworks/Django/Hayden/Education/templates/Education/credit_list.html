@@ -26,7 +26,13 @@
                         {% endif %}
                     </li>
                     <li class="list-group-item">
-                        For a {{ credit.term|lower }} during {{ credit.grade_level|capfirst }} year
+                        {% if credit.term == "Semester"%}
+                            For a {{ credit.term|lower }} during {{ credit.grade_level|capfirst }} year
+                        {% elif credit.term == "Summer" %}
+                            During the {{ credit.term|lower }} after {{ credit.grade_level|capfirst }} year
+                        {% elif credit.term == "Year" %}
+                            For {{ credit.grade_level|capfirst }} regular academic {{ credit.term|lower }}
+                        {% endif %}
                     </li>
                 </ul>
             </div>
