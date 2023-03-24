@@ -84,24 +84,11 @@ def bill_ingredients(family_member):
 
     ''' Usage '''
     usage = 0
-    if family_member == "Blair":
-        coasta_rica_roaming_minutes = 45.50
-        international_long_distance = 3
-        usage = coasta_rica_roaming_minutes + international_long_distance
-    elif family_member == "Ian":
-        coasta_rica_roaming_minutes = 1.5
-        usage = coasta_rica_roaming_minutes
-
     if not usage == 0:
         print("Usage: ", locale.currency(usage, grouping=True))
 
     ''' Surcharges Subtotal '''
     surcharges = 0
-    if not family_member == "Hayden" and not family_member == "Wilder":
-        federal_universal_service_access = 0.87
-        kentucky_state_gross_receipts_surcharge = 0.67
-        surcharges += (federal_universal_service_access + kentucky_state_gross_receipts_surcharge) / (
-                    number_of_lines - 2)
     if not surcharges == 0:
         print("Surcharges:", locale.currency(surcharges, grouping=True))
 
@@ -110,7 +97,7 @@ def bill_ingredients(family_member):
     sales_tax = 0
 
     if not family_member == "Hayden" and not family_member == "Wilder":
-        sales_tax += 9.27
+        sales_tax += 6.18
         government_taxes_and_fees += (sales_tax / (number_of_lines - 2))
 
     if not government_taxes_and_fees == 0:
