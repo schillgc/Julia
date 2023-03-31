@@ -258,15 +258,15 @@ class Credit(models.Model):
                 class_gpa += 0
         return class_gpa
 
-
-        @property
-        def class_weight(self):
-            if self.term:
-                if self.term == "Semester" or Credit.term == "Summer":
-                    class_weight = 0.5
-                elif self.term == "Full Year":
-                    class_weight = 1
-            return class_weight
+    @property
+    def class_weight(self):
+        global class_weight
+        if self.term:
+            if self.term == "Semester" or Credit.term == "Summer":
+                class_weight = 0.5
+            elif self.term == "Full Year":
+                class_weight = 1
+        return class_weight
 
 
 class Instructor(models.Model):
