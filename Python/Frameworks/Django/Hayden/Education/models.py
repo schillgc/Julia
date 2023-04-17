@@ -1,5 +1,6 @@
 from address.models import AddressField
 from django.db import models
+from django.db.models import TextChoices
 from django.urls import reverse
 from djmoney.models.fields import MoneyField
 from phonenumber_field.modelfields import PhoneNumberField
@@ -73,78 +74,49 @@ class Credit(models.Model):
 
     name = models.CharField(max_length=100)
 
-    SIXTH_GRADE = '6th Grade'
-    SEVENTH_GRADE = '7th Grade'
-    EIGHTH_GRADE = '8th Grade'
-    FRESHMAN = 'Freshman'
-    SOPHOMORE = 'Sophomore'
-    JUNIOR = 'Junior'
-    SENIOR = 'Senior'
-    GRADUATE = 'Graduate'
-
-    YEAR_IN_SCHOOL_CHOICES = [
-        (FRESHMAN, 'Freshman'),
-        (SOPHOMORE, 'Sophomore'),
-        (JUNIOR, 'Junior'),
-        (SENIOR, 'Senior'),
-    ]
+    class YearInSchool(TextChoices):
+        FRESHMAN = 'FRESHMAN', 'Freshman'
+        SOPHOMORE = 'SOPHOMORE', 'Sophomore'
+        JUNIOR = 'JUNIOR', 'Junior'
+        SENIOR = 'SENIOR', 'Senior'
 
     grade_level = models.CharField(
         verbose_name="Grade Level",
         max_length=9,
-        choices=YEAR_IN_SCHOOL_CHOICES,
+        choices=YearInSchool.choices,
         blank=False,
     )
 
-    ENGLISH = 'English'
-    ENRICHMENT = 'Enrichment'
-    FINE_ARTS_AND_HUMANITIES = 'Fine Arts & Humanities'
-    HEALTH_AND_PHYSICAL_EDUCATION = 'Health & Physical Education'
-    MATHEMATICS = 'Mathematics'
-    SCIENCE = 'Science'
-    SOCIAL_STUDIES = 'Social Studies'
-    BUSINESS_AND_TECHNOLOGY = 'Business & Technology'
-    THEOLOGY = 'Theology'
-    WORLD_LANGUAGES = 'World Languages'
-
-    SUBJECT_CHOICES = [
-        (BUSINESS_AND_TECHNOLOGY, 'Business & Technology'),
-        (ENGLISH, 'English'),
-        (ENRICHMENT, 'Enrichment'),
-        (FINE_ARTS_AND_HUMANITIES, 'Fine Arts & Humanities'),
-        (MATHEMATICS, 'Mathematics'),
-        (HEALTH_AND_PHYSICAL_EDUCATION, 'Health & Physical Education'),
-        (SCIENCE, 'Science'),
-        (SOCIAL_STUDIES, 'Social Studies'),
-        (THEOLOGY, 'Theology'),
-        (WORLD_LANGUAGES, 'World Languages'),
-    ]
+    class Subject(TextChoices):
+        BUSINESS_AND_TECHNOLOGY = 'BUSINESS_AND_TECHNOLOGY', 'Business & Technology'
+        ENGLISH = 'ENGLISH', 'English'
+        ENRICHMENT = 'ENRICHMENT', 'Enrichment'
+        FINE_ARTS_AND_HUMANITIES = 'FINE_ARTS_AND_HUMANITIES', 'Fine Arts & Humanities'
+        MATHEMATICS = 'MATHMATICS', 'Mathematics'
+        HEALTH_AND_PHYSICAL_EDUCATION = 'HEALTH_AND_PHYSICAL_EDUCATION', 'Health & Physical Education'
+        SCIENCE = 'SCIENCE', 'Science'
+        SOCIAL_STUDIES = 'SOCIAL_STUDIES', 'Social Studies'
+        THEOLOGY = 'THEOLOGY', 'Theology'
+        WORLD_LANGUAGES = 'WORLD_LANGUAGES', 'World Languages'
 
     subject = models.CharField(
         verbose_name="Subject",
-        max_length=27,
-        choices=SUBJECT_CHOICES,
+        max_length=29,
+        choices=Subject.choices,
         blank=True,
     )
 
-    TRADITIONAL = 'Traditional'
-    ACADEMIC = 'Academic'
-    HONORS = 'Honors'
-    ADVANCED = 'Advanced'
-    ADVANCED_PLACEMENT = 'AP'
-
-    TRACK_CHOICES = [
-        (TRADITIONAL, 'Traditional'),
-        (ACADEMIC, 'Academic'),
-        (HONORS, 'Honors'),
-        (ADVANCED, 'Advanced'),
-        (ADVANCED_PLACEMENT, 'AP'),
-    ]
+    class Track(TextChoices):
+        TRADITIONAL = 'TRADITIONAL', 'Traditional'
+        ACADEMIC = 'ACADEMIC', 'Academic'
+        HONORS = 'HONORS', 'Honors'
+        ADVANCED = 'ADVANCED', 'Advanced'
+        ADVANCED_PLACEMENT = 'ADVANCED_PLACEMENT', 'AP'
 
     track = models.CharField(
         verbose_name="Course Track",
         max_length=18,
-        choices=TRACK_CHOICES,
+        choices=Track.choices,
         blank=True,
     )
 
@@ -152,57 +124,37 @@ class Credit(models.Model):
 
     registered = models.BooleanField(default=False)
 
-    A_PLUS = 'A+'
-    A = 'A'
-    A_MINUS = 'A-'
-    B_PLUS = 'B+'
-    B = 'B'
-    B_MINUS = 'B-'
-    C_PLUS = 'C+'
-    C = 'C'
-    C_MINUS = 'C-'
-    D_PLUS = 'D+'
-    D = 'D'
-    D_MINUS = 'D-'
-    F = 'F'
-
-    LETTER_GRADE_CHOICES = [
-        (A_PLUS, 'A+'),
-        (A, 'A'),
-        (A_MINUS, 'A-'),
-        (B_PLUS, 'B+'),
-        (B, 'B'),
-        (B_MINUS, 'B-'),
-        (C_PLUS, 'C+'),
-        (C, 'C'),
-        (C_MINUS, 'C-'),
-        (D_PLUS, 'D+'),
-        (D, 'D'),
-        (D_MINUS, 'D-'),
-        (F, 'F'),
-    ]
+    class LetterGrade(TextChoices):
+        A_PLUS = 'A_PLUS', 'A+'
+        A = 'A', 'A'
+        A_MINUS = 'A_MINUS', 'A-'
+        B_PLUS = 'B_PLUS', 'B+'
+        B = 'B', 'B'
+        B_MINUS = 'B_MINUS', 'B-'
+        C_PLUS = 'C_PLUS', 'C+'
+        C = 'C', 'C'
+        C_MINUS = 'C_MINUS', 'C-'
+        D_PLUS = 'D_PLUS', 'D+'
+        D = 'D', 'D'
+        D_MINUS = 'D_MINUS', 'D-'
+        F = 'F', 'F'
 
     letter_grade = models.CharField(
         verbose_name="Letter Grade",
         max_length=7,
-        choices=LETTER_GRADE_CHOICES,
+        choices=LetterGrade.choices,
         blank=True,
     )
 
-    SEMESTER: str = 'Semester'
-    SUMMER: str = 'Summer'
-    YEAR: str = 'Year'
-
-    TERM_CHOICES = [
-        (SEMESTER, 'Semester'),
-        (SUMMER, 'Summer'),
-        (YEAR, 'Full Year'),
-    ]
+    class Term(TextChoices):
+        SEMESTER = 'SEMESTER', 'Semester'
+        SUMMER = 'SUMMER', 'Summer'
+        YEAR = 'YEAR', 'Full Year'
 
     term = models.CharField(
         verbose_name="Class Weight",
         max_length=9,
-        choices=TERM_CHOICES,
+        choices=Term.choices,
         blank=True,
     )
 
