@@ -1,14 +1,22 @@
 {% extends "base.html" %}
 
-{% block content %}
-    <center>
-        <h1>{{ object.name }}</h1>
-        {{ form }}
-        <p>School: {{ object.school }}</p>
-        <p>Grade Level: {{ object.grade_level }}</p>
-        <p>Subject: {{ object.subject }}</p>
-        <p>Course Track: {{ object.track }}</p>
-        if (object.clep_exam):
-            <p>Clep Exam: {{ object.clep_exam }}</p>
-    </center>
-{% endblock %}
+<form method="post" action="{% url 'classes' object.name %}">
+    {% csrf_token %}
+    <fieldset>
+        <legend>
+            <h1>{{ object.name }}</h1>
+        </legend>
+        {% if error_message %}
+            <p><strong>{{ error_message }}</strong></p>
+        {% endif %}
+        {% for credit in credit_list.all %}
+            <p>School: {{ object.school }}</p>
+            <p>Grade Level: {{ object.grade_level }}</p>
+            <p>Subject: {{ object.subject }}</p>
+            <p>Course Track: {{ object.track }}</p>
+            if (object.clep_exam):
+                <p>Clep Exam: {{ object.clep_exam }}</p>
+        {% endfor %}
+    </fieldset>
+    <input type="submit">
+</form>
