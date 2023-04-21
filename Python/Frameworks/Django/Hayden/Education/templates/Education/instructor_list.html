@@ -1,0 +1,20 @@
+{% include "base.html" %}
+
+{% block content %}
+    {% if instructor_list %}
+        <ul>
+            {% for instructor in instructor_list.all %}
+                <li>
+                    <h2>{{ instructor.first_name }} {{ instructor.last_name }}</h2>
+<!--                    <p>{{ instructor.email }}</p>-->
+<!--                    <p>{{ instructor.phone }}</p>-->
+
+<!--                    <h3>{{ instructor.school }}</h3>-->
+<!--                    <b>{{ instructor.course }}</b>-->
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No teachers are available.</p>
+    {% endif %}
+{% endblock %}
