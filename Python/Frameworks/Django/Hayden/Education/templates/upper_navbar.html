@@ -11,7 +11,6 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="admin/Education/credit/add">Add a class</a></li>
-                        <li><a class="dropdown-item" href="admin/Education/credit">Modify a class</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li><a class="dropdown-item" href="{% url 'Education:classes' %}">List classes</a></li>
                     </ul>
@@ -22,7 +21,6 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="admin/Education/institution/add">Add a school</a></li>
-                        <li><a class="dropdown-item" href="admin/Education/institution">Modify a school</a></li>
                         <li><div class="dropdown-divider"></div></li>
                         <li><a class="dropdown-item" href="{% url 'Education:schools' %}">List schools</a></li>
                     </ul>
@@ -33,7 +31,8 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="admin/Education/instructor/add">Add a teacher</a></li>
-                        <li><a class="dropdown-item" href="admin/Education/instructor">Modify a teacher</a></li>
+                        <li><div class="dropdown-divider"></div></li>
+                        <li><a class="dropdown-item" href="{% url 'Education:instructors' %}">List teachers</a></li>
                     </ul>
                 </li>
             </ul>
