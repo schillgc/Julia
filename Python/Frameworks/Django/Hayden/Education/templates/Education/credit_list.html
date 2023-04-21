@@ -9,7 +9,7 @@
                     <ul class="list-group list-group-flush">
                         <li class="list-group-item">
                             <b>
-                                {{ credit.track }} {{ credit.name|capfirst }}
+                                {{ credit.track|lower|capfirst }} {{ credit.name|capfirst }}
                             </b>
                         </li>
                         <li class="list-group-item">
@@ -22,26 +22,17 @@
                             <p>
                                 Class GPA: {{ credit.class_gpa }}
                             </p>
+                            {% endif %}
                         </li>
                     </ul>
                 </div>
             {% endfor %}
         </ul>
+    {% else %}
+        <p>
+            No class data is available.
+        </p>
     {% endif %}
-
-    <li class="list-group-item">
-        {% if instructor_list %}
-            {% for instructor in instructor_list.all %}
-                <h2>
-                    {{ instructor.first_name|capfirst }} {{ instructor.last_name|capfirst}}
-                </h2>
-            {% empty %}
-                <p>
-                    Instructor not yet recorded
-                </p>
-            {% endfor %}
-        {% endif %}
-    </li>
 
     <li class="list-group-item">
         {% if credit.term == "Semester"%}
@@ -52,16 +43,6 @@
             For {{ credit.grade_level|capfirst }} regular academic {{ credit.term|lower }}
         {% endif %}
     </li>
-
-    {% empty %}
-        <p>
-            No class data is available.
-        </p>
-    {% else %}
-        <p>
-            Class data is currently unavailable.
-        </p>
-    {% endif %}
 {% endblock %}
 
 <footer>
