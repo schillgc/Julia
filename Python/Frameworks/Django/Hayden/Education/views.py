@@ -5,7 +5,7 @@ from django.views.generic.base import TemplateView
 from django.views.generic.edit import CreateView, DeleteView, FormView, UpdateView
 
 from .forms import PersonForm
-from .models import Institution, Credit
+from .models import Credit, Institution, Instructor
 
 
 class AddressView(FormView):
@@ -80,4 +80,32 @@ class InstitutionIndexView(ListView):
 
 class InstitutionUpdate(UpdateView):
     model = Institution
+    template_name_suffix = '_update_form'
+
+
+class InstructorCreate(CreateView):
+    model = Instructor
+
+
+class InstructorDelete(DeleteView):
+    model = Instructor
+    success_url = reverse_lazy('instructor-detail')
+
+
+class InstructorDetailView(DetailView):
+    model = Instructor
+    template_name = 'Education/instructor_detail.html'
+
+
+class InstructorIndexView(ListView):
+    model = Instructor
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['now'] = timezone.now()
+        return context
+
+
+class InstructorUpdate(UpdateView):
+    model = Instructor
     template_name_suffix = '_update_form'
