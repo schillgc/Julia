@@ -247,12 +247,12 @@ class Instructor(models.Model):
         max_length=125,
     )
 
-    email_address_of_instructor = models.EmailField(
+    email = models.EmailField(
         verbose_name="Instructor's Email Address",
         blank=True,
     )
 
-    phone_number_of_instructor = PhoneNumberField(
+    phone = PhoneNumberField(
         verbose_name="Instructor's Telephone Number",
         blank=True,
     )
