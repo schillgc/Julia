@@ -1,20 +1,17 @@
 {% include "base.html" %}
 
 {% block content %}
-    {% if instructor_list %}
-        <ul>
+    <li class="list-group-item">
+        {% if instructor_list %}
             {% for instructor in instructor_list.all %}
-                <li>
-                    <h2>{{ instructor.first_name }} {{ instructor.last_name }}</h2>
-<!--                    <p>{{ instructor.email }}</p>-->
-<!--                    <p>{{ instructor.phone }}</p>-->
-
-<!--                    <h3>{{ instructor.school }}</h3>-->
-<!--                    <b>{{ instructor.course }}</b>-->
-                </li>
+                <h2>
+                    {{ instructor.first_name|capfirst }} {{ instructor.last_name|capfirst}}
+                </h2>
+            {% empty %}
+                <p>
+                    Instructor not yet recorded
+                </p>
             {% endfor %}
-        </ul>
-    {% else %}
-        <p>No teachers are available.</p>
-    {% endif %}
+        {% endif %}
+    </li>
 {% endblock %}
