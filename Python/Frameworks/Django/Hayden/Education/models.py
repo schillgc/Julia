@@ -88,23 +88,29 @@ class Credit(models.Model):
     )
 
     class Subject(TextChoices):
-        BUSINESS_AND_TECHNOLOGY = 'BUSINESS_AND_TECHNOLOGY', 'Business & Technology'
-        ENGLISH = 'ENGLISH', 'English'
-        ENRICHMENT = 'ENRICHMENT', 'Enrichment'
-        FINE_ARTS_AND_HUMANITIES = 'FINE_ARTS_AND_HUMANITIES', 'Fine Arts & Humanities'
-        MATHEMATICS = 'MATHMATICS', 'Mathematics'
-        HEALTH_AND_PHYSICAL_EDUCATION = 'HEALTH_AND_PHYSICAL_EDUCATION', 'Health & Physical Education'
-        SCIENCE = 'SCIENCE', 'Science'
-        SOCIAL_STUDIES = 'SOCIAL_STUDIES', 'Social Studies'
-        THEOLOGY = 'THEOLOGY', 'Theology'
-        WORLD_LANGUAGES = 'WORLD_LANGUAGES', 'World Languages'
+        BUSINESS_AND_TECHNOLOGY = 'B', 'Business & Technology'
+        ENGLISH = 'E', 'English'
+        ENRICHMENT = 'Q', 'Enrichment'
+        FINE_ARTS_AND_HUMANITIES = 'A', 'Fine Arts & Humanities'
+        MATHEMATICS = 'M', 'Mathematics'
+        HEALTH_AND_PHYSICAL_EDUCATION = 'P', 'Health & Physical Education'
+        SCIENCE = 'C', 'Science'
+        SOCIAL_STUDIES = 'T', 'Social Studies'
+        THEOLOGY = 'R', 'Theology'
+        CHINESE = 'H', 'Chinese'
+        FRENCH = 'F', 'French'
+        GERMAN = 'G', 'German'
+        SPANISH = 'S', 'Spanish'
 
     subject = models.CharField(
         verbose_name="Subject",
-        max_length=29,
+        max_length=1,
         choices=Subject.choices,
         blank=True,
     )
+
+    course_number = models.IntegerField(verbose_name="Course Number", blank=True)
+    section = models.IntegerField(verbose_name="Section", blank=True, default='001')
 
     class Track(TextChoices):
         TRADITIONAL = 'TRADITIONAL', 'Traditional'
