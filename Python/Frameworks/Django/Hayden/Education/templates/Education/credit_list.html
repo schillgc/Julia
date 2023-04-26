@@ -2,47 +2,49 @@
 {% load mathfilters %}
 
 {% block content %}
-    {% if credit_list %}
-        <ul>
-            {% for credit in credit_list.all %}
-                <div class="card" style="width: 18rem;">
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item">
-                            <b>
-                                {{ credit.track|lower|capfirst }} {{ credit.name|capfirst }}
-                            </b>
-                        </li>
-                        <li class="list-group-item">
-                            <i>
-                                {{ credit.subject|title|linebreaks }}
-                            </i>
-                        </li>
-                        <li class="list-group-item">
-                            {% if credit.letter_grade %}
-                            <p>
-                                Class GPA: {{ credit.class_gpa }}
-                            </p>
-                            {% endif %}
-                        </li>
-                    </ul>
-                </div>
-            {% endfor %}
-        </ul>
-    {% else %}
-        <p>
-            No class data is available.
-        </p>
-    {% endif %}
-
-    <li class="list-group-item">
-        {% if credit.term == "Semester"%}
-            For a {{ credit.term|lower }} during {{ credit.grade_level|capfirst }} year
-        {% elif credit.term == "Summer" %}
-            During the {{ credit.term|lower }} after {{ credit.grade_level|capfirst }} year
-        {% elif credit.term == "Year" %}
-            For {{ credit.grade_level|capfirst }} regular academic {{ credit.term|lower }}
+    <main>
+        {% if credit_list %}
+            <ul>
+                {% for credit in credit_list.all %}
+                    <section class="card" style="width: 18rem;">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">
+                                <b>
+                                    {{ credit.track|lower|capfirst }} {{ credit.name|capfirst }}
+                                </b>
+                            </li>
+                            <li class="list-group-item">
+                                <i>
+                                    {{ credit.subject|title }} {{ credit.course_number }} - {{ credit.section }}
+                                </i>
+                            </li>
+                            <li class="list-group-item">
+                                {% if credit.letter_grade %}
+                                <p>
+                                    Class GPA: {{ credit.class_gpa }}
+                                </p>
+                                {% endif %}
+                            </li>
+                        </ul>
+                    </section>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>
+                No class data is available.
+            </p>
         {% endif %}
-    </li>
+
+        <li class="list-group-item">
+            {% if credit.term == "Semester"%}
+                For a {{ credit.term|lower }} during {{ credit.grade_level|capfirst }} year
+            {% elif credit.term == "Summer" %}
+                During the {{ credit.term|lower }} after {{ credit.grade_level|capfirst }} year
+            {% elif credit.term == "Year" %}
+                For {{ credit.grade_level|capfirst }} regular academic {{ credit.term|lower }}
+            {% endif %}
+        </li>
+    </main>
 {% endblock %}
 
 <footer>
