@@ -22,8 +22,14 @@ class Institution(models.Model):
         on_delete=models.CASCADE,
         verbose_name="Institution's Address",
     )
-    phone_number = PhoneNumberField()
-    fax_number = PhoneNumberField(blank=True)
+    phone_number = PhoneNumberField(
+        verbose_name="School's Main Phone Number",
+        blank=True,
+    )
+    fax_number = PhoneNumberField(
+        verbose_name="School's Main Fax Number",
+        blank=True,
+    )
 
     admissions_director = models.CharField(
         verbose_name="Admissions Director's Name",
@@ -31,7 +37,10 @@ class Institution(models.Model):
         blank=True,
     )
 
-    website = models.URLField(blank=True)
+    website = models.URLField(
+        verbose_name="School Website",
+        blank=True,
+    )
 
     application_received = models.BooleanField(default=False)
     application_submitted = models.BooleanField(default=False)
@@ -49,7 +58,6 @@ class Institution(models.Model):
     description = models.TextField(
         max_length=10000,
         blank=True,
-        default='',
     )
 
     class Meta:
@@ -62,6 +70,38 @@ class Institution(models.Model):
 
     def get_absolute_url(self):
         return reverse('institution-detail', kwargs={'pk': self.pk})
+
+
+class Instructor(models.Model):
+    first_name = models.CharField(
+        verbose_name="Instructor's First Name",
+        blank=True,
+        max_length=50,
+    )
+
+    last_name = models.CharField(
+        verbose_name="Instructor's Last Name",
+        blank=True,
+        max_length=50,
+    )
+
+    email = models.EmailField(
+        verbose_name="Instructor's Email Address",
+        blank=True,
+    )
+
+    phone = PhoneNumberField(
+        verbose_name="Instructor's Telephone Number",
+        blank=True,
+    )
+
+    def __str__(self):
+        return self.last_name + ", " + self.first_name
+
+    class Meta:
+        verbose_name = "Teaching Instructor"
+        verbose_name_plural = "Teaching Instructors"
+        ordering = ['last_name', 'first_name']
 
 
 class Credit(models.Model):
@@ -164,6 +204,13 @@ class Credit(models.Model):
         blank=True,
     )
 
+    teacher = models.ForeignKey(
+        Instructor,
+        on_delete=models.CASCADE,
+        verbose_name="Course Teacher",
+        blank=True,
+    )
+
     class Meta:
         ordering = ['school', 'grade_level', 'subject', 'track', 'name']
         verbose_name = "Graduation Credit"
@@ -225,48 +272,3 @@ class Credit(models.Model):
             elif self.term == "Full Year":
                 class_weight = 1
         return class_weight
-
-
-class Instructor(models.Model):
-    school = models.ForeignKey(
-        Institution,
-        on_delete=models.CASCADE,
-        verbose_name="School Name",
-    )
-
-    course = models.ForeignKey(
-        Credit,
-        on_delete=models.CASCADE,
-        blank=True,
-        verbose_name="Name of School Credit",
-    )
-
-    first_name = models.CharField(
-        verbose_name="Instructor's First Name",
-        blank=True,
-        max_length=125,
-    )
-
-    last_name = models.CharField(
-        verbose_name="Instructor's Last Name",
-        blank=True,
-        max_length=125,
-    )
-
-    email = models.EmailField(
-        verbose_name="Instructor's Email Address",
-        blank=True,
-    )
-
-    phone = PhoneNumberField(
-        verbose_name="Instructor's Telephone Number",
-        blank=True,
-    )
-
-    def __str__(self):
-        return self.last_name, self.first_name
-
-    class Meta:
-        verbose_name = "Teaching Instructor"
-        verbose_name_plural = "Teaching Instructors"
-        ordering = ['last_name', 'first_name']
