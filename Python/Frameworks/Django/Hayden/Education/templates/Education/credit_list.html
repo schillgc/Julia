@@ -6,18 +6,30 @@
         {% if credit_list %}
             <ul>
                 {% for credit in credit_list.all %}
-                    <section class="card" style="width: 18rem;">
+                    <section class="card" style="width: 22rem;">
                         <ul class="list-group list-group-flush">
                             <li class="list-group-item">
+                                {% if credit.track and credit.name %}
                                 <b>
                                     {{ credit.track|lower|capfirst }} {{ credit.name|capfirst }}
                                 </b>
-                            </li>
-                            <li class="list-group-item">
+                                {% endif %}
+
+                                {% if credit.subject and credit.course_number and credit.section %}
                                 <i>
-                                    {{ credit.term }}: {{ credit.subject }} {{ credit.course_number }} - {{ credit.section }}
+                                    ( {{ credit.subject }} {{ credit.course_number }} - {{ credit.section }} )
                                 </i>
+                                {% endif %}
                             </li>
+
+                            <li class="list-group-item">
+                                {% if credit.term and credit.grade_level %}
+                                <p>
+                                    {{ credit.term }} of {{ credit.grade_level }} Year
+                                </p>
+                                {% endif %}
+                            </li>
+
                             <li class="list-group-item">
                                 {% if credit.letter_grade %}
                                 <p>
