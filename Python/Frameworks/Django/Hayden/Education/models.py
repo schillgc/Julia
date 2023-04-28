@@ -117,8 +117,8 @@ class Credit(models.Model):
     class YearInSchool(TextChoices):
         FRESHMAN = 'Freshman', 'Freshman'
         SOPHOMORE = 'Sophomore', 'Sophomore'
-        JUNIOR = 'Jr.', 'Junior'
-        SENIOR = 'Sr.', 'Senior'
+        JUNIOR = 'Junior', 'Junior'
+        SENIOR = 'Senior', 'Senior'
 
     grade_level = models.CharField(
         verbose_name="Grade Level",
