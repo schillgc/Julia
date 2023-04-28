@@ -115,10 +115,10 @@ class Credit(models.Model):
     name = models.CharField(max_length=100)
 
     class YearInSchool(TextChoices):
-        FRESHMAN = 'FRESHMAN', 'Freshman'
-        SOPHOMORE = 'SOPHOMORE', 'Sophomore'
-        JUNIOR = 'JUNIOR', 'Junior'
-        SENIOR = 'SENIOR', 'Senior'
+        FRESHMAN = 'Freshman', 'Freshman'
+        SOPHOMORE = 'Sophomore', 'Sophomore'
+        JUNIOR = 'Jr.', 'Junior'
+        SENIOR = 'Sr.', 'Senior'
 
     grade_level = models.CharField(
         verbose_name="Grade Level",
@@ -153,11 +153,11 @@ class Credit(models.Model):
     section = models.IntegerField(verbose_name="Section", blank=True, default='001')
 
     class Track(TextChoices):
-        TRADITIONAL = 'TRADITIONAL', 'Traditional'
-        ACADEMIC = 'ACADEMIC', 'Academic'
-        HONORS = 'HONORS', 'Honors'
-        ADVANCED = 'ADVANCED', 'Advanced'
-        ADVANCED_PLACEMENT = 'ADVANCED_PLACEMENT', 'AP'
+        TRADITIONAL = 'Traditional', 'Traditional'
+        ACADEMIC = 'Academic', 'Academic'
+        HONORS = 'Honors', 'Honors'
+        ADVANCED = 'Advanced', 'Advanced'
+        ADVANCED_PLACEMENT = 'AP', 'AP'
 
     track = models.CharField(
         verbose_name="Course Track",
@@ -171,18 +171,18 @@ class Credit(models.Model):
     registered = models.BooleanField(default=False)
 
     class LetterGrade(TextChoices):
-        A_PLUS = 'A_PLUS', 'A+'
+        A_PLUS = 'A+', 'A+'
         A = 'A', 'A'
-        A_MINUS = 'A_MINUS', 'A-'
-        B_PLUS = 'B_PLUS', 'B+'
+        A_MINUS = 'A-', 'A-'
+        B_PLUS = 'B+', 'B+'
         B = 'B', 'B'
-        B_MINUS = 'B_MINUS', 'B-'
-        C_PLUS = 'C_PLUS', 'C+'
+        B_MINUS = 'B-', 'B-'
+        C_PLUS = 'C+', 'C+'
         C = 'C', 'C'
-        C_MINUS = 'C_MINUS', 'C-'
-        D_PLUS = 'D_PLUS', 'D+'
+        C_MINUS = 'C-', 'C-'
+        D_PLUS = 'D+', 'D+'
         D = 'D', 'D'
-        D_MINUS = 'D_MINUS', 'D-'
+        D_MINUS = 'D-', 'D-'
         F = 'F', 'F'
 
     letter_grade = models.CharField(
@@ -193,9 +193,9 @@ class Credit(models.Model):
     )
 
     class Term(TextChoices):
-        SEMESTER = 'SEMESTER', 'Semester'
-        SUMMER = 'SUMMER', 'Summer'
-        YEAR = 'YEAR', 'Full Year'
+        SEMESTER = 'Semester', 'Semester'
+        SUMMER = 'Summer', 'Summer'
+        YEAR = 'Full Year', 'Full Year'
 
     term = models.CharField(
         verbose_name="Class Weight",
@@ -226,36 +226,36 @@ class Credit(models.Model):
     def class_gpa(self):
         class_gpa = 0
         if self.track:
-            if self.track == "Traditional":
+            if self.track == "Traditional" or self.track == "TRADITIONAL":
                 class_gpa += 0
-            elif self.track == "Academic":
+            elif self.track == "Academic" or self.track == "ACADEMIC":
                 class_gpa += 0.8
-            elif self.track == "Honors":
+            elif self.track == "Honors" or self.track == "HONORS":
                 class_gpa += 1.2
-            elif self.track == "Advanced":
+            elif self.track == "Advanced" or self.track == "ADVANCED":
                 class_gpa += 1.6
-            elif self.track == "AP":
+            elif self.track == "AP" or self.track == "ADVANCED_PLACEMENT":
                 class_gpa += 2
         if self.letter_grade:
-            if self.letter_grade == "A+":
+            if self.letter_grade == "A+" or self.letter_grade == "A_PLUS":
                 class_gpa += (4 + (1 / 3))
             elif self.letter_grade == "A":
                 class_gpa += 4
-            elif self.letter_grade == "A-":
+            elif self.letter_grade == "A-" or self.letter_grade == "A_MINUS":
                 class_gpa += (3 + (2 / 3))
-            elif self.letter_grade == "B+":
+            elif self.letter_grade == "B+" or self.letter_grade == "B_PLUS":
                 class_gpa += (3 + (1 / 3))
             elif self.letter_grade == "B":
                 class_gpa += 3
-            elif self.letter_grade == "B-":
+            elif self.letter_grade == "B-" or self.letter_grade == "B_MINUS":
                 class_gpa += (2 + (2 / 3))
-            elif self.letter_grade == "C+":
+            elif self.letter_grade == "C+" or self.letter_grade == "C_PLUS":
                 class_gpa += (2 + (1 / 3))
             elif self.letter_grade == "C":
                 class_gpa += 2
-            elif self.letter_grade == "C-":
+            elif self.letter_grade == "C-" or self.letter_grade == "C_MINUS":
                 class_gpa += (1 + (2 / 3))
-            elif self.letter_grade == "D+":
+            elif self.letter_grade == "D+" or self.letter_grade == "D_PLUS":
                 class_gpa += (1 + (1 / 3))
             elif self.letter_grade == "D":
                 class_gpa += 1
@@ -267,8 +267,8 @@ class Credit(models.Model):
     def class_weight(self):
         global class_weight
         if self.term:
-            if self.term == "Semester" or Credit.term == "Summer":
+            if self.term == "Semester" or self.term == "SEMESTER" or self.term == "Summer" or self.term == "Spring" or self.term == "SUMMER":
                 class_weight = 0.5
-            elif self.term == "Full Year":
+            elif self.term == "Full Year" or self.term == "YEAR":
                 class_weight = 1
         return class_weight
