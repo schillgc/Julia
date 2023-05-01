@@ -1,3 +1,8 @@
+from django import template
+
+register = template.Library()
+
+
 def convert_to_weighted_gpa(Credit):
     if Credit.letter_grade == "A+":
         Credit.course_weighted_grade_point_average = 4.33
