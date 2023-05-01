@@ -193,13 +193,14 @@ class Credit(models.Model):
     )
 
     class Term(TextChoices):
-        SEMESTER = 'Semester', 'Semester'
+        FIRST_SEMESTER = '1st Semester', '1st Semester'
+        SECOND_SEMESTER = '2nd Semester', '2nd Semester'
         SUMMER = 'Summer', 'Summer'
         YEAR = 'Full Year', 'Full Year'
 
     term = models.CharField(
         verbose_name="Class Weight",
-        max_length=9,
+        max_length=12,
         choices=Term.choices,
         blank=True,
     )
@@ -267,7 +268,7 @@ class Credit(models.Model):
     def class_weight(self):
         global class_weight
         if self.term:
-            if self.term == "Semester" or self.term == "SEMESTER" or self.term == "Summer" or self.term == "Spring" or self.term == "SUMMER":
+            if self.term == "1st Semester" or self.term == "FIRST_SEMESTER" or self.term == "2nd Semester" or self.term == "SECOND_TERM" or self.term == "Summer" or self.term == "Spring" or self.term == "SUMMER":
                 class_weight = 0.5
             elif self.term == "Full Year" or self.term == "YEAR":
                 class_weight = 1
