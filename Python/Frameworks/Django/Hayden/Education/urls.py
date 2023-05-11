@@ -1,6 +1,7 @@
 from django.urls import path
 
-from .views import CreditDetailView, CreditIndexView, InstitutionDetailView, InstitutionIndexView, InstructorDetailView, InstructorIndexView
+from .views import CreditDetailView, CreditIndexView, InstitutionDetailView, InstitutionIndexView, InstructorDetailView, \
+    InstructorIndexView
 
 app_name = 'Education'
 urlpatterns = [
