@@ -5,10 +5,6 @@ from djmoney.models.fields import MoneyField
 from phone_field import PhoneField
 
 
-def pay(rate_per_hour, number_of_hours_per_week, number_of_weeks):
-    rate_per_hour * number_of_hours_per_week * number_of_weeks
-
-
 class Job(models.Model):
     title = models.CharField(max_length=200,
                              verbose_name="Job Title",
