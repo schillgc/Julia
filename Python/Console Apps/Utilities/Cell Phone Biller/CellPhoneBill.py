@@ -40,23 +40,25 @@ def bill_ingredients(family_member):
     ''' Auto-Payment & Other Discounts '''
     discounts = 0
     auto_pay = True
-    auto_pay_plan_discount = 5
-    if auto_pay:
-        discounts += auto_pay_plan_discount
-    else:
-        print("You can save by auto-paying")
+
+    if not family_member == "Hayden" and not family_member == "Wilder":
+        auto_pay_plan_discount = 5
+        if auto_pay:
+            discounts += auto_pay_plan_discount
+        else:
+            print("You can save by auto-paying")
 
     if family_member == "Gavin" and date.today() < date(2025, 1, 31):
         sprint_perks_discount = 5
         samsung_trade = 33.34
         discounts += sprint_perks_discount + samsung_trade
-    elif family_member == "Hayden" and family_member == "Wilder":
+    if family_member == "Hayden" and family_member == "Wilder":
         line_on_us = 25
         discounts += line_on_us
-    elif family_member == "Mama" and date.today() < date(2024, 7, 31):
+    if family_member == "Mama" and date.today() < date(2024, 7, 31):
         apple_trade_in = 16.67
         discounts += apple_trade_in
-    elif family_member == "Ian" and date.today() < date(2024, 4, 30):
+    if family_member == "Ian" and date.today() < date(2024, 4, 30):
         apple_trade_in = 25
         discounts += apple_trade_in
 
@@ -86,7 +88,9 @@ def bill_ingredients(family_member):
     ''' Usage '''
     usage = 0
     if family_member == "Blair":
-        usage = 0.25
+        usage = 12.46
+    if family_member == "Ian":
+        usage = 4.50
     if not usage == 0:
         print("Usage: ", locale.currency(usage, grouping=True))
 
@@ -104,9 +108,15 @@ def bill_ingredients(family_member):
         government_taxes_and_fees += (sales_tax / (number_of_lines - 2))
 
     if family_member == "Blair":
-        federal_universial_service_fund = 0.01
-        sales_tax += 0.02
-        government_taxes_and_fees += federal_universial_service_fund + sales_tax
+        gross_receipts_surcharge = 0.17
+        federal_universial_service_fund = 0.58
+        sales_tax += 0.76
+        government_taxes_and_fees += gross_receipts_surcharge + federal_universial_service_fund + sales_tax
+    if family_member == "Ian":
+        gross_receipts_surcharge = 0.05
+        federal_universial_service_fund = 0.18
+        sales_tax += 0.24
+        government_taxes_and_fees += gross_receipts_surcharge + federal_universial_service_fund + sales_tax
 
     if not government_taxes_and_fees == 0:
         print("Government Taxes & Fees:", locale.currency(
@@ -116,7 +126,7 @@ def bill_ingredients(family_member):
     due = 0
     if not family_member == "Hayden" and not family_member == "Wilder":
         due += net_plan_and_equipment + services + usage + surcharges + government_taxes_and_fees
-    elif family_member == "Hayden" and family_member == "Wilder":
+    if family_member == "Hayden" and family_member == "Wilder":
         due += usage
     return locale.currency(due, grouping=True)
 
