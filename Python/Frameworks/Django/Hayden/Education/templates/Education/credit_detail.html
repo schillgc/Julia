@@ -14,8 +14,10 @@
             <p>Grade Level: {{ object.grade_level }}</p>
             <p>Subject: {{ object.subject }}</p>
             <p>Course Track: {{ object.track }}</p>
-            if (object.clep_exam):
+
+            {% if object.clep_exam %}
                 <p>Clep Exam: {{ object.clep_exam }}</p>
+            {% endif %}
         {% endfor %}
     </fieldset>
     <input type="submit">
