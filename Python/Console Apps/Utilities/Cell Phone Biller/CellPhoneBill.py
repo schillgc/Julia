@@ -9,11 +9,11 @@ def bill_ingredients(family_member):
     number_of_lines = len(family_members)
     lines_one_and_two = 123
     kid_lines = 2
-    additional_lines = number_of_lines - 4  # Lines 1 & 2 + Hayden & Wilder's Free Lines Excluded
+    additional_lines = number_of_lines - kid_lines - 2  # Lines 1 & 2 + Hayden & Wilder's Free Lines Excluded
     unlimited_basic_phone_plan: float = (
-            lines_one_and_two + (additional_lines * 30) + (kid_lines * 0.79))
+            lines_one_and_two + (additional_lines * 30))
 
-    equally_divided_base_phone_plan_charge = unlimited_basic_phone_plan / (number_of_lines - 2) \
+    equally_divided_base_phone_plan_charge = unlimited_basic_phone_plan / (number_of_lines - kid_lines) \
         # Hayden and Wilder exempt
     if not family_member == "Hayden" and not family_member == "Wilder":
         print("Equally Divided Plan:", locale.currency(equally_divided_base_phone_plan_charge, grouping=True))
@@ -53,13 +53,17 @@ def bill_ingredients(family_member):
         samsung_trade = 33.34
         discounts += sprint_perks_discount + samsung_trade
     if family_member == "Hayden" and family_member == "Wilder":
-        line_on_us = 25
-        discounts += line_on_us
+        line_on_us = 24.21
+        rate_plan_credit = 0.79
+        discounts += line_on_us + rate_plan_credit
     if family_member == "Mama" and date.today() < date(2024, 7, 31):
         apple_trade_in = 16.67
         discounts += apple_trade_in
     if family_member == "Ian" and date.today() < date(2024, 4, 30):
         apple_trade_in = 25
+        discounts += apple_trade_in
+    if family_member == "Blair" and date.today() < date(2025, 6, 30):
+        apple_trade_in = 0
         discounts += apple_trade_in
 
     if not discounts == 0:
@@ -78,19 +82,16 @@ def bill_ingredients(family_member):
     if protection_plan_for_hayden:
         if not family_member == "Hayden" and not family_member == "Wilder":
             # Hayden's Protection Plan
-            services += (protection_360_tier_3 / (number_of_lines - 2))
+            services += (protection_360_tier_3 / (number_of_lines - kid_lines))
     if not family_member == "Hayden" and not family_member == "Wilder":
-        services += protection_360_tier_5
+        unlimited_plus = 10
+        services += (unlimited_plus / (number_of_lines - kid_lines)) + protection_360_tier_5
     if not services == 0:
         print("Services:", locale.currency(
             services, grouping=True))
 
     ''' Usage '''
     usage = 0
-    if family_member == "Blair":
-        usage = 12.46
-    if family_member == "Ian":
-        usage = 4.50
     if not usage == 0:
         print("Usage: ", locale.currency(usage, grouping=True))
 
@@ -105,18 +106,7 @@ def bill_ingredients(family_member):
 
     if not family_member == "Hayden" and not family_member == "Wilder":
         sales_tax += 6.18
-        government_taxes_and_fees += (sales_tax / (number_of_lines - 2))
-
-    if family_member == "Blair":
-        gross_receipts_surcharge = 0.17
-        federal_universial_service_fund = 0.58
-        sales_tax += 0.76
-        government_taxes_and_fees += gross_receipts_surcharge + federal_universial_service_fund + sales_tax
-    if family_member == "Ian":
-        gross_receipts_surcharge = 0.05
-        federal_universial_service_fund = 0.18
-        sales_tax += 0.24
-        government_taxes_and_fees += gross_receipts_surcharge + federal_universial_service_fund + sales_tax
+        government_taxes_and_fees += (sales_tax / (number_of_lines - kid_lines))
 
     if not government_taxes_and_fees == 0:
         print("Government Taxes & Fees:", locale.currency(
