@@ -4,9 +4,14 @@
     <li class="list-group-item">
         {% if instructor_list %}
             {% for instructor in instructor_list.all %}
-                <h2>
-                    {{ instructor.first_name|capfirst }} {{ instructor.last_name|capfirst}}
-                </h2>
+                <p>
+                    <a href="https://www.trinityrocks.com/staff?search={{ instructor.last_name }}" target="_blank">
+                        {{ instructor.first_name|capfirst }} {{ instructor.last_name|capfirst}}
+                    </a>
+                    <br />
+                    <a href="mailto://{{ instructor.email }}">{{ instructor.email }}</a>
+                    {{ instructor.phone }}
+                </p>
             {% empty %}
                 <p>
                     Instructor not yet recorded
