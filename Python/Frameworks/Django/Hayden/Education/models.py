@@ -1,4 +1,5 @@
 from address.models import AddressField
+from django.core.validators import EmailValidator
 from django.db import models
 from django.db.models import TextChoices
 from django.urls import reverse
@@ -60,6 +61,8 @@ class Institution(models.Model):
         blank=True,
     )
 
+    slug = models.SlugField(unique=True)
+
     class Meta:
         verbose_name = "Educational Institution"
         verbose_name_plural = "Educational Institutions"
@@ -88,6 +91,7 @@ class Instructor(models.Model):
     email = models.EmailField(
         verbose_name="Instructor's Email Address",
         blank=True,
+        validators=[EmailValidator],
     )
 
     phone = PhoneNumberField(
@@ -95,8 +99,24 @@ class Instructor(models.Model):
         blank=True,
     )
 
+    class Title(TextChoices):
+        ADVISOR = 'Academic Advisor'
+        MENTOR = 'Mentor'
+        NURSE = 'School Nurse'
+        SPONSOR = 'Club Faculty Sponsor'
+        TEACHER = 'Class Instructor'
+
+    title = models.CharField(
+        verbose_name="Professional Role Title",
+        max_length=20,
+        choices=Title.choices,
+        blank=False,
+    )
+
+    slug = models.SlugField(unique=True)
+
     def __str__(self):
-        return self.last_name + ", " + self.first_name
+        return f"{self.last_name}, {self.first_name}"
 
     class Meta:
         verbose_name = "Teaching Instructor"
@@ -170,27 +190,8 @@ class Credit(models.Model):
 
     registered = models.BooleanField(default=False)
 
-    class LetterGrade(TextChoices):
-        A_PLUS = 'A+', 'A+'
-        A = 'A', 'A'
-        A_MINUS = 'A-', 'A-'
-        B_PLUS = 'B+', 'B+'
-        B = 'B', 'B'
-        B_MINUS = 'B-', 'B-'
-        C_PLUS = 'C+', 'C+'
-        C = 'C', 'C'
-        C_MINUS = 'C-', 'C-'
-        D_PLUS = 'D+', 'D+'
-        D = 'D', 'D'
-        D_MINUS = 'D-', 'D-'
-        F = 'F', 'F'
-
-    letter_grade = models.CharField(
-        verbose_name="Letter Grade",
-        max_length=7,
-        choices=LetterGrade.choices,
-        blank=True,
-    )
+    grade_percentage = models.PositiveSmallIntegerField(verbose_name="Raw Course Grade Percentage", null=True,
+                                                        blank=True)
 
     class Term(TextChoices):
         FIRST_SEMESTER = '1st Semester', '1st Semester'
@@ -212,20 +213,24 @@ class Credit(models.Model):
         blank=True,
     )
 
+    slug = models.SlugField(unique=True)
+
     class Meta:
         ordering = ['school', 'grade_level', 'subject', 'track', 'name']
         verbose_name = "Graduation Credit"
         verbose_name_plural = "Graduation Credits"
 
     def __str__(self):
-        return self.name
+        return (f"{self.term} {self.grade_level} {self.track} {self.name} - {self.teacher} - Course GPA:"
+                f" {self.class_gpa} - Academic Credit(s): {self.class_weight}")
 
     def get_absolute_url(self):
         return reverse('credit-detail', kwargs={'pk': self.pk})
 
     @property
     def class_gpa(self):
-        class_gpa = 0
+        class_gpa = float()
+
         if self.track:
             if self.track == "Traditional" or self.track == "TRADITIONAL":
                 class_gpa += 0
@@ -237,38 +242,61 @@ class Credit(models.Model):
                 class_gpa += 1.6
             elif self.track == "AP" or self.track == "ADVANCED_PLACEMENT":
                 class_gpa += 2
-        if self.letter_grade:
-            if self.letter_grade == "A+" or self.letter_grade == "A_PLUS":
-                class_gpa += (4 + (1 / 3))
-            elif self.letter_grade == "A":
-                class_gpa += 4
-            elif self.letter_grade == "A-" or self.letter_grade == "A_MINUS":
-                class_gpa += (3 + (2 / 3))
-            elif self.letter_grade == "B+" or self.letter_grade == "B_PLUS":
-                class_gpa += (3 + (1 / 3))
-            elif self.letter_grade == "B":
-                class_gpa += 3
-            elif self.letter_grade == "B-" or self.letter_grade == "B_MINUS":
-                class_gpa += (2 + (2 / 3))
-            elif self.letter_grade == "C+" or self.letter_grade == "C_PLUS":
-                class_gpa += (2 + (1 / 3))
-            elif self.letter_grade == "C":
-                class_gpa += 2
-            elif self.letter_grade == "C-" or self.letter_grade == "C_MINUS":
-                class_gpa += (1 + (2 / 3))
-            elif self.letter_grade == "D+" or self.letter_grade == "D_PLUS":
-                class_gpa += (1 + (1 / 3))
-            elif self.letter_grade == "D":
-                class_gpa += 1
-            elif self.letter_grade == "F":
+
+        if self.grade_percentage:
+            if int(self.grade_percentage) >= 90:
+                class_gpa += 4.0
+            elif int(self.grade_percentage) == 89:
+                class_gpa += 3.9
+            elif int(self.grade_percentage) == 88:
+                class_gpa += 3.8
+            elif int(self.grade_percentage) == 87:
+                class_gpa += 3.7
+            elif int(self.grade_percentage) == 86:
+                class_gpa += 3.5
+            elif int(self.grade_percentage) == 85:
+                class_gpa += 3.4
+            elif int(self.grade_percentage) == 84:
+                class_gpa += 3.3
+            elif int(self.grade_percentage) == 83:
+                class_gpa += 3.0
+            elif int(self.grade_percentage) == 82:
+                class_gpa += 2.9
+            elif int(self.grade_percentage) == 81:
+                class_gpa += 2.8
+            elif int(self.grade_percentage) == 80:
+                class_gpa += 2.7
+            elif int(self.grade_percentage) == 79:
+                class_gpa += 2.5
+            elif int(self.grade_percentage) == 78:
+                class_gpa += 2.4
+            elif int(self.grade_percentage) == 77:
+                class_gpa += 2.3
+            elif int(self.grade_percentage) == 76:
+                class_gpa += 2.1
+            elif int(self.grade_percentage) == 75:
+                class_gpa += 1.9
+            elif int(self.grade_percentage) == 74:
+                class_gpa += 1.8
+            elif int(self.grade_percentage) == 73:
+                class_gpa += 1.7
+            elif int(self.grade_percentage) == 72:
+                class_gpa += 1.5
+            elif int(self.grade_percentage) == 71:
+                class_gpa += 1.4
+            elif int(self.grade_percentage) == 70:
+                class_gpa += 1.3
+            elif int(self.grade_percentage) <= 69:
                 class_gpa += 0
         return class_gpa
 
     @property
     def class_weight(self):
-        global class_weight
+        class_weight = float()
         if self.term:
-            if self.term == "1st Semester" or self.term == "FIRST_SEMESTER" or self.term == "2nd Semester" or self.term == "SECOND_TERM" or self.term == "Summer" or self.term == "Spring" or self.term == "SUMMER":
+            if (self.term == "1st Semester" or self.term == "FIRST_SEMESTER" or self.term == "2nd Semester" or
+                    self.term == "SECOND_TERM" or self.term == "Summer" or self.term == "Spring" or
+                    self.term == "SUMMER"):
                 class_weight = 0.5
             elif self.term == "Full Year" or self.term == "YEAR":
                 class_weight = 1
