@@ -1,24 +1,13 @@
 {% extends "base.html" %}
 
-<form method="post" action="{% url 'classes' object.name %}">
-    {% csrf_token %}
-    <fieldset>
-        <legend>
-            <h1>{{ object.name }}</h1>
-        </legend>
-        {% if error_message %}
-            <p><strong>{{ error_message }}</strong></p>
-        {% endif %}
-        {% for credit in credit_list.all %}
-            <p>School: {{ object.school }}</p>
-            <p>Grade Level: {{ object.grade_level }}</p>
-            <p>Subject: {{ object.subject }}</p>
-            <p>Course Track: {{ object.track }}</p>
+{% block content %}
+    <h1>{{ credit.name }}</h1>
 
-            {% if object.clep_exam %}
-                <p>Clep Exam: {{ object.clep_exam }}</p>
-            {% endif %}
-        {% endfor %}
-    </fieldset>
-    <input type="submit">
-</form>
+    <p>Grade Level: {{ credit.grade_level }}</p>
+    <p>Subject: {{ credit.subject }}</p>
+    <p>Course Track: {{ credit.track }}</p>
+
+    {% if credit.clep_exam %}
+        <p>Clep Exam: {{ credit.clep_exam }}</p>
+    {% endif %}
+{% endblock %}
