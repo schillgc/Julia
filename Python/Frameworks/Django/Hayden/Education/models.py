@@ -14,6 +14,8 @@ class Institution(models.Model):
     )
 
     next_year_full_tuition = MoneyField(max_digits=7, decimal_places=0, default_currency='USD')
+    registration_fee = MoneyField(max_digits=3, decimal_places=0, default_currency='USD')
+    student_activity_fee = MoneyField(max_digits=3, decimal_places=0, default_currency='USD')
 
     headmaster = models.CharField(
         verbose_name="Head of School's Name",
