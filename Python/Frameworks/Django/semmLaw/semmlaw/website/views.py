@@ -1,10 +1,31 @@
 from django.shortcuts import render
 from django.template.response import TemplateResponse
-from django.views.generic import DetailView, TemplateView
+from django.views.generic import DetailView
+import requests
+from .models import Attorney
 
-from . import services
-from .models import Attorney, Newsfeed
-from .utils.news import query
+def news(request):
+    url = ('https://newsapi.org/v2/everything?q="{{ Attorney.first_name }} {{ Attorney.last_name }}"'
+           'country=us&'
+           'apiKey=164788cbd69e4dba8b1f3b57014cd86b')
+
+    attorney_news = requests.get(url).json()
+
+    a = attorney_news['articles']
+    desc =[]
+    title =[]
+    img =[]
+
+    for i in range(len(a)):
+        f = a[i]
+        title.append(f['title'])
+        desc.append(f['description'])
+        img.append(f['urlToImage'])
+    mylist = zip(title, desc, img)
+
+    context = {'mylist': mylist}
+
+    return render(request, 'news.html', context)
 
 
 class Bio(DetailView):
@@ -14,12 +35,6 @@ class Bio(DetailView):
         context = super().get_context_data(**kwargs)
         return context
 
-
-class News(TemplateView):
-    def get(self, request=(Attorney.first_name, Attorney.last_name), **kwargs):
-        Newsfeed.news = services.get_news(query)
-        template_name = "website/index.html"
-        return render(request, template_name)
 
 
 def index(request, template_name="website/index.html"):
