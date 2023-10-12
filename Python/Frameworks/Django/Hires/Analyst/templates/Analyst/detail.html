@@ -1,1 +1,15 @@
-{{ job }}
+{% load mathfilters %}
+
+<h1>{{ job.title }}</h1>
+
+{% if job.recruiting_company %}
+    <h2>{{ job.company }} via {{ job.recruiting_company }}</h2>
+{% else %}
+    <h2>{{ job.company }}</h2>
+{% endif %}
+
+{% if job.rate_per_hour and job.number_of_hours_per_week and job.number_of_weeks %}
+    <h3>Salary: {{ job.rate_per_hour|mul:job.number_of_hours_per_week|mul:job.number_of_weeks }}</h3>
+{% endif %}
+
+<p>{{ job.job_site_city }}, {{ job.job_site_state }}</p>
