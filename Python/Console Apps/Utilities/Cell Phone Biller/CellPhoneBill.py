@@ -39,7 +39,7 @@ def bill_ingredients(family_member):
 
     ''' Auto-Payment & Other Discounts '''
     discounts = 0
-    auto_pay = True
+    auto_pay = False
 
     if not family_member == "Hayden" and not family_member == "Wilder":
         auto_pay_plan_discount = 5
