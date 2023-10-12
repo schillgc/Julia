@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'djmoney',
     'address',
     'phone_field',
+    'mathfilters',
 ]
 
 MIDDLEWARE = [
