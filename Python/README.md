@@ -1,7 +1,7 @@
 # Python Repo Directory
 By Gavin Schilling
 
-<<<<<<< HEAD
+
 #### Games
 + [Dungeon Game](https://github.com/schillgc/Python/tree/master/Flask/Dungeon%20Game)
 
@@ -18,7 +18,7 @@ By Gavin Schilling
 + [Bird Scooter](https://github.com/schillgc/Python/tree/master/Jupyter%20Notebook/Bird%20Scooter)
 + [Mass Shootings](https://github.com/schillgc/Python/tree/master/Jupyter%20Notebook/Mass%20Shootings)
 + [Metro Louisville Government - Hours Not Worked](https://github.com/schillgc/Python/tree/master/Jupyter%20Notebook/Louisville%20Metro%20Government/Hours%20Not%20Worked)
-=======
+
 ### Console Apps
 + [Age Calculator](https://github.com/schillgc/Python/tree/master/Console%20Apps/Utilities/Age%20Calculator)
 + [Cell Phone Biller](https://github.com/schillgc/Python/tree/master/Console%20Apps/Utilities/Cell%20Phone%20Biller)
@@ -51,4 +51,3 @@ By Gavin Schilling
 + [Old Faithful](https://github.com/schillgc/Python/tree/master/Frameworks/Notebooks/Jupyter%20Notebooks/Old%20Faithful)
 + [Political Econometrics](https://github.com/schillgc/Python/tree/master/Frameworks/Notebooks/Jupyter%20Notebooks/Political%20Econometrics)
 + [Transcriber](https://github.com/schillgc/Python/tree/master/Frameworks/Notebooks/Jupyter%20Notebooks/Transcriber)
->>>>>>> 94ae7c67ab8fb01bd690eed6e256c116e1516b50
