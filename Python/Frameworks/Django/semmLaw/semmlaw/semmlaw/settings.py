@@ -32,7 +32,6 @@ INSTALLED_APPS = [
     'website.apps.WebsiteConfig',
     'marketing.apps.MarketingConfig',
     'address',
-    'newsapi',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

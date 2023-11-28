@@ -1,6 +1,6 @@
-address==0.1.1
+address==0.2.8
 Django==4.2.3
-django_phonenumber_field==7.1.0
+django_phonenumber_field==7.2.0
 mailchimp_marketing==3.0.80
 newsapi_python==0.2.7
 Requests==2.31.0

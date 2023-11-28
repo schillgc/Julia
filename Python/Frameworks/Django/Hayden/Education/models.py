@@ -304,28 +304,32 @@ class Credit(models.Model):
                 class_weight = 1
         return class_weight
 
-    def grade_equivalence(self):
-        if self.class_gpa >= 4.33:
-            grade_equivalence = 'A+'
-        elif self.class_gpa >= 4.00:
-            grade_equivalence = 'A'
-        elif self.class_gpa >= 3+(2/3):
-            grade_equivalence = 'A-'
-        elif self.class_gpa >= 3+(1/3):
-            grade_equivalence = 'B+'
-        elif self.class_gpa >= 3.00:
-            grade_equivalence = 'B'
-        elif self.class_gpa >= 2+(2/3):
-            grade_equivalence = 'B-'
-        elif self.class_gpa >= 2+(1/3):
-            grade_equivalence = 'C+'
-        elif self.class_gpa >= 2.00:
-            grade_equivalence = 'C'
-        elif self.class_gpa >= 1+(2/3):
-            grade_equivalence = 'C-'
-        elif self.class_gpa >= 1+(1/3):
-            grade_equivalence = 'D+'
-        elif self.class_gpa >= 1.00:
-            grade_equivalence = 'D'
-        else:
-            grade_equivalence = 'F'
+    # @property
+    # def grade_equivalence(class_gpa):
+    #     grade_equivalence = str()
+    #     if str(class_gpa):
+    #         if float(class_gpa) >= 4 + (1/3):
+    #             grade_equivalence = 'A+'
+    #         elif float(class_gpa) >= 4:
+    #             grade_equivalence = 'A'
+    #         elif float(class_gpa) >= 3+(2/3):
+    #             grade_equivalence = 'A-'
+    #         elif float(class_gpa) >= 3+(1/3):
+    #             grade_equivalence = 'B+'
+    #         elif float(class_gpa) >= 3:
+    #             grade_equivalence = 'B'
+    #         elif float(class_gpa) >= 2+(2/3):
+    #             grade_equivalence = 'B-'
+    #         elif float(class_gpa) >= 2+(1/3):
+    #             grade_equivalence = 'C+'
+    #         elif float(class_gpa) >= 2:
+    #             grade_equivalence = 'C'
+    #         elif float(class_gpa) >= 1+(2/3):
+    #             grade_equivalence = 'C-'
+    #         elif float(class_gpa) >= 1+(1/3):
+    #             grade_equivalence = 'D+'
+    #         elif float(class_gpa) == 1:
+    #             grade_equivalence = 'D'
+    #         else:
+    #             grade_equivalence = 'F'
+    #     return grade_equivalence

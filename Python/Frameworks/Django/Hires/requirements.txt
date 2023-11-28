@@ -1,4 +1,4 @@
-Django==4.2.3
+Django==4.2.7
 django-address==0.2.8
-django_money==3.3.0
+django_money==3.4.0
 django_phone_field==1.8.1

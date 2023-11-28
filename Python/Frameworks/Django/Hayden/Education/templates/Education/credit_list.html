@@ -7,36 +7,38 @@
             <ul>
                 {% for credit in credit_list.all %}
                     <section class="card" style="width: 22rem;">
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item">
-                                {% if credit.track and credit.name %}
-                                <b>
-                                    {{ credit.track|lower|capfirst }} {{ credit.name|capfirst }}
-                                </b>
-                                {% endif %}
+                        {% if credit.grade_percentage %}
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    {% if credit.track and credit.name %}
+                                        <b>
+                                            {{ credit.track|lower|capfirst }} {{ credit.name|capfirst }}
+                                        </b>
+                                    {% endif %}
 
-                                {% if credit.subject and credit.course_number and credit.section %}
-                                <i>
-                                    ( {{ credit.subject }} {{ credit.course_number }} - {{ credit.section }} )
-                                </i>
-                                {% endif %}
-                            </li>
+                                    {% if credit.subject and credit.course_number and credit.section %}
+                                        <i>
+                                            ( {{ credit.subject }} {{ credit.course_number }} - {{ credit.section }} )
+                                        </i>
+                                    {% endif %}
+                                </li>
 
-                            <li class="list-group-item">
-                                {% if credit.term and credit.grade_level %}
-                                <p>
-                                    {{ credit.term }} of {{ credit.grade_level }} Year
-                                </p>
-                                {% endif %}
-                            </li>
+                                <li class="list-group-item">
+                                    {% if credit.term and credit.grade_level %}
+                                        <p>
+                                            {{ credit.term }} of {{ credit.grade_level }} Year
+                                        </p>
+                                    {% endif %}
+                                </li>
 
-                            <li class="list-group-item">
-                                <p>
-                                    Class GPA: {{ credit.class_gpa }}
-                                    Grade Equivalence: {{ credit.grade_equivalence }}
-                                </p>
-                            </li>
-                        </ul>
+                                <li class="list-group-item">
+                                    <p>
+                                        Class GPA: {{ credit.class_gpa }}
+    <!--                                        Grade Equivalence: {{ credit.grade_equivalence }}-->
+                                    </p>
+                                </li>
+                            </ul>
+                        {% endif %}
                     </section>
                 {% endfor %}
             </ul>

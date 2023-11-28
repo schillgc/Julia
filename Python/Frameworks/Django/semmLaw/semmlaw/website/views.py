@@ -1,31 +1,20 @@
-from django.shortcuts import render
 from django.template.response import TemplateResponse
 from django.views.generic import DetailView
-import requests
 from .models import Attorney
+from googlesearch import search
 
-def news(request):
-    url = ('https://newsapi.org/v2/everything?q="{{ Attorney.first_name }} {{ Attorney.last_name }}"'
-           'country=us&'
-           'apiKey=164788cbd69e4dba8b1f3b57014cd86b')
 
-    attorney_news = requests.get(url).json()
+def get_news_search_results(Attorney):
+    # Perform Google News search about the lawyer from the firm's webpage
+    query = {
+        Attorney.first_name,
+        Attorney.last_name,
+        "Schonekas, Evans, McGoey & McEachin, L.L.C."
+    }
+    search_results = search(query, num_results=100)
 
-    a = attorney_news['articles']
-    desc =[]
-    title =[]
-    img =[]
-
-    for i in range(len(a)):
-        f = a[i]
-        title.append(f['title'])
-        desc.append(f['description'])
-        img.append(f['urlToImage'])
-    mylist = zip(title, desc, img)
-
-    context = {'mylist': mylist}
-
-    return render(request, 'news.html', context)
+    # Return the search results
+    return search_results
 
 
 class Bio(DetailView):

@@ -1,15 +1,4 @@
-import requests
 import universities
-
-from .utils.news import api
-
-
-def get_news(request):
-    everything = api.get_everything(q=request)
-    r = requests.get(everything)
-    news = r.json()
-    news_list = {'news': news['results']}
-    return news_list
 
 
 def validate_academic_institution(request):

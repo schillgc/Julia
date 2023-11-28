@@ -30,6 +30,7 @@ class Attorney(models.Model):
     image = models.ImageField(verbose_name="Picture of Attorney", blank=True)
     slug = models.SlugField(max_length=255, unique=True)
 
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.first_name, self.last_name)

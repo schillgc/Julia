@@ -8,14 +8,14 @@
             </h1>
             <h5>
                 Direct Line: {{ attorney.phone_number }}
+            </h5>
             <br>
-            <p>
-                Graduated from:
-            </p>
             <h4>
-                {{ attorney.academic_institution_details.name }}  {{ attorney.graduation_year }}
-                {{ attorney.degree }}
+                Graduated with {{attorney.degree }} from {{ attorney.academic_institution_details }} in {{ attorney.graduation_year }}
             </h4>
+            <p>
+                {{ get_news_search_results }}
+            </p>
         </div>
     </body>
 {% endblock body %}
