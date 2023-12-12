@@ -103,6 +103,7 @@ class Instructor(models.Model):
 
     class Title(TextChoices):
         ADVISOR = 'Academic Advisor'
+        COUNSELOR = 'Counselor'
         MENTOR = 'Mentor'
         NURSE = 'School Nurse'
         SPONSOR = 'Club Faculty Sponsor'

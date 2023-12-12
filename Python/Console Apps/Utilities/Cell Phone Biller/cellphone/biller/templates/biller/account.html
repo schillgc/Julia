@@ -1,15 +1,20 @@
-{% extends "base.html" %}
+{% include "base.html" %}
 
-<title> {{ User.first_name User.last_name }} </title>
+{% block content %}
+    <main>
+        {% if user_list %}
+            {% for user in user_list.all %}
+                {% if user.is_active %}
+                    <h1> {{ user.last_name }}, {{ user.first_name }} </h1>
+                    <h2> {{ user.phone_number }} </h2>
 
-<body>
-    {% if User.is_active %}
-        <h1> Individual Cell Phone Biller </h1>
-        <h2> {{ User.last_name }}, {{ User.first_name }} </h2>
-        <h3> {{ User.phone_number }} </h3>
-
-        <p> {{ Phone.make }} {{ Phone.model }} </p>
-    {% endif %}
-
-
-</body>
+                    <p> {{ phone.make }} {{ phone.model }} </p>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            <p>
+                Can't pull records at this time
+            </p>
+        {% endif %}
+    </main>
+{% endblock %}

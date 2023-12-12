@@ -3,5 +3,5 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.results, name='results'),
+    path('', views.PhoneListView.as_view(), name='results'),
 ]

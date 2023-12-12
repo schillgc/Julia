@@ -13,3 +13,11 @@ class MiddlewareTestCase(TestCase):
 
     def test_cache_middleware(self):
         response = self.client.get('/')
+        return response
+
+
+class CreditListTestCase(TestCase):
+    def test_credit_list(self):
+        if credit_list:
+            response = self.client.get('/')
+            return response
