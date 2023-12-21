@@ -197,8 +197,7 @@ class Credit(models.Model):
                                                         blank=True)
 
     class Term(TextChoices):
-        FIRST_SEMESTER = '1st Semester', '1st Semester'
-        SECOND_SEMESTER = '2nd Semester', '2nd Semester'
+        SEMESTER = 'Semester', 'Semester'
         SUMMER = 'Summer', 'Summer'
         YEAR = 'Full Year', 'Full Year'
 
@@ -209,9 +208,8 @@ class Credit(models.Model):
         blank=True,
     )
 
-    teacher = models.ForeignKey(
+    teacher = models.ManyToManyField(
         Instructor,
-        on_delete=models.CASCADE,
         verbose_name="Course Teacher",
         blank=True,
     )
@@ -224,7 +222,7 @@ class Credit(models.Model):
         verbose_name_plural = "Graduation Credits"
 
     def __str__(self):
-        return (f"{self.term} {self.grade_level} {self.track} {self.name} - {self.teacher} - Course GPA:"
+        return (f"{self.term} of {self.track} {self.grade_level} {self.name} - {self.teacher} - Course GPA:"
                 f" {self.class_gpa} - Academic Credit(s): {self.class_weight}")
 
     def get_absolute_url(self):
@@ -297,11 +295,9 @@ class Credit(models.Model):
     def class_weight(self):
         class_weight = float()
         if self.term:
-            if (self.term == "1st Semester" or self.term == "FIRST_SEMESTER" or self.term == "2nd Semester" or
-                    self.term == "SECOND_TERM" or self.term == "Summer" or self.term == "Spring" or
-                    self.term == "SUMMER"):
+            if (self.term == "Semester" or self.term == "Summer"):
                 class_weight = 0.5
-            elif self.term == "Full Year" or self.term == "YEAR":
+            elif self.term == "Full Year":
                 class_weight = 1
         return class_weight
 
