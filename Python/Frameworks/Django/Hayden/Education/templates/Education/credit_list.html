@@ -24,18 +24,13 @@
                                 </li>
 
                                 <li class="list-group-item">
-                                    {% if credit.term and credit.grade_level %}
+                                    {% if credit.instructor %}
                                         <p>
-                                            {{ credit.term }} of {{ credit.grade_level }} Year
+                                            {% for instructor in credit.instructor.all %}
+                                                {{ instructor }} <a href={{instructor.email}}>{{instructor.email}}</a> <br>
+                                            {% endfor %}
                                         </p>
                                     {% endif %}
-                                </li>
-
-                                <li class="list-group-item">
-                                    <p>
-                                        Class GPA: {{ credit.class_gpa }}
-    <!--                                        Grade Equivalence: {{ credit.grade_equivalence }}-->
-                                    </p>
                                 </li>
 
                                 <li class="list-group-item">
@@ -43,9 +38,16 @@
                                         For a {{ credit.term|lower }} during {{ credit.grade_level|capfirst }} year
                                     {% elif credit.term == "Summer" %}
                                         During the {{ credit.term|lower }} after {{ credit.grade_level|capfirst }} year
-                                    {% elif credit.term == "Year" %}
+                                    {% elif credit.term == "Full Year" %}
                                         For {{ credit.grade_level|capfirst }} regular academic {{ credit.term|lower }}
                                     {% endif %}
+                                </li>
+
+                                <li class="list-group-item">
+                                    <p>
+                                        Class GPA: <b>{{ credit.class_gpa }}</b><br>
+                                        Grade Equivalence: <b>{{ credit.grade_equivalence }}</b>
+                                    </p>
                                 </li>
                             </ul>
                         {% endif %}
