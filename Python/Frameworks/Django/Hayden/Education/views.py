@@ -39,8 +39,8 @@ class AddressView(FormView):
 class CreditCreateView(CreateView):
     """ Description: Handles the creation of a new "Credit" instance. """
     model = Credit
-    template_name = 'Education/credit_form.html'
-    success_url = reverse_lazy('credit-detail/<slug>')
+    # template_name = 'Education/credit_form.html'
+    # success_url = reverse_lazy('credit-detail/<slug>')
 
 
 class CreditDeleteView(DeleteView):
@@ -52,13 +52,13 @@ class CreditDeleteView(DeleteView):
 class CreditDetailView(DetailView):
     """ Description: Displays the details of a specific "Credit" instance. """
     model = Credit
-    template_name = 'Education/credit_detail.html'
+    # template_name = 'Education/credit_detail.html'
 
 
 class CreditIndexView(ListView):
     """ Description: Displays a list of all "Credit" instances. """
     model = Credit
-    template_name = 'Education/credit_list.html'
+    # template_name = 'Education/credit_list.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -69,7 +69,7 @@ class CreditIndexView(ListView):
 class CreditUpdateView(UpdateView):
     """ Description: Handles the update of a specific "Credit" instance. """
     model = Credit
-    template_name_suffix = 'Education/credit_update_form.html'
+    template_name_suffix = '_update_form'
 
 
 class IndexView(TemplateView):
@@ -80,7 +80,7 @@ class IndexView(TemplateView):
 class InstitutionCreateView(CreateView):
     """ Description: Handles the creation of a new "Institution" instance. """
     model = Institution
-    template_name = 'Education/institution_form.html'
+    # template_name = 'Education/institution_form.html'
 
 
 class InstitutionDeleteView(DeleteView):
@@ -92,7 +92,7 @@ class InstitutionDeleteView(DeleteView):
 class InstitutionDetailView(DetailView):
     """ Description: Displays the details of a specific "Institution" instance. """
     model = Institution
-    template_name = 'Education/institution_detail.html'
+    # template_name = 'Education/institution_detail.html'
 
 
 class InstitutionIndexView(ListView):
@@ -119,7 +119,7 @@ class InstitutionUpdateView(UpdateView):
 class InstructorCreateView(CreateView):
     """ Description: Handles the creation of a new "Instructor" instance. """
     model = Instructor
-    template_name = 'Education/instructor_form.html'
+    # template_name = 'Education/instructor_form.html'
 
 
 class InstructorDeleteView(DeleteView):
@@ -131,13 +131,13 @@ class InstructorDeleteView(DeleteView):
 class InstructorDetailView(DetailView):
     """ Description: Displays the details of a specific "Instructor" instance. """
     model = Instructor
-    template_name = 'Education/instructor_detail.html'
+    # template_name = 'Education/instructor_detail.html'
 
 
 class InstructorIndexView(ListView):
     """ Description: Displays a list of all "Instructor" instances. """
     model = Instructor
-    template_name = 'Education/instructor_list.html'
+    # template_name = 'Education/instructor_list.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -148,4 +148,4 @@ class InstructorIndexView(ListView):
 class InstructorUpdateView(UpdateView):
     """ Description: Handles the update of a specific "Instructor" instance. """
     model = Instructor
-    template_name = 'Education/instructor_update_form.html'
+    template_name_suffix = '_update_form'
