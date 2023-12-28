@@ -1,3 +1,5 @@
+<!-- This template displays a list of all the Credit instances. -->
+
 {% include "base.html" %}
 {% load mathfilters %}
 
@@ -12,7 +14,7 @@
                                 <li class="list-group-item">
                                     {% if credit.track and credit.name %}
                                         <b>
-                                            {{ credit.track|lower|capfirst }} {{ credit.name|capfirst }}
+                                            {{ credit.track|lower|capfirst }} <a href="../class/{{ credit.slug }}">{{ credit.name|capfirst }}</a>
                                         </b>
                                     {% endif %}
 
