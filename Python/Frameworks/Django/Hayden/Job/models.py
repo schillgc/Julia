@@ -1,5 +1,5 @@
-from djmoney.models.fields import MoneyField
 from django.db import models
+from djmoney.models.fields import MoneyField
 
 
 class Career(models.Model):
