@@ -126,6 +126,7 @@ class Credit(models.Model):
         track (str): The track of the credit.
         clep_exam (bool): A boolean indicating whether the credit is a CLEP exam.
         registered (bool): A boolean indicating whether the credit is registered.
+        undertaking (bool): A boolean indicating whether the credit is undertaking.
         grade_percentage (int): The raw course grade percentage.
         term (str): The term of the credit.
         instructor (list): A list of instructors for the credit.
@@ -180,6 +181,7 @@ class Credit(models.Model):
     course_number = models.IntegerField(verbose_name="Course Number", blank=True)
     section = models.IntegerField(verbose_name="Section", blank=True, default='001')
     track = models.CharField(verbose_name="Course Track", max_length=18, choices=Track.choices, blank=True)
+    undertaking = models.BooleanField(verbose_name="Course Undertaking", default=False)
     clep_exam = models.BooleanField(verbose_name="College-Level Examination Program®", default=False)
     registered = models.BooleanField(default=False)
     grade_percentage = models.PositiveSmallIntegerField(verbose_name="Raw Course Grade Percentage", null=True,
