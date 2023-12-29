@@ -1,3 +1,10 @@
+"""
+File: models.py
+Author: Gavin Schilling
+
+This file defines the Credit, Institution, Instructor models for the Django project.
+"""
+
 from address.models import AddressField
 from django.core.validators import EmailValidator
 from django.db import models
