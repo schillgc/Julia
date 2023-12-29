@@ -9,7 +9,7 @@
             <ul>
                 {% for credit in credit_list.all %}
                     <section class="card" style="width: 22rem;">
-                        {% if credit.grade_percentage %}
+                        {% if credit.grade_percentage and credit.undertaking %}
                             <ul class="list-group list-group-flush">
                                 <li class="list-group-item">
                                     {% if credit.track and credit.name %}
