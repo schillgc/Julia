@@ -68,17 +68,6 @@ class Instructor(models.Model):
 
 
 class Credit(models.Model):
-    school = models.ForeignKey(Institution, on_delete=models.CASCADE, verbose_name="Name of Institution", blank=True)
-    name = models.CharField(max_length=100)
-
-    class YearInSchool(TextChoices):
-        FRESHMAN = 'Freshman', 'Freshman'
-        SOPHOMORE = 'Sophomore', 'Sophomore'
-        JUNIOR = 'Junior', 'Junior'
-        SENIOR = 'Senior', 'Senior'
-
-    grade_level = models.CharField(verbose_name="Grade Level", max_length=9, choices=YearInSchool.choices, blank=False)
-
     class Subject(TextChoices):
         BUSINESS_AND_TECHNOLOGY = 'B', 'Business & Technology'
         ENGLISH = 'E', 'English'
@@ -94,10 +83,6 @@ class Credit(models.Model):
         GERMAN = 'G', 'German'
         SPANISH = 'S', 'Spanish'
 
-    subject = models.CharField(verbose_name="Subject", max_length=1, choices=Subject.choices, blank=True)
-    course_number = models.IntegerField(verbose_name="Course Number", blank=True)
-    section = models.IntegerField(verbose_name="Section", blank=True, default='001')
-
     class Track(TextChoices):
         TRADITIONAL = 'Traditional', 'Traditional'
         ACADEMIC = 'Academic', 'Academic'
@@ -105,17 +90,28 @@ class Credit(models.Model):
         ADVANCED = 'Advanced', 'Advanced'
         ADVANCED_PLACEMENT = 'AP', 'AP'
 
-    track = models.CharField(verbose_name="Course Track", max_length=18, choices=Track.choices, blank=True)
-    clep_exam = models.BooleanField(verbose_name="College-Level Examination Program®", default=False)
-    registered = models.BooleanField(default=False)
-    grade_percentage = models.PositiveSmallIntegerField(verbose_name="Raw Course Grade Percentage", null=True,
-                                                        blank=True)
-
     class Term(TextChoices):
         SEMESTER = 'Semester', 'Semester'
         SUMMER = 'Summer', 'Summer'
         YEAR = 'Full Year', 'Full Year'
 
+    class YearInSchool(TextChoices):
+        FRESHMAN = 'Freshman', 'Freshman'
+        SOPHOMORE = 'Sophomore', 'Sophomore'
+        JUNIOR = 'Junior', 'Junior'
+        SENIOR = 'Senior', 'Senior'
+
+    school = models.ForeignKey(Institution, on_delete=models.CASCADE, verbose_name="Name of Institution", blank=True)
+    name = models.CharField(max_length=100)
+    grade_level = models.CharField(verbose_name="Grade Level", max_length=9, choices=YearInSchool.choices, blank=False)
+    subject = models.CharField(verbose_name="Subject", max_length=1, choices=Subject.choices, blank=True)
+    course_number = models.IntegerField(verbose_name="Course Number", blank=True)
+    section = models.IntegerField(verbose_name="Section", blank=True, default='001')
+    track = models.CharField(verbose_name="Course Track", max_length=18, choices=Track.choices, blank=True)
+    clep_exam = models.BooleanField(verbose_name="College-Level Examination Program®", default=False)
+    registered = models.BooleanField(default=False)
+    grade_percentage = models.PositiveSmallIntegerField(verbose_name="Raw Course Grade Percentage", null=True,
+                                                        blank=True)
     term = models.CharField(verbose_name="Class Weight", max_length=12, choices=Term.choices, blank=True)
     instructor = models.ManyToManyField(Instructor, verbose_name="Course Teacher", blank=True)
     slug = models.SlugField(unique=True)
@@ -127,29 +123,38 @@ class Credit(models.Model):
 
     def __str__(self):
         return (f"{self.term} of {self.track} {self.grade_level} {self.name} - Course GPA:"
-                f" {self.class_gpa} - Academic Credit(s): {self.class_weight}")
+                f" {self.weighted_gpa} - Academic Credit(s): {self.class_weight}")
 
     def get_absolute_url(self):
         return reverse('credit-detail', kwargs={'pk': self.pk})
 
     @property
-    def class_gpa(self):
-        class_gpa = 0.0
+    def unweighted_gpa(grade_percentage):
+        unweighted_gpa = 0.0
+        unweighted_gpa += min((grade_percentage - 50) / 10, 4.0)
+
+        return unweighted_gpa
+
+    @property
+    def weighted_gpa(self):
+        weighted_gpa = 0.0
+        unweighted_gpa = 0.0
+
         if self.track == "Traditional":
-            class_gpa += 0
+            weighted_gpa += 0 + unweighted_gpa
         elif self.track == "Academic":
-            class_gpa += 0.8
+            weighted_gpa += 0.8 + unweighted_gpa
         elif self.track == "Honors":
-            class_gpa += 1.2
+            weighted_gpa += 1.2 + unweighted_gpa
         elif self.track == "Advanced":
-            class_gpa += 1.6
+            weighted_gpa += 1.6 + unweighted_gpa
         elif self.track == "AP":
-            class_gpa += 2.0
+            weighted_gpa += 2.0 + unweighted_gpa
 
         if self.grade_percentage:
-            class_gpa += min((self.grade_percentage - 50) / 10, 4.0)
+            weighted_gpa += min((self.grade_percentage - 50) / 10, 4.0)
 
-        return class_gpa
+        return weighted_gpa
 
     @property
     def class_weight(self):
@@ -162,28 +167,28 @@ class Credit(models.Model):
 
     @property
     def grade_equivalence(self):
-        class_gpa = self.class_gpa
-        if class_gpa >= 4 + (1 / 3):
+        weighted_gpa = self.weighted_gpa
+        if weighted_gpa >= 4 + (1 / 3):
             return 'A+'
-        elif class_gpa >= 4:
+        elif weighted_gpa >= 4:
             return 'A'
-        elif class_gpa >= 3 + (2 / 3):
+        elif weighted_gpa >= 3 + (2 / 3):
             return 'A-'
-        elif class_gpa >= 3 + (1 / 3):
+        elif weighted_gpa >= 3 + (1 / 3):
             return 'B+'
-        elif class_gpa >= 3:
+        elif weighted_gpa >= 3:
             return 'B'
-        elif class_gpa >= 2 + (2 / 3):
+        elif weighted_gpa >= 2 + (2 / 3):
             return 'B-'
-        elif class_gpa >= 2 + (1 / 3):
+        elif weighted_gpa >= 2 + (1 / 3):
             return 'C+'
-        elif class_gpa >= 2:
+        elif weighted_gpa >= 2:
             return 'C'
-        elif class_gpa >= 1 + (2 / 3):
+        elif weighted_gpa >= 1 + (2 / 3):
             return 'C-'
-        elif class_gpa >= 1 + (1 / 3):
+        elif weighted_gpa >= 1 + (1 / 3):
             return 'D+'
-        elif class_gpa >= 1:
+        elif weighted_gpa >= 1:
             return 'D'
         else:
             return 'F'
