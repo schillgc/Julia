@@ -50,7 +50,7 @@ class Career(models.Model):
         verbose_name="Required Education",
         max_length=35,
         choices=DEGREE_CHOICES,
-        blank=False,
+        blank=True,
     )
 
     def __str__(self):
