@@ -1,0 +1,6 @@
+django-phonenumber-field==7.3.0
+django-phonenumbers==1.0.1
+phonenumbers==8.13.27
+python-dateutil==2.8.2
+pytz==2023.3.post1
+six==1.16.0
