@@ -6,11 +6,13 @@
 -  ### [Maze](https://github.com/schillgc/Julia/tree/master/Python/Frameworks/PyGame/AI%20Maze)
 -  ### [Tic-Tac-Toe](https://github.com/schillgc/Julia/tree/master/Python/Frameworks/PyGame/Tic-Tac-Toe%20AI/tictactoe)
 
-## Notebooks
--  ### [Bird Scooters](https://github.com/schillgc/Julia/blob/master/Python/Frameworks/Notebooks/Jupyter%20Notebooks/Bird%20Scooter/BirdScooter.ipynb)
+## Data Analysis
 -  ### [COVID-19](https://github.com/schillgc/Julia/blob/master/Python/Frameworks/Notebooks/Jupyter%20Notebooks/Corona%20Virus/CoronaVirus.ipynb)
 -  ### [Louisville Metro Government: Hours Not Worked](https://github.com/schillgc/Julia/blob/master/Python/Frameworks/Notebooks/Jupyter%20Notebooks/Louisville%20Metro%20Government/HoursNotWorked.ipynb)
 -  ### [March for Our Lives](https://github.com/schillgc/Julia/blob/master/Python/Frameworks/Notebooks/Jupyter%20Notebooks/March%20for%20Our%20Lives/MassShootings.ipynb)
+
+## Machine Learning
+-  ### [Bird Scooters](https://github.com/schillgc/Julia/blob/master/Python/Frameworks/Notebooks/Jupyter%20Notebooks/Bird%20Scooter/BirdScooter.ipynb)
 
 ## Utilities
 -  ### [Academic Scheduling](https://github.com/schillgc/Julia/tree/master/Python/Frameworks/Django/Hayden)
