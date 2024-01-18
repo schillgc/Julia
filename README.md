@@ -1,5 +1,5 @@
 # Python
-### Created by: Gavin Schilling
+### Created by: [Gavin Schilling](https://about.me/gavinschilling)
 
 ## Artificial Intelligence
 -  ### [Degrees of Separation](https://github.com/schillgc/Julia/tree/master/Python/Console%20Apps/Utilities/Kevin%20Bacon%206-Degrees%20AI)
