@@ -6,5 +6,10 @@
 -  ### [Maze](https://github.com/schillgc/Julia/tree/master/Python/Frameworks/PyGame/AI%20Maze)
 -  ### [Tic-Tac-Toe](https://github.com/schillgc/Julia/tree/master/Python/Frameworks/PyGame/Tic-Tac-Toe%20AI/tictactoe)
 
+## Notebooks
+-  ### [Bird Scooters](https://github.com/schillgc/Julia/blob/master/Python/Frameworks/Notebooks/Jupyter%20Notebooks/Bird%20Scooter/BirdScooter.ipynb)
+-  ### [COVID-19](https://github.com/schillgc/Julia/blob/master/Python/Frameworks/Notebooks/Jupyter%20Notebooks/Corona%20Virus/CoronaVirus.ipynb)
+
 ## Utilities
 -  ### [Age Calculator](https://github.com/schillgc/Julia/tree/master/Python/Console%20Apps/Utilities/Age%20Calculator)
+-  ### [Phone Tracer](https://github.com/schillgc/Julia/tree/master/Python/Console%20Apps/Utilities/Phone%20Tracker)
