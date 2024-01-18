@@ -1,6 +1,12 @@
 # Python
 ### Created by: [Gavin Schilling](https://about.me/gavinschilling)
 
+## Application Programs
+-  ### [Academic Scheduling](https://github.com/schillgc/Julia/tree/master/Python/Frameworks/Django/Hayden)
+-  ### [Age Calculator](https://github.com/schillgc/Julia/tree/master/Python/Console%20Apps/Utilities/Age%20Calculator)
+-  ### [Career System](https://github.com/schillgc/Julia/tree/master/Python/Frameworks/Django/Hires)
+-  ### [Phone Tracer](https://github.com/schillgc/Julia/tree/master/Python/Console%20Apps/Utilities/Phone%20Tracker)
+
 ## Artificial Intelligence
 -  ### [Degrees of Separation](https://github.com/schillgc/Julia/tree/master/Python/Console%20Apps/Utilities/Kevin%20Bacon%206-Degrees%20AI)
 -  ### [Maze](https://github.com/schillgc/Julia/tree/master/Python/Frameworks/PyGame/AI%20Maze)
@@ -13,9 +19,3 @@
 
 ## Machine Learning
 -  ### [Bird Scooters](https://github.com/schillgc/Julia/blob/master/Python/Frameworks/Notebooks/Jupyter%20Notebooks/Bird%20Scooter/BirdScooter.ipynb)
-
-## Utilities
--  ### [Academic Scheduling](https://github.com/schillgc/Julia/tree/master/Python/Frameworks/Django/Hayden)
--  ### [Age Calculator](https://github.com/schillgc/Julia/tree/master/Python/Console%20Apps/Utilities/Age%20Calculator)
--  ### [Career System](https://github.com/schillgc/Julia/tree/master/Python/Frameworks/Django/Hires)
--  ### [Phone Tracer](https://github.com/schillgc/Julia/tree/master/Python/Console%20Apps/Utilities/Phone%20Tracker)
