@@ -14,4 +14,5 @@
 ## Utilities
 -  ### [Academic Scheduling](https://github.com/schillgc/Julia/tree/master/Python/Frameworks/Django/Hayden)
 -  ### [Age Calculator](https://github.com/schillgc/Julia/tree/master/Python/Console%20Apps/Utilities/Age%20Calculator)
+-  ### [Career System](https://github.com/schillgc/Julia/tree/master/Python/Frameworks/Django/Hires)
 -  ### [Phone Tracer](https://github.com/schillgc/Julia/tree/master/Python/Console%20Apps/Utilities/Phone%20Tracker)
