@@ -9,6 +9,7 @@
 ## Notebooks
 -  ### [Bird Scooters](https://github.com/schillgc/Julia/blob/master/Python/Frameworks/Notebooks/Jupyter%20Notebooks/Bird%20Scooter/BirdScooter.ipynb)
 -  ### [COVID-19](https://github.com/schillgc/Julia/blob/master/Python/Frameworks/Notebooks/Jupyter%20Notebooks/Corona%20Virus/CoronaVirus.ipynb)
+-  ### [Louisville Metro Government: Hours Not Worked](https://github.com/schillgc/Julia/blob/master/Python/Frameworks/Notebooks/Jupyter%20Notebooks/Louisville%20Metro%20Government/HoursNotWorked.ipynb)
 
 ## Utilities
 -  ### [Age Calculator](https://github.com/schillgc/Julia/tree/master/Python/Console%20Apps/Utilities/Age%20Calculator)
