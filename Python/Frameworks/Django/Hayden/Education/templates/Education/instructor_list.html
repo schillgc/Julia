@@ -11,7 +11,7 @@
                         {{ instructor.first_name|capfirst }} {{ instructor.last_name|capfirst}}
                     </a>
                     <br />
-                    <a href="mailto://{{ instructor.email }}">{{ instructor.email }}</a>
+                    <a href=mailto:%22{{instructor.first_name}}%20{{instructor.last_name}}%22%3c{{instructor.email}}%3e>{{ instructor.email }}</a>
                     {{ instructor.phone }}
                 </p>
             {% empty %}
