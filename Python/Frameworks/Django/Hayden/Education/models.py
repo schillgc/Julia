@@ -199,52 +199,26 @@ class Credit(models.Model):
         return (f"{self.term} of {self.track} {self.grade_level} {self.name} - Course GPA:"
                 f" {self.weighted_gpa} - Academic Credit(s): {self.class_weight}")
 
-
     @property
-    def unweighted_gpa(grade_percentage):
-        """
-        Returns the unweighted GPA.
-
-        Args:
-            grade_percentage (int): The raw course grade percentage.
-
-        Returns:
-            float: The unweighted GPA.
-
-        """
-
+    def unweighted_gpa(self):
         unweighted_gpa = 0.0
-        unweighted_gpa += min((grade_percentage - 50) / 10, 4.0)
-
+        if self.grade_percentage:
+            unweighted_gpa += min((self.grade_percentage - 50) / 10, 4.0)
         return unweighted_gpa
 
     @property
     def weighted_gpa(self):
-        """
-        Returns the weighted GPA.
-
-        Returns:
-            float: The weighted GPA.
-
-        """
-
         weighted_gpa = 0.0
-        unweighted_gpa = 0.0
-
-        if self.track == "Traditional":
-            weighted_gpa += 0 + unweighted_gpa
-        elif self.track == "Academic":
-            weighted_gpa += 0.8 + unweighted_gpa
-        elif self.track == "Honors":
-            weighted_gpa += 1.2 + unweighted_gpa
-        elif self.track == "Advanced":
-            weighted_gpa += 1.6 + unweighted_gpa
-        elif self.track == "AP":
-            weighted_gpa += 2.0 + unweighted_gpa
-
+        unweighted_gpa = self.unweighted_gpa
+        track_weights = {
+            "Traditional": 0,
+            "Academic": 0.8,
+            "Honors": 1.2,
+            "Advanced": 1.6,
+            "AP": 2.0
+        }
         if self.grade_percentage:
-            weighted_gpa += min((self.grade_percentage - 50) / 10, 4.0)
-
+            weighted_gpa += track_weights.get(self.track, 0) + unweighted_gpa
         return weighted_gpa
 
     @property
@@ -265,16 +239,52 @@ class Credit(models.Model):
             return 0.0
 
     @property
-    def grade_equivalence(self):
+    def unweighted_grade_equivalence(self):
         """
-        Returns the grade equivalence.
+        Returns the unweighted grade equivalence.
 
         Returns:
-            str: The grade equivalence.
+            str: The unweighted grade equivalence.
 
         """
+        unweighted_gpa = self.unweighted_gpa
+        # Grade equivalences based on unweighted GPA
+        if unweighted_gpa >= 4 + (1 / 3):
+            return 'A+'
+        elif unweighted_gpa >= 4:
+            return 'A'
+        elif unweighted_gpa >= 3 + (2 / 3):
+            return 'A-'
+        elif unweighted_gpa >= 3 + (1 / 3):
+            return 'B+'
+        elif unweighted_gpa >= 3:
+            return 'B'
+        elif unweighted_gpa >= 2 + (2 / 3):
+            return 'B-'
+        elif unweighted_gpa >= 2 + (1 / 3):
+            return 'C+'
+        elif unweighted_gpa >= 2:
+            return 'C'
+        elif unweighted_gpa >= 1 + (2 / 3):
+            return 'C-'
+        elif unweighted_gpa >= 1 + (1 / 3):
+            return 'D+'
+        elif unweighted_gpa >= 1:
+            return 'D'
+        else:
+            return 'F'
 
+    @property
+    def weighted_grade_equivalence(self):
+        """
+        Returns the weighted grade equivalence.
+
+        Returns:
+            str: The weighted grade equivalence.
+
+        """
         weighted_gpa = self.weighted_gpa
+        # Grade equivalences based on weighted GPA
         if weighted_gpa >= 4 + (1 / 3):
             return 'A+'
         elif weighted_gpa >= 4:
