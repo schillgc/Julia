@@ -1,20 +1,7 @@
-"""
-File: models.py
-Author: Gavin Schilling
-
-This file defines the Career model for the Django project.
-"""
-
 from django.db import models
 from djmoney.models.fields import MoneyField
 
-
 class Career(models.Model):
-    """
-    The Career model represents a profession and its associated
-    educational requirements and average salary.
-    """
-
     profession = models.CharField(
         verbose_name="Profession",
         max_length=250,
@@ -54,10 +41,6 @@ class Career(models.Model):
     )
 
     def __str__(self):
-        """
-        Returns the profession name.
-        """
-
         return self.profession
 
     class Meta:
