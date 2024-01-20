@@ -13,7 +13,7 @@ def unslugify(value):
 @register.filter
 @stringfilter
 def roman_numerals(value):
-    return value.replace("1","I").replace("2","II")
+    return value.replace("1","I").replace("2","II").replace("3","III").replace("4","IV").replace("5","V")
 
 
 def convert_to_gpa_and_letter_grade(Credit):
