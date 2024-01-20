@@ -1,4 +1,3 @@
-# Import necessary modules
 from django.urls import reverse_lazy
 from django.utils import timezone
 from django.views.generic import DetailView, ListView
@@ -112,6 +111,7 @@ class InstitutionIndexView(ListView):
 
 
 class InstitutionUpdateView(UpdateView):
+    """ Description: Handles the update of a specific "Institution" instance. """
     model = Institution
     template_name_suffix = '_update_form'
 
