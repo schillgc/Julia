@@ -1,6 +1,7 @@
 from django.db import models
 from djmoney.models.fields import MoneyField
 
+
 class Career(models.Model):
     profession = models.CharField(
         verbose_name="Profession",
