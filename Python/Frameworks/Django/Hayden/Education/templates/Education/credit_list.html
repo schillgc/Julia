@@ -30,7 +30,7 @@
                                     {% if credit.instructor %}
                                         <p>
                                             {% for instructor in credit.instructor.all %}
-                                                {{ instructor }} <a href=mailto:{{instructor.email}}>{{instructor.email}}</a> <br>
+                                                {{ instructor }} <a href=mailto:%22{{instructor.first_name}}%20{{instructor.last_name}}%22%3c{{instructor.email}}%3e>{{instructor.email}}</a> <br>
                                             {% endfor %}
                                         </p>
                                     {% endif %}
