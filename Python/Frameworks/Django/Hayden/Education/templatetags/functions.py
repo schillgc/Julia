@@ -1,6 +1,19 @@
 from django import template
+from django.template.defaultfilters import stringfilter
 
 register = template.Library()
+
+
+@register.filter
+@stringfilter
+def unslugify(value):
+    return value.replace('-', ' ').capitalize()
+
+
+@register.filter
+@stringfilter
+def roman_numerals(value):
+    return value.replace("1","I").replace("2","II")
 
 
 def convert_to_gpa_and_letter_grade(Credit):
