@@ -4,7 +4,7 @@ Django Admin Configuration
 
 from django.contrib import admin
 
-from .models import Credit, Institution, Instructor
+from .models import Credit, School, Instructor
 
 
 @admin.register(Credit)
@@ -15,7 +15,7 @@ class CreditAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('grade_level', 'name',)}
 
 
-@admin.register(Institution)
+@admin.register(School)
 class InstitutionAdmin(admin.ModelAdmin):
     """
     Django Admin Configuration for Institutions
