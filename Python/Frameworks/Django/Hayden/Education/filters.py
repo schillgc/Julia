@@ -1,7 +1,7 @@
 # filters.py
 import django_filters
 from django import forms
-from .models import Credit
+from .models import Credit, School
 
 class CreditFilter(django_filters.FilterSet):
     class_weight = django_filters.NumberFilter(
@@ -13,14 +13,14 @@ class CreditFilter(django_filters.FilterSet):
     )
 
     grade_level = django_filters.ChoiceFilter(
-        choices=Credit.GRADE_LEVEL_CHOICES,  # Assuming GRADE_LEVEL_CHOICES is defined in the Credit model
+        choices=Credit.GRADE_LEVEL_CHOICES,
         widget=forms.Select(attrs={'class': 'form-control'}),
         label='Grade Level',
         help_text='Grade Level is Freshman, Sophomore, Junior, or Senior',
     )
 
     school = django_filters.ModelChoiceFilter(
-        queryset=School.objects.all(),  # Assuming School model is related to Credit model
+        queryset=School.objects.all(),
         widget=forms.Select(attrs={'class': 'form-control'}),
         label='School',
         help_text='School is the name of the school that the credit is for.',
