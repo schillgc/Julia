@@ -5,15 +5,15 @@ Author: Gavin Schilling
 This file defines the Credit, Institution, Instructor models for the Django project.
 """
 
-from address.models import AddressField
-from django.core.validators import EmailValidator
 from django.db import models
 from django.db.models import TextChoices
-from djmoney.models.fields import MoneyField
+from django.core.validators import EmailValidator, MinValueValidator, MaxValueValidator
 from phonenumber_field.modelfields import PhoneNumberField
+from djmoney.models.fields import MoneyField
+from address.models import AddressField
 
 
-class Institution(models.Model):
+class School(models.Model):
     """
     A model representing an educational institution.
 
@@ -40,7 +40,7 @@ class Institution(models.Model):
         slug (str): A unique slug for the institution.
     """
 
-    name = models.CharField(verbose_name="Name of the School", max_length=250)
+    name = models.CharField(verbose_name="Name of the School", max_length=255, unique=True)
     next_year_full_tuition = MoneyField(max_digits=7, decimal_places=0, default_currency='USD')
     registration_fee = MoneyField(max_digits=3, decimal_places=0, default_currency='USD')
     student_activity_fee = MoneyField(max_digits=3, decimal_places=0, default_currency='USD')
@@ -57,7 +57,7 @@ class Institution(models.Model):
     teacher_recommendations_submitted = models.BooleanField(default=False)
     accepted = models.BooleanField(default=False)
     financial_aid_requested = models.BooleanField(default=False)
-    financial_aid_awarded = MoneyField(max_digits=7, decimal_places=0, default_currency='USD')
+    financial_aid_awarded = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
     description = models.TextField(max_length=10000, blank=True)
     slug = models.SlugField(unique=True)
 
@@ -68,6 +68,11 @@ class Institution(models.Model):
 
     def __str__(self):
         return self.name
+
+    @property
+    def net_cost(self):
+        return self.next_year_full_tuition - self.financial_aid_awarded
+
 
 
 class Instructor(models.Model):
@@ -87,24 +92,25 @@ class Instructor(models.Model):
 
     """
 
-    first_name = models.CharField(verbose_name="Instructor's First Name", max_length=50, blank=True)
-    last_name = models.CharField(verbose_name="Instructor's Last Name", max_length=50, blank=True)
+    first_name = models.CharField(verbose_name="Instructor's First Name", max_length=255, blank=True)
+    last_name = models.CharField(verbose_name="Instructor's Last Name", max_length=255, blank=True)
     email = models.EmailField(verbose_name="Instructor's Email Address", blank=True, validators=[EmailValidator])
     phone = PhoneNumberField(verbose_name="Instructor's Telephone Number", blank=True)
 
-    class Title(TextChoices):
-        ADVISOR = 'Academic Advisor'
-        COUNSELOR = 'Counselor'
-        MENTOR = 'Mentor'
-        NURSE = 'School Nurse'
-        SPONSOR = 'Club Faculty Sponsor'
-        TEACHER = 'Class Instructor'
+    TITLE_CHOICES = [
+        ('Advisor', 'Academic Advisor'),
+        ('Counselor', 'School Counselor'),
+        ('Mentor', 'Life Mentor'),
+        ('Nurse', 'School Nurse'),
+        ('Sponsor', 'Club Faculty Sponsor'),
+        ('Teacher', 'Class Instructor'),
+    ]
 
-    title = models.CharField(verbose_name="Professional Role Title", max_length=20, choices=Title.choices, blank=False)
+    title = models.CharField(verbose_name="Professional Role Title", max_length=20, choices=TITLE_CHOICES, blank=False)
     slug = models.SlugField(unique=True)
 
     def __str__(self):
-        return f"{self.last_name}, {self.first_name}"
+        return f"{self.first_name} {self.last_name}"
 
     class Meta:
         verbose_name = "Teaching Instructor"
@@ -117,7 +123,7 @@ class Credit(models.Model):
     A model representing a graduation credit.
 
     Attributes:
-        school (Institution): The institution that offers the credit.
+        school (School): The institution that offers the credit.
         name (str): The name of the credit.
         grade_level (str): The grade level of the credit.
         subject (str): The subject of the credit.
@@ -141,6 +147,19 @@ class Credit(models.Model):
 
     """
 
+    GRADE_LEVEL_CHOICES = [
+        ('Freshman', 'Freshman'),
+        ('Sophomore', 'Sophomore'),
+        ('Junior', 'Junior'),
+        ('Senior', 'Senior'),
+    ]
+
+    TERM_CHOICES = [
+        ('Semester', 'Semester'),
+        ('Summer', 'Summer'),
+        ('Full Year', 'Full Year'),
+    ]
+
     class Subject(TextChoices):
         BUSINESS_AND_TECHNOLOGY = 'B', 'Business & Technology'
         ENGLISH = 'E', 'English'
@@ -156,37 +175,28 @@ class Credit(models.Model):
         GERMAN = 'G', 'German'
         SPANISH = 'S', 'Spanish'
 
-    class Track(TextChoices):
-        TRADITIONAL = 'Traditional', 'Traditional'
-        ACADEMIC = 'Academic', 'Academic'
-        HONORS = 'Honors', 'Honors'
-        ADVANCED = 'Advanced', 'Advanced'
-        ADVANCED_PLACEMENT = 'AP', 'AP'
+    TRACK_CHOICES = [
+        ('Traditional', 'Traditional'),
+        ('Academic', 'Academic'),
+        ('Honors', 'Honors'),
+        ('Advanced', 'Advanced'),
+        ('Advanced Placement', 'AP'),
+    ]
 
-    class Term(TextChoices):
-        SEMESTER = 'Semester', 'Semester'
-        SUMMER = 'Summer', 'Summer'
-        YEAR = 'Full Year', 'Full Year'
 
-    class YearInSchool(TextChoices):
-        FRESHMAN = 'Freshman', 'Freshman'
-        SOPHOMORE = 'Sophomore', 'Sophomore'
-        JUNIOR = 'Junior', 'Junior'
-        SENIOR = 'Senior', 'Senior'
-
-    school = models.ForeignKey(Institution, on_delete=models.CASCADE, verbose_name="Name of Institution", blank=True)
+    school = models.ForeignKey(School, on_delete=models.CASCADE, verbose_name="Name of Institution", blank=True)
     name = models.CharField(max_length=100)
-    grade_level = models.CharField(verbose_name="Grade Level", max_length=9, choices=YearInSchool.choices, blank=False)
+    grade_level = models.CharField(verbose_name="Grade Level", max_length=9, choices=GRADE_LEVEL_CHOICES, blank=False)
     subject = models.CharField(verbose_name="Subject", max_length=1, choices=Subject.choices, blank=True)
     course_number = models.IntegerField(verbose_name="Course Number", blank=True)
     section = models.IntegerField(verbose_name="Section", blank=True, default='001')
-    track = models.CharField(verbose_name="Course Track", max_length=18, choices=Track.choices, blank=True)
+    track = models.CharField(verbose_name="Course Track", max_length=18, choices=TRACK_CHOICES, blank=True)
     undertaking = models.BooleanField(verbose_name="Course Undertaking", default=False)
     clep_exam = models.BooleanField(verbose_name="College-Level Examination Program®", default=False)
     registered = models.BooleanField(default=False)
     grade_percentage = models.PositiveSmallIntegerField(verbose_name="Raw Course Grade Percentage", null=True,
                                                         blank=True)
-    term = models.CharField(verbose_name="Class Weight", max_length=12, choices=Term.choices, blank=True)
+    term = models.CharField(verbose_name="Class Weight", max_length=12, choices=TERM_CHOICES, blank=True)
     instructor = models.ManyToManyField(Instructor, verbose_name="Course Teacher(s)", blank=True)
     slug = models.SlugField(unique=True)
 
@@ -201,25 +211,48 @@ class Credit(models.Model):
 
     @property
     def unweighted_gpa(self):
-        unweighted_gpa = 0.0
-        if self.grade_percentage:
-            unweighted_gpa += min((self.grade_percentage - 50) / 10, 4.0)
-        return unweighted_gpa
+        if self.grade_percentage is not None:
+            unweighted_gpa_table = {
+                90.00: 4.00,
+                89.00: 3.90,
+                88.00: 3.80,
+                87.00: 3.70,
+                86.00: 3.50,
+                85.00: 3.40,
+                84.00: 3.30,
+                83.00: 3.00,
+                82.00: 2.90,
+                81.00: 2.80,
+                80.00: 2.70,
+                79.00: 2.50,
+                78.00: 2.40,
+                77.00: 2.30,
+                76.00: 2.10,
+                75.00: 1.90,
+                74.00: 1.80,
+                73.00: 1.70,
+                72.00: 1.50,
+                71.00: 1.40,
+                70.00: 1.30,
+                69.00: 0.00,
+            }
+            return max(min(unweighted_gpa_table.get(self.grade_percentage, 0.0), 4.0), 0.0)
+        # return None  # or raise an exception, depending on your desired behavior
 
     @property
     def weighted_gpa(self):
-        weighted_gpa = 0.0
-        unweighted_gpa = self.unweighted_gpa
-        track_weights = {
-            "Traditional": 0,
-            "Academic": 0.8,
-            "Honors": 1.2,
-            "Advanced": 1.6,
-            "AP": 2.0
-        }
-        if self.grade_percentage:
-            weighted_gpa += track_weights.get(self.track, 0) + unweighted_gpa
-        return weighted_gpa
+        if self.grade_percentage is not None:
+            unweighted_gpa = self.unweighted_gpa
+            track_weights = {
+                "Traditional": 0,
+                "Academic": 0.8,
+                "Honors": 1.2,
+                "Advanced": 1.6,
+                "AP": 2.0
+            }
+            weighted_gpa = unweighted_gpa + track_weights.get(self.track, 0)
+            return max(min(weighted_gpa, 5.0), 0.0)
+        # return None  # or raise an exception, depending on your desired behavior
 
     @property
     def class_weight(self):
@@ -247,32 +280,35 @@ class Credit(models.Model):
             str: The unweighted grade equivalence.
 
         """
-        unweighted_gpa = self.unweighted_gpa
-        # Grade equivalences based on unweighted GPA
-        if unweighted_gpa >= 4 + (1 / 3):
-            return 'A+'
-        elif unweighted_gpa >= 4:
-            return 'A'
-        elif unweighted_gpa >= 3 + (2 / 3):
-            return 'A-'
-        elif unweighted_gpa >= 3 + (1 / 3):
-            return 'B+'
-        elif unweighted_gpa >= 3:
-            return 'B'
-        elif unweighted_gpa >= 2 + (2 / 3):
-            return 'B-'
-        elif unweighted_gpa >= 2 + (1 / 3):
-            return 'C+'
-        elif unweighted_gpa >= 2:
-            return 'C'
-        elif unweighted_gpa >= 1 + (2 / 3):
-            return 'C-'
-        elif unweighted_gpa >= 1 + (1 / 3):
-            return 'D+'
-        elif unweighted_gpa >= 1:
-            return 'D'
-        else:
-            return 'F'
+        if self.grade_percentage is not None:
+            unweighted_gpa = self.unweighted_gpa
+            # Grade equivalences based on unweighted GPA
+            if unweighted_gpa >= 4 + (1 / 3):
+                return 'A+'
+            elif unweighted_gpa >= 4:
+                return 'A'
+            elif unweighted_gpa >= 3 + (2 / 3):
+                return 'A-'
+            elif unweighted_gpa >= 3 + (1 / 3):
+                return 'B+'
+            elif unweighted_gpa >= 3:
+                return 'B'
+            elif unweighted_gpa >= 2 + (2 / 3):
+                return 'B-'
+            elif unweighted_gpa >= 2 + (1 / 3):
+                return 'C+'
+            elif unweighted_gpa >= 2:
+                return 'C'
+            elif unweighted_gpa >= 1 + (2 / 3):
+                return 'C-'
+            elif unweighted_gpa >= 1 + (1 / 3):
+                return 'D+'
+            elif unweighted_gpa >= 1:
+                return 'D'
+            else:
+                return 'F'
+        return None  # or raise an exception, depending on your desired behavior
+
 
     @property
     def weighted_grade_equivalence(self):
@@ -283,29 +319,88 @@ class Credit(models.Model):
             str: The weighted grade equivalence.
 
         """
-        weighted_gpa = self.weighted_gpa
-        # Grade equivalences based on weighted GPA
-        if weighted_gpa >= 4 + (1 / 3):
-            return 'A+'
-        elif weighted_gpa >= 4:
-            return 'A'
-        elif weighted_gpa >= 3 + (2 / 3):
-            return 'A-'
-        elif weighted_gpa >= 3 + (1 / 3):
-            return 'B+'
-        elif weighted_gpa >= 3:
-            return 'B'
-        elif weighted_gpa >= 2 + (2 / 3):
-            return 'B-'
-        elif weighted_gpa >= 2 + (1 / 3):
-            return 'C+'
-        elif weighted_gpa >= 2:
-            return 'C'
-        elif weighted_gpa >= 1 + (2 / 3):
-            return 'C-'
-        elif weighted_gpa >= 1 + (1 / 3):
-            return 'D+'
-        elif weighted_gpa >= 1:
-            return 'D'
-        else:
-            return 'F'
+        if self.grade_percentage is not None:
+            weighted_gpa = self.weighted_gpa
+            # Grade equivalences based on weighted GPA
+            if weighted_gpa >= 4 + (1 / 3):
+                return 'A+'
+            elif weighted_gpa >= 4:
+                return 'A'
+            elif weighted_gpa >= 3 + (2 / 3):
+                return 'A-'
+            elif weighted_gpa >= 3 + (1 / 3):
+                return 'B+'
+            elif weighted_gpa >= 3:
+                return 'B'
+            elif weighted_gpa >= 2 + (2 / 3):
+                return 'B-'
+            elif weighted_gpa >= 2 + (1 / 3):
+                return 'C+'
+            elif weighted_gpa >= 2:
+                return 'C'
+            elif weighted_gpa >= 1 + (2 / 3):
+                return 'C-'
+            elif weighted_gpa >= 1 + (1 / 3):
+                return 'D+'
+            elif weighted_gpa >= 1:
+                return 'D'
+            else:
+                return 'F'
+        return None  # or raise an exception, depending on your desired behavior
+
+
+
+
+class Department(models.Model):
+    name = models.CharField(max_length=255)
+    code = models.CharField(max_length=10, unique=True)
+
+    def __str__(self):
+        return self.name
+
+
+class Major(models.Model):
+    name = models.CharField(max_length=255)
+    code = models.CharField(max_length=10, unique=True)
+    department = models.ForeignKey(Department, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
+
+
+class Student(models.Model):
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
+    date_of_birth = models.DateField()
+    school = models.ForeignKey(School, on_delete=models.CASCADE)
+    major = models.ForeignKey(Major, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
+
+
+class Enrollment(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    credit = models.ForeignKey(Credit, on_delete=models.CASCADE)
+    grade = models.CharField(max_length=2)
+
+    def __str__(self):
+        return f"{self.student} - {self.credit} - {self.grade}"
+
+
+class Degree(models.Model):
+    student = models.OneToOneField(Student, on_delete=models.CASCADE)
+    major = models.ForeignKey(Major, on_delete=models.CASCADE)
+    graduation_date = models.DateField()
+
+    def __str__(self):
+        return f"{self.student} - {self.major} - {self.graduation_date}"
+
+
+class Transcript(models.Model):
+    student = models.ForeignKey(Student, on_delete=models.CASCADE)
+    course = models.CharField(max_length=255)
+    grade = models.CharField(max_length=2)
+
+    def __str__(self):
+        return f"{self.student} - {self.course} - {self.grade}"
