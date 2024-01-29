@@ -47,40 +47,38 @@
                                 </li>
 
                                 <li class="list-group-item">
-                                    <p>
-                                        <div class="container text-center">
-                                            <div class="row">
-                                                <i>Grade</i>
+                                    <div class="container text-center">
+                                        <div class="row">
+                                            <i>Grade</i>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                <u>Weighted:</u>
                                             </div>
-                                            <div class="row">
-                                                <div class="col">
-                                                    <u>Weighted:</u>
-                                                </div>
-                                                <div class="col">
-                                                    <u>Unweighted:</u>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col">
-                                                    <b>{{ credit.weighted_gpa }}</b>
-                                                </div>
-                                                <div class="col">
-                                                    <b>{{ credit.unweighted_gpa }}</b>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <div class="col">
-                                                    <b>{{ credit.weighted_grade_equivalence }}</b>
-                                                </div>
-                                                <div class="col">
-                                                    <b>{{ credit.unweighted_grade_equivalence }}</b>
-                                                </div>
-                                            </div>
-                                            <div class="row">
-                                                <b>{{ credit.grade_percentage }}%</b>
+                                            <div class="col">
+                                                <u>Unweighted:</u>
                                             </div>
                                         </div>
-                                    </p>
+                                        <div class="row">
+                                            <div class="col">
+                                                <b>{{ credit.weighted_gpa }}</b>
+                                            </div>
+                                            <div class="col">
+                                                <b>{{ credit.unweighted_gpa }}</b>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">
+                                                <b>{{ credit.weighted_grade_equivalence }}</b>
+                                            </div>
+                                            <div class="col">
+                                                <b>{{ credit.unweighted_grade_equivalence }}</b>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <b>{{ credit.grade_percentage }}%</b>
+                                        </div>
+                                    </div>
                                 </li>
                             </ul>
                         {% endif %}
@@ -88,9 +86,7 @@
                 {% endfor %}
             </ul>
         {% else %}
-            <p>
-                No class data is available.
-            </p>
+            <p>No class data is available.</p>
         {% endif %}
     </main>
 {% endblock %}
