@@ -213,6 +213,16 @@ class Credit(models.Model):
     def unweighted_gpa(self):
         if self.grade_percentage is not None:
             unweighted_gpa_table = {
+                100.00: 4.00,
+                99.00: 4.00,
+                98.00: 4.00,
+                97.00: 4.00,
+                96.00: 4.00,
+                95.00: 4.00,
+                94.00: 4.00,
+                93.00: 4.00,
+                92.00: 4.00,
+                91.00: 4.00,
                 90.00: 4.00,
                 89.00: 3.90,
                 88.00: 3.80,
@@ -237,7 +247,7 @@ class Credit(models.Model):
                 69.00: 0.00,
             }
             return max(min(unweighted_gpa_table.get(self.grade_percentage, 0.0), 4.0), 0.0)
-        # return None  # or raise an exception, depending on your desired behavior
+        return None  # or raise an exception, depending on your desired behavior
 
     @property
     def weighted_gpa(self):
@@ -281,34 +291,42 @@ class Credit(models.Model):
 
         """
         if self.grade_percentage is not None:
-            unweighted_gpa = self.unweighted_gpa
-            # Grade equivalences based on unweighted GPA
-            if unweighted_gpa >= 4 + (1 / 3):
-                return 'A+'
-            elif unweighted_gpa >= 4:
-                return 'A'
-            elif unweighted_gpa >= 3 + (2 / 3):
-                return 'A-'
-            elif unweighted_gpa >= 3 + (1 / 3):
-                return 'B+'
-            elif unweighted_gpa >= 3:
-                return 'B'
-            elif unweighted_gpa >= 2 + (2 / 3):
-                return 'B-'
-            elif unweighted_gpa >= 2 + (1 / 3):
-                return 'C+'
-            elif unweighted_gpa >= 2:
-                return 'C'
-            elif unweighted_gpa >= 1 + (2 / 3):
-                return 'C-'
-            elif unweighted_gpa >= 1 + (1 / 3):
-                return 'D+'
-            elif unweighted_gpa >= 1:
-                return 'D'
-            else:
-                return 'F'
+            unweighted_gpa_table = {
+                100.00: 'A+',
+                99.00: 'A+',
+                98.00: 'A+',
+                97.00: 'A+',
+                96.00: 'A+',
+                95.00: 'A+',
+                94.00: 'A',
+                93.00: 'A',
+                92.00: 'A',
+                91.00: 'A',
+                90.00: 'A',
+                89.00: 'A-',
+                88.00: 'A-',
+                87.00: 'A-',
+                86.00: 'B+',
+                85.00: 'B+',
+                84.00: 'B+',
+                83.00: 'B',
+                82.00: 'B-',
+                81.00: 'B-',
+                80.00: 'B-',
+                79.00: 'C+',
+                78.00: 'C+',
+                77.00: 'C+',
+                76.00: 'C',
+                75.00: 'C-',
+                74.00: 'C-',
+                73.00: 'C-',
+                72.00: 'D+',
+                71.00: 'D+',
+                70.00: 'D+',
+                69.00: 'F',
+            }
+            return unweighted_gpa_table.get(self.grade_percentage, 'F')
         return None  # or raise an exception, depending on your desired behavior
-
 
     @property
     def weighted_grade_equivalence(self):
@@ -322,28 +340,26 @@ class Credit(models.Model):
         if self.grade_percentage is not None:
             weighted_gpa = self.weighted_gpa
             # Grade equivalences based on weighted GPA
-            if weighted_gpa >= 4 + (1 / 3):
+            if weighted_gpa >= 4.3:
                 return 'A+'
             elif weighted_gpa >= 4:
                 return 'A'
-            elif weighted_gpa >= 3 + (2 / 3):
+            elif weighted_gpa >= 3.7:
                 return 'A-'
-            elif weighted_gpa >= 3 + (1 / 3):
+            elif weighted_gpa >= 3.3:
                 return 'B+'
             elif weighted_gpa >= 3:
                 return 'B'
-            elif weighted_gpa >= 2 + (2 / 3):
+            elif weighted_gpa >= 2.7:
                 return 'B-'
-            elif weighted_gpa >= 2 + (1 / 3):
+            elif weighted_gpa >= 2.3:
                 return 'C+'
             elif weighted_gpa >= 2:
                 return 'C'
-            elif weighted_gpa >= 1 + (2 / 3):
+            elif weighted_gpa >= 1.7:
                 return 'C-'
-            elif weighted_gpa >= 1 + (1 / 3):
+            elif weighted_gpa >= 1.3:
                 return 'D+'
-            elif weighted_gpa >= 1:
-                return 'D'
             else:
                 return 'F'
         return None  # or raise an exception, depending on your desired behavior
