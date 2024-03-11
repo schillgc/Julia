@@ -98,15 +98,18 @@ class Instructor(models.Model):
     phone = PhoneNumberField(verbose_name="Instructor's Telephone Number", blank=True)
 
     TITLE_CHOICES = [
-        ('Advisor', 'Academic Advisor'),
-        ('Counselor', 'School Counselor'),
-        ('Mentor', 'Life Mentor'),
-        ('Nurse', 'School Nurse'),
-        ('Sponsor', 'Club Faculty Sponsor'),
-        ('Teacher', 'Class Instructor'),
+        ('Academic Advisor', 'Academic Advisor'),
+        ('Academic Dean', 'Academic Dean'),
+        ('Class Instructor', 'Class Instructor'),
+        ('College Counselor', 'College Counselor'),
+        ('Faculty Sponsor', 'Faculty Sponsor'),
+        ('Learning Support Coordinator', 'Learning Support Coordinator'),
+        ('Life Mentor', 'Life Mentor'),
+        ('School Nurse', 'School Nurse'),
+        ('Personal/Academic Counselor', 'Personal/Academic Counselor'),
     ]
 
-    title = models.CharField(verbose_name="Professional Role Title", max_length=20, choices=TITLE_CHOICES, blank=False)
+    title = models.CharField(verbose_name="Professional Role Title", max_length=28, choices=TITLE_CHOICES, blank=False)
     slug = models.SlugField(unique=True)
 
     def __str__(self):
