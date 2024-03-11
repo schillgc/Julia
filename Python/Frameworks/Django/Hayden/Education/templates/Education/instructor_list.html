@@ -8,8 +8,8 @@
             {% for instructor in instructor_list.all %}
                 <p>
                     <a href="https://www.trinityrocks.com/staff?search={{ instructor.last_name }}" target="_blank">
-                        {{ instructor.first_name|capfirst }} {{ instructor.last_name|capfirst}}
-                    </a>
+                        {{ instructor.first_name|capfirst }} {{ instructor.last_name|capfirst }}
+                    </a> -- {{ school.name }} {{ instructor.title }}
                     <br />
                     <a href=mailto:%22{{instructor.first_name}}%20{{instructor.last_name}}%22%3c{{instructor.email}}%3e>{{ instructor.email }}</a>
                     {{ instructor.phone }}
