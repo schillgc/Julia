@@ -264,7 +264,7 @@ class Credit(models.Model):
                 "AP": 2.0
             }
             weighted_gpa = unweighted_gpa + track_weights.get(self.track, 0)
-            return max(min(weighted_gpa, 5.0), 0.0)
+            return max(min(weighted_gpa, 6.0), 0.0)
         # return None  # or raise an exception, depending on your desired behavior
 
     @property
