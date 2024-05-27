@@ -1,10 +1,8 @@
 from address.models import Locality, State
 from django.db import models
 from django.template.defaultfilters import slugify
-from django.utils.text import slugify
 from djmoney.models.fields import MoneyField
-from phone_field import PhoneField
-
+from phonenumber_field.modelfields import PhoneNumberField
 
 class Benefit(models.Model):
     name = models.CharField(max_length=200, blank=True, null=True)
@@ -33,7 +31,7 @@ class Recruiter(models.Model):
     last_name = models.CharField(verbose_name="Recruiter's Last Name", max_length=200, blank=True, null=True)
     company = models.ForeignKey(Company, on_delete=models.CASCADE)
     title = models.CharField(verbose_name="Recruiter's Professional Title", max_length=200, blank=True, null=True)
-    phone_number = PhoneField(verbose_name="Recruiter's Phone Number", blank=True, null=True)
+    phone_number = PhoneNumberField(verbose_name="Recruiter's Phone Number", blank=True, null=True)
     email_address = models.EmailField(verbose_name="Recruiter's Email Address", blank=True, null=True)
 
     def __str__(self):
