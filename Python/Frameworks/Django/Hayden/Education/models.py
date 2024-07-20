@@ -1,102 +1,70 @@
-"""
-File: models.py
-Author: Gavin Schilling
-
-This file defines the Credit, Institution, Instructor models for the Django project.
-"""
-
 from django.db import models
-from django.db.models import TextChoices
-from django.core.validators import EmailValidator, MinValueValidator, MaxValueValidator
+from django.core.validators import EmailValidator
 from phonenumber_field.modelfields import PhoneNumberField
 from djmoney.models.fields import MoneyField
 from address.models import AddressField
 
+# Common model fields
+CharField = models.CharField
+BooleanField = models.BooleanField
+TextField = models.TextField
+SlugField = models.SlugField
+URLField = models.URLField
+EmailField = models.EmailField
 
-class School(models.Model):
-    """
-    A model representing an educational institution.
 
-    Attributes:
-        name (str): The name of the institution.
-        next_year_full_tuition (djmoney.models.fields.MoneyField): The full tuition for the next school year.
-        registration_fee (djmoney.models.fields.MoneyField): The registration fee for new students.
-        student_activity_fee (djmoney.models.fields.MoneyField): The fee for student activities.
-        headmaster (str): The name of the headmaster.
-        address (address.models.AddressField): The address of the institution.
-        phone_number (phonenumber_field.modelfields.PhoneNumberField): The main phone number of the institution.
-        fax_number (phonenumber_field.modelfields.PhoneNumberField): The main fax number of the institution.
-        admissions_director (str): The name of the admissions director.
-        website (str): The website of the institution.
-        application_received (bool): A boolean indicating whether the application has been received.
-        application_submitted (bool): A boolean indicating whether the application has been submitted.
-        toured (bool): A boolean indicating whether the campus has been toured.
-        teacher_recommendations_requested (bool): A boolean indicating whether teacher recommendations have been requested.
-        teacher_recommendations_submitted (bool): A boolean indicating whether teacher recommendations have been submitted.
-        accepted (bool): A boolean indicating whether the institution has been accepted.
-        financial_aid_requested (bool): A boolean indicating whether financial aid has been requested.
-        financial_aid_awarded (djmoney.models.fields.MoneyField): The amount of financial aid awarded.
-        description (str): A description of the institution.
-        slug (str): A unique slug for the institution.
-    """
+class SchoolManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().select_related('address')
 
-    name = models.CharField(verbose_name="Name of the School", max_length=255, unique=True)
-    next_year_full_tuition = MoneyField(max_digits=7, decimal_places=0, default_currency='USD')
-    registration_fee = MoneyField(max_digits=3, decimal_places=0, default_currency='USD')
-    student_activity_fee = MoneyField(max_digits=3, decimal_places=0, default_currency='USD')
-    headmaster = models.CharField(verbose_name="Head of School's Name", max_length=250)
-    address = AddressField(verbose_name="Institution's Address")
-    phone_number = PhoneNumberField(verbose_name="School's Main Phone Number", blank=True)
-    fax_number = PhoneNumberField(verbose_name="School's Main Fax Number", blank=True)
-    admissions_director = models.CharField(verbose_name="Admissions Director's Name", max_length=250, blank=True)
-    website = models.URLField(verbose_name="School Website", blank=True)
-    application_received = models.BooleanField(default=False)
-    application_submitted = models.BooleanField(default=False)
-    toured = models.BooleanField(default=False)
-    teacher_recommendations_requested = models.BooleanField(default=False)
-    teacher_recommendations_submitted = models.BooleanField(default=False)
-    accepted = models.BooleanField(default=False)
-    financial_aid_requested = models.BooleanField(default=False)
-    financial_aid_awarded = MoneyField(max_digits=10, decimal_places=2, default_currency='USD')
-    description = models.TextField(max_length=10000, blank=True)
-    slug = models.SlugField(unique=True)
+
+class BaseModel(models.Model):
+    name = CharField(max_length=255)
+    slug = SlugField()
+
+    class Meta:
+        abstract = True
+
+
+class School(BaseModel):
+    address = AddressField()
+    objects = SchoolManager()
+
+    headmaster = CharField(max_length=250)
+    phone_number = PhoneNumberField(blank=True)
+    fax_number = PhoneNumberField(blank=True)
+
+    next_year_full_tuition = MoneyField(max_digits=7)
+    registration_fee = MoneyField(max_digits=5)
+    student_activity_fee = MoneyField(max_digits=4)
+
+    admissions_director = CharField(max_length=250, blank=True)
+    website = URLField(blank=True)
+
+    description = TextField(max_length=10000, blank=True)
+
+    # Application status fields
+    application_received = BooleanField(default=False)
+    application_submitted = BooleanField(default=False)
+    toured = BooleanField(default=False)
 
     class Meta:
         verbose_name = "Educational Institution"
         verbose_name_plural = "Educational Institutions"
         ordering = ['name']
 
-    def __str__(self):
-        return self.name
-
     @property
     def net_cost(self):
-        return self.next_year_full_tuition - self.financial_aid_awarded
+        return (
+                self.next_year_full_tuition - self.financial_aid_awarded
+        )
 
 
-
-class Instructor(models.Model):
-    """
-    A model representing a teaching instructor.
-
-    Attributes:
-        first_name (str): The instructor's first name.
-        last_name (str): The instructor's last name.
-        email (str): The instructor's email address.
-        phone (str): The instructor's phone number.
-        title (str): The instructor's professional role title.
-        slug (str): A unique slug for the instructor.
-
-    Methods:
-        __str__(self): Returns the instructor's full name.
-
-    """
-
-    first_name = models.CharField(verbose_name="Instructor's First Name", max_length=255, blank=True)
-    last_name = models.CharField(verbose_name="Instructor's Last Name", max_length=255, blank=True)
-    email = models.EmailField(verbose_name="Instructor's Email Address", blank=True, validators=[EmailValidator])
-    phone = PhoneNumberField(verbose_name="Instructor's Telephone Number", blank=True)
-
+class Instructor(BaseModel):
+    first_name = CharField(max_length=255, blank=True, null=True)
+    last_name = CharField(max_length=255, blank=True, null=True)
+    email = EmailField(validators=[EmailValidator])
+    phone = PhoneNumberField()
     TITLE_CHOICES = [
         ('Academic Advisor', 'Academic Advisor'),
         ('Academic Dean', 'Academic Dean'),
@@ -113,6 +81,9 @@ class Instructor(models.Model):
     slug = models.SlugField(unique=True)
 
     def __str__(self):
+        return f"{self.first_name} {self.last_name}"
+
+    def name(self):
         return f"{self.first_name} {self.last_name}"
 
     class Meta:
@@ -163,7 +134,7 @@ class Credit(models.Model):
         ('Full Year', 'Full Year'),
     ]
 
-    class Subject(TextChoices):
+    class Subject(models.TextChoices):
         BUSINESS_AND_TECHNOLOGY = 'B', 'Business & Technology'
         ENGLISH = 'E', 'English'
         ENRICHMENT = 'Q', 'Enrichment'
@@ -185,7 +156,6 @@ class Credit(models.Model):
         ('Advanced', 'Advanced'),
         ('Advanced Placement', 'AP'),
     ]
-
 
     school = models.ForeignKey(School, on_delete=models.CASCADE, verbose_name="Name of Institution", blank=True)
     name = models.CharField(max_length=100)
@@ -366,8 +336,6 @@ class Credit(models.Model):
             else:
                 return 'F'
         return None  # or raise an exception, depending on your desired behavior
-
-
 
 
 class Department(models.Model):
