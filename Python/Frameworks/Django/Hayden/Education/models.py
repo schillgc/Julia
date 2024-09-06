@@ -27,7 +27,7 @@ class BaseModel(models.Model):
 
 
 class School(BaseModel):
-    address = AddressField()
+    address = AddressField(blank=True, null=True)
     objects = SchoolManager()
 
     headmaster = CharField(max_length=250)
@@ -36,7 +36,7 @@ class School(BaseModel):
 
     next_year_full_tuition = MoneyField(max_digits=7)
     registration_fee = MoneyField(max_digits=5)
-    student_activity_fee = MoneyField(max_digits=4)
+    student_activity_fee = MoneyField(max_digits=5)
 
     admissions_director = CharField(max_length=250, blank=True)
     website = URLField(blank=True)
@@ -58,6 +58,9 @@ class School(BaseModel):
         return (
                 self.next_year_full_tuition - self.financial_aid_awarded
         )
+
+    def __str__(self):
+        return self.name
 
 
 class Instructor(BaseModel):
