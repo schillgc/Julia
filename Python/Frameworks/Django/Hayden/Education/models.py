@@ -340,6 +340,18 @@ class Credit(models.Model):
                 return 'F'
         return None  # or raise an exception, depending on your desired behavior
 
+    @property
+    def cumulative_class_weight(self):
+        total_class_weight = sum(credit.class_weight for credit in self.credits.all())
+        return round(total_class_weight, 2)
+    def cumulative_gpa(self):
+        total_weighted_gpa = sum(
+            credit.weighted_gpa for credit in self.credits.all() if credit.weighted_gpa is not None)
+        total_credits = sum(credit.class_weight for credit in self.credits.all())
+        if total_credits == 0:
+            return 0.0
+        return round(total_weighted_gpa / total_credits, 2)
+
 
 class Department(models.Model):
     name = models.CharField(max_length=255)
