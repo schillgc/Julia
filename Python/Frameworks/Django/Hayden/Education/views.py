@@ -5,6 +5,8 @@ from django.views.generic import DetailView, ListView, CreateView, DeleteView, U
 from .forms import PersonForm, CreditForm
 from .models import Credit, School, Instructor
 
+import math
+
 
 def official_grade_level(Credit):
     """ Description: A standalone function to calculate the grade level based on the total number of classes for a
@@ -62,6 +64,14 @@ class CreditIndexView(ListView):
         context = super().get_context_data(**kwargs)
         context['now'] = timezone.now()
         return context
+
+    def truncate(number, digits) -> float:
+        # Improve accuracy with floating point operations, to avoid truncate(16.4, 2) = 16.39 or truncate(-1.13, 2) = -1.12
+        nbDecimals = len(str(number).split('.')[1])
+        if nbDecimals <= digits:
+            return number
+        stepper = 10.0 ** digits
+        return math.trunc(stepper * number) / stepper
 
 
 class CreditUpdateView(UpdateView):
