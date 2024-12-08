@@ -352,6 +352,38 @@ class Credit(models.Model):
             return 0.0
         return round(total_weighted_gpa / total_credits, 2)
 
+    def cumulative_grade_equivalence(self):
+        total_weighted_gpa = sum(
+            credit.weighted_gpa for credit in self.credits.all() if credit.weighted_gpa is not None)
+        total_credits = sum(credit.class_weight for credit in self.credits.all())
+        if total_credits == 0:
+            return 'F'
+        weighted_gpa = total_weighted_gpa / total_credits
+        # Grade equivalences based on weighted GPA
+        if weighted_gpa >= 4.3:
+            return 'A+'
+        elif weighted_gpa >= 4:
+            return 'A'
+        elif weighted_gpa >= 3.7:
+            return 'A-'
+        elif weighted_gpa >= 3.3:
+            return 'B+'
+        elif weighted_gpa >= 3:
+            return 'B'
+        elif weighted_gpa >= 2.7:
+            return 'B-'
+        elif weighted_gpa >= 2.3:
+            return 'C+'
+        elif weighted_gpa >= 2:
+            return 'C'
+        elif weighted_gpa >= 1.7:
+            return 'C-'
+        elif weighted_gpa >= 1.3:
+            return 'D+'
+        else:
+            return 'F'
+        return None  # or raise an exception, depending on your desired behavior
+
 
 class Department(models.Model):
     name = models.CharField(max_length=255)
