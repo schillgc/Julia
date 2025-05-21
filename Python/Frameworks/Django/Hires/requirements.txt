@@ -1,6 +1,6 @@
 asgiref==3.8.1
 babel==2.17.0
-Django==5.2
+Django==5.2.1
 django-address==0.2.8
 django-mathfilters==1.0.0
 django_money==3.5.4
