@@ -4,7 +4,7 @@
 
 {% if career_list %}
     <ul>
-        {% for career in career_list.all %}
+        {% for career in career_list %}
             <li>
                 <h5>{{ career.profession }}</h5>
                 <p><b>{{ career.average_salary }}</b> - {{ career.required_education }}</p>
