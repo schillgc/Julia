@@ -1,142 +1,186 @@
 import locale
 from datetime import date
+from typing import Dict, List
 
+# Set locale for currency formatting
 locale.setlocale(locale.LC_ALL, 'English_United States.1252')
 
 
-def bill_ingredients(family_member):
-    """ Cell Phone Plan Rates Subtotal """
-    number_of_lines = len(family_members)
-    lines_one_and_two = 123
-    kid_lines = 2
-    additional_lines = number_of_lines - kid_lines - 2  # Lines 1 & 2 + Hayden & Wilder's Free Lines Excluded
-    unlimited_basic_phone_plan: float = (
-            lines_one_and_two + (additional_lines * 30))
+class CellPhoneBillCalculator:
+    """Calculator for family cell phone bill distribution"""
 
-    equally_divided_base_phone_plan_charge = unlimited_basic_phone_plan / (number_of_lines - kid_lines) \
-        # Hayden and Wilder exempt
-    if not family_member == "Hayden" and not family_member == "Wilder":
-        print("Equally Divided Plan:", locale.currency(equally_divided_base_phone_plan_charge, grouping=True))
+    def __init__(self):
+        self.family_members = ["Mama", "Ellie", "Blair", "Gavin", "Hayden", "Ian", "Wilder"]
+        self.today = date.today()
 
-    ''' Equipment '''
-    equipment = 0
-    samsung_lease = True
-    apple_lease = True
-    if date.today() < date(2024, 10, 31) and samsung_lease:
+        # Plan configuration
+        self.plan_rates = {
+            "line_one": 73.00,
+            "line_two": 50.00,
+            "third_generation_lines": 30.00,
+            "additional_line_rate": 30.00
+        }
+
+        # Discount configuration
+        self.discounts_config = {
+            "auto_pay": 5.00,
+            "sprint_perks": 5.00,
+            "line_on_us": 25.00
+        }
+
+        # Equipment configuration
+        self.equipment_config = {
+            "samsung_a11_lease_end": date(2022, 12, 25),
+            "samsung_a11_monthly": 7.50
+        }
+
+        # Protection plans configuration
+        self.protection_plans = {
+            "hayden_protection": 0.00,
+            "premium_plans": {
+                "Blair": 19.00,
+                "Gavin": 19.00,
+                "Ellie": 15.00,
+                "Ian": 15.00
+            }
+        }
+
+    def calculate_base_plan_cost(self) -> Dict[str, float]:
+        """Calculate the base unlimited plan cost distribution"""
+        num_lines = len(self.family_members)
+
+        # Calculate total base plan cost
+        additional_lines_cost = self.plan_rates["additional_line_rate"] * (num_lines - 3)
+        total_base_cost = (
+                self.plan_rates["line_one"] +
+                self.plan_rates["line_two"] +
+                self.plan_rates["third_generation_lines"] +
+                additional_lines_cost
+        )
+
+        # Calculate equal distribution (before Hayden's special rate)
+        equal_share = total_base_cost / num_lines
+
+        # Adjust for Hayden's special rate
+        base_costs = {}
+        hayden_adjustment = (equal_share - self.plan_rates["third_generation_lines"]) / (num_lines - 1)
+
+        for member in self.family_members:
+            if member == "Hayden" or member == "Wilder":
+                base_costs[member] = self.plan_rates["third_generation_lines"]
+            else:
+                base_costs[member] = equal_share + hayden_adjustment
+
+        return base_costs
+
+    def calculate_discounts(self, family_member: str) -> float:
+        """Calculate applicable discounts for a family member"""
+        total_discount = 0.0
+
+        # Auto-pay discount for everyone
+        total_discount += self.discounts_config["auto_pay"]
+
+        # Member-specific discounts
         if family_member == "Gavin":
-            equipment += 50
-    if date.today() < date(2024, 4, 30) and apple_lease:
-        if family_member == "Ian":
-            equipment += 33.34
-    if date.today() < date(2024, 7, 31) and apple_lease:
-        if family_member == "Mama":
-            equipment += 33.34
-    if date.today() < date(2026, 5, 31) and apple_lease:
-        if family_member == "Blair":
-            equipment += 41.67
-    if not equipment == 0:
-        print("Equipment:", locale.currency(equipment, grouping=True))
+            total_discount += self.discounts_config["sprint_perks"]
+        elif family_member == "Hayden" or family_member == "Wilder":
+            total_discount += self.discounts_config["line_on_us"]
 
-    ''' Auto-Payment & Other Discounts '''
-    discounts = 0
-    auto_pay = False
+        return total_discount
 
-    if not family_member == "Hayden" and not family_member == "Wilder":
-        auto_pay_plan_discount = 5
-        if auto_pay:
-            discounts += auto_pay_plan_discount
-        else:
-            print("You can save by auto-paying")
+    def calculate_equipment_charges(self, family_member: str) -> float:
+        """Calculate equipment charges for a family member"""
+        equipment_charge = 0.0
 
-    if family_member == "Gavin" and date.today() < date(2025, 1, 31):
-        sprint_perks_discount = 5
-        samsung_trade = 33.34
-        discounts += sprint_perks_discount + samsung_trade
-    if family_member == "Hayden" and family_member == "Wilder":
-        line_on_us = 24.21
-        rate_plan_credit = 0.79
-        discounts += line_on_us + rate_plan_credit
-    if family_member == "Mama" and date.today() < date(2024, 7, 31):
-        apple_trade_in = 16.67
-        discounts += apple_trade_in
-    if family_member == "Ian" and date.today() < date(2024, 4, 30):
-        apple_trade_in = 25
-        discounts += apple_trade_in
-    if family_member == "Blair" and date.today() < date(2025, 6, 30):
-        apple_trade_in = 0
-        discounts += apple_trade_in
+        # Samsung A11 lease charges (shared by Mama, Ellie, Blair)
+        if (self.today < self.equipment_config["samsung_a11_lease_end"] and
+                family_member in ["Mama", "Ellie", "Blair"]):
+            equipment_charge = self.equipment_config["samsung_a11_monthly"] / 3
 
-    if not discounts == 0:
-        print("Discounts:", locale.currency(discounts, grouping=True))
+        return equipment_charge
 
-    ''' Plan & Equipment Subtotal '''
-    net_plan_and_equipment = (equally_divided_base_phone_plan_charge + equipment) - discounts
-    if not family_member == "Hayden" and not family_member == "Wilder":
-        print("Plan & Equipment (After Discounts):", locale.currency(net_plan_and_equipment, grouping=True))
+    def calculate_protection_plans(self, family_member: str) -> float:
+        """Calculate protection plan charges for a family member"""
+        protection_charge = 0.0
 
-    ''' T-Mobile Protection 360 & Premium Services Subtotal '''
-    protection_360_tier_3 = 13
-    protection_360_tier_5 = 18
-    services = 0
-    protection_plan_for_hayden = True
-    if protection_plan_for_hayden:
-        if not family_member == "Hayden" and not family_member == "Wilder":
-            # Hayden's Protection Plan
-            services += (protection_360_tier_3 / (number_of_lines - kid_lines))
-    if not family_member == "Hayden" and not family_member == "Wilder":
-        unlimited_plus = 10
-        services += (unlimited_plus / (number_of_lines - kid_lines)) + protection_360_tier_5
-    if not services == 0:
-        print("Services:", locale.currency(
-            services, grouping=True))
+        # Hayden's protection plan (shared by others except Ian)
+        if family_member not in ["Hayden", "Ian"]:
+            protection_charge += (self.protection_plans["hayden_protection"] /
+                                  (len(self.family_members) - 2))
 
-    ''' Usage '''
-    usage = 0
-    if not usage == 0:
-        print("Usage: ", locale.currency(usage, grouping=True))
+        # Individual premium protection plans
+        protection_charge += self.protection_plans["premium_plans"].get(family_member, 0.0)
 
-    ''' Surcharges Subtotal '''
-    surcharges = 0
-    if not surcharges == 0:
-        print("Surcharges:", locale.currency(surcharges, grouping=True))
+        return protection_charge
 
-    ''' Government Taxes & Fees Subtotal '''
-    government_taxes_and_fees = 0
-    sales_tax = 0
+    def calculate_member_bill(self, family_member: str) -> Dict[str, float]:
+        """Calculate complete bill for a family member"""
+        if family_member not in self.family_members:
+            raise ValueError(f"Unknown family member: {family_member}")
 
-    if not family_member == "Hayden" and not family_member == "Wilder":
-        sales_tax += 6.18
-        government_taxes_and_fees += (sales_tax / (number_of_lines - kid_lines))
+        base_costs = self.calculate_base_plan_cost()
+        base_charge = base_costs[family_member]
+        discounts = self.calculate_discounts(family_member)
+        equipment_charges = self.calculate_equipment_charges(family_member)
+        protection_charges = self.calculate_protection_plans(family_member)
 
-    if not government_taxes_and_fees == 0:
-        print("Government Taxes & Fees:", locale.currency(
-            government_taxes_and_fees, grouping=True))
+        # Calculate final charges
+        plans_and_services = base_charge - discounts
+        total_charges = plans_and_services + equipment_charges + protection_charges
 
-    ''' Totals Due '''
-    due = 0
-    if not family_member == "Hayden" and not family_member == "Wilder":
-        due += net_plan_and_equipment + services + usage + surcharges + government_taxes_and_fees
-    if family_member == "Hayden" and family_member == "Wilder":
-        due += usage
-    return locale.currency(due, grouping=True)
+        return {
+            "base_plan": base_charge,
+            "discounts": discounts,
+            "plans_and_services": plans_and_services,
+            "equipment": equipment_charges,
+            "protection": protection_charges,
+            "total": total_charges
+        }
+
+    def print_member_bill(self, family_member: str):
+        """Print formatted bill for a family member"""
+        bill = self.calculate_member_bill(family_member)
+
+        print(f"\n=== {family_member}'s Cell Phone Bill ===")
+        print(f"Base Plan: {locale.currency(bill['base_plan'], grouping=True)}")
+
+        if bill['discounts'] > 0:
+            print(f"Discounts: -{locale.currency(bill['discounts'], grouping=True)}")
+
+        print(f"Plans & Services: {locale.currency(bill['plans_and_services'], grouping=True)}")
+
+        if bill['equipment'] > 0:
+            print(f"Equipment: {locale.currency(bill['equipment'], grouping=True)}")
+
+        if bill['protection'] > 0:
+            print(f"Protection Plans: {locale.currency(bill['protection'], grouping=True)}")
+
+        print(f"TOTAL: {locale.currency(bill['total'], grouping=True)}")
+
+    def print_all_bills(self):
+        """Print bills for all family members"""
+        print("FAMILY CELL PHONE BILL BREAKDOWN")
+        print("=" * 40)
+
+        total_family_bill = 0.0
+        for member in self.family_members:
+            bill = self.calculate_member_bill(member)
+            total_family_bill += bill['total']
+            self.print_member_bill(member)
+
+        print(f"\nTOTAL FAMILY BILL: {locale.currency(total_family_bill, grouping=True)}")
 
 
-def bill(family_member):
-    """ Billing Function """
-    if family_member:
-        print("Total Due: " + bill_ingredients(family_member))
+# Example usage
+def main():
+    calculator = CellPhoneBillCalculator()
+
+    # Print bill for a specific member
+    calculator.print_member_bill("Hayden")
+
+    # Print all bills
+    calculator.print_all_bills()
 
 
-
-family_members = ["Gavin", "Mama", "Ian", "Ellie", "Blair", "Hayden", "Wilder"]
-
-
-def main(family):
-    """ Family Members to Be Billed """
-    print('\n', date.today().strftime("%A, %B %d, %Y"), '\n')
-    for family_member in family:
-        print(family_member)
-        bill(family_member)
-        print('\n')
-
-main(family_members)
+if __name__ == "__main__":
+    main()
