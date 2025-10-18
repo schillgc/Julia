@@ -1,7 +1,11 @@
 from datetime import date
 import locale
 
-locale.setlocale(locale.LC_ALL, 'English_United States.1252')
+try:
+    locale.setlocale(locale.LC_ALL, 'English_United States.1252')
+except:
+    locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
+
 family = ["Blair", "Ellie", "Gavin", "Hayden", "Ian", "Rusti"]
 
 for family_member in family:
@@ -26,7 +30,7 @@ for family_member in family:
     elif family_member == "Ian" and date.today() < date(2024, 4, 30) and apple_trade_in:
         discounts += 25
 
-    if not discounts == 0:
+    if discounts != 0:
         print("Discounts for", family_member, ":", locale.currency(discounts, grouping=True))
 
 # Gavin's $ 51.95

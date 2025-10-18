@@ -3,7 +3,10 @@ from datetime import date
 from typing import Dict, List
 
 # Set locale for currency formatting
-locale.setlocale(locale.LC_ALL, 'English_United States.1252')
+try:
+    locale.setlocale(locale.LC_ALL, 'English_United States.1252')
+except:
+    locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
 
 
 class CellPhoneBillCalculator:
@@ -93,7 +96,7 @@ class CellPhoneBillCalculator:
         equipment_charge = 0.0
 
         # Samsung A11 lease charges (shared by Mama, Ellie, Blair)
-        if (self.today < self.equipment_config["samsung_a11_lease_end"] and
+        if (self.today <= self.equipment_config["samsung_a11_lease_end"] and
                 family_member in ["Mama", "Ellie", "Blair"]):
             equipment_charge = self.equipment_config["samsung_a11_monthly"] / 3
 
