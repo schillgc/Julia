@@ -1,0 +1,7 @@
+# requirements.txt
+streamlit==1.50.0
+pandas==2.3.3
+plotly==6.3.1
+openpyxl==3.2.0b1
+xlsxwriter==3.2.9
+pytest==8.4.2

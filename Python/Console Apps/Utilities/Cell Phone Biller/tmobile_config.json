@@ -1,0 +1,71 @@
+{
+  "family_members": [
+    "Mama",
+    "Ellie",
+    "Blair",
+    "Gavin",
+    "Hayden",
+    "Ian",
+    "Wilder"
+  ],
+  "phone_numbers": {
+    "Mama": "(502) 500-5480",
+    "Gavin": "(502) 994-5865",
+    "Blair": "(502) 500-2994",
+    "Ellie": "(805) 453-5242",
+    "Ian": "(302) 270-3860",
+    "Hayden": "(502) 457-1408",
+    "Wilder": "Reserved Line"
+  },
+  "plan_groups": {
+    "group_one": {
+      "members": [
+        "Gavin",
+        "Mama",
+        "Ellie",
+        "Ian",
+        "Blair"
+      ],
+      "total_cost": 238.0
+    },
+    "group_two": {
+      "members": [
+        "Wilder",
+        "Hayden"
+      ],
+      "total_cost": 70.0
+    }
+  },
+  "discounts_config": {
+    "auto_pay": 5.0,
+    "legacy_tmobile_perk": 5.0,
+    "line_on_us": 29.02
+  },
+  "equipment_config": {
+    "iphone_16_installment": 34.59,
+    "accessories_installment": 8.13,
+    "iphone_16_assigned_to": "Mama",
+    "accessories_assigned_to": "Mama"
+  },
+  "protection_plans": {
+    "protection_360_tier5": 18.0,
+    "protected_members": [
+      "Mama",
+      "Blair",
+      "Gavin",
+      "Ian",
+      "Ellie"
+    ]
+  },
+  "plan_features": {
+    "unlimited_plus": {
+      "cost": 10.0,
+      "assigned_to": "Gavin"
+    }
+  },
+  "one_time_charges": {
+    "Ian": 3.65,
+    "Hayden": -0.98,
+    "Wilder": -0.98
+  }
+}
