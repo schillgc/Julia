@@ -125,7 +125,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'Hayden.wsgi.application'
 
-GOOGLE_API_KEY = 'AIzaSyDy7JrdPC4Y1KmLxhWY5AAisbKtdoYJp9Y'
+GOOGLE_API_KEY = os.environ.get("HAYDEN_GOOGLE_MAPS_API_KEY", "")
 
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases

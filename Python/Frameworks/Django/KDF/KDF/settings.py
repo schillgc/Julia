@@ -243,8 +243,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-GEOPOSITION_GOOGLE_MAPS_API_KEY = 'AIzaSyDy7JrdPC4Y1KmLxhWY5AAisbKtdoYJp9Y'
-GOOGLE_API_KEY = 'AIzaSyDy7JrdPC4Y1KmLxhWY5AAisbKtdoYJp9Y'
+GEOPOSITION_GOOGLE_MAPS_API_KEY = os.environ.get("KDF_GOOGLE_MAPS_API_KEY", "")
+GOOGLE_API_KEY = os.environ.get("KDF_GOOGLE_MAPS_API_KEY", "")
 
 ACCOUNT_FORMS = {
     'login': 'allauth.account.forms.LoginForm',
