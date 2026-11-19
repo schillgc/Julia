@@ -13,8 +13,14 @@ public class Program {
             webRequest.Method = "GET";
             webRequest.Timeout = 12000;
             webRequest.ContentType = "application/json";
-            webRequest.Headers.Add("app_id", "b7f6f8c8");
-            webRequest.Headers.Add("app_key", "9d6a59520c16040983c8ff1be3b77a4c");
+            var appId = Environment.GetEnvironmentVariable("OXFORD_DICTIONARIES_APP_ID");
+            var appKey = Environment.GetEnvironmentVariable("OXFORD_DICTIONARIES_APP_KEY");
+            if (String.IsNullOrWhiteSpace(appId) || String.IsNullOrWhiteSpace(appKey)) {
+                Console.Error.WriteLine("Set OXFORD_DICTIONARIES_APP_ID and OXFORD_DICTIONARIES_APP_KEY.");
+                return;
+            }
+            webRequest.Headers.Add("app_id", appId);
+            webRequest.Headers.Add("app_key", appKey);
 
             using(System.IO.Stream s = webRequest.GetResponse().GetResponseStream()) {
               using(System.IO.StreamReader sr = new System.IO.StreamReader(s)) {

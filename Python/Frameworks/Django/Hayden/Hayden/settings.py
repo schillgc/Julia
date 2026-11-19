@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
+from django.core.exceptions import ImproperlyConfigured
+
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -20,10 +22,32 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', '2i)yy3kb=1u9a0r@5xdqo#my6t1um7l7e=mo^7#8gtc$6=wdap')
+# Project-isolated environment settings (HAYDEN).
+def _required_env(name):
+    value = os.environ.get(name, "")
+    if not value.strip():
+        raise ImproperlyConfigured(f"{name} must be set to a non-empty value.")
+    return value
+
+
+def _env_bool(name, default=False):
+    value = os.environ.get(name)
+    if value is None:
+        return default
+    normalized = value.strip().lower()
+    if normalized in {"1", "true", "yes", "on"}:
+        return True
+    if normalized in {"0", "false", "no", "off"}:
+        return False
+    raise ImproperlyConfigured(f"{name} must be a boolean value.")
+
+
+def _env_csv(name):
+    return [part.strip() for part in os.environ.get(name, "").split(",") if part.strip()]
+SECRET_KEY = _required_env("HAYDEN_DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get('DJANGO_DEBUG', 'True') == 'True'
+DEBUG = _env_bool("HAYDEN_DJANGO_DEBUG", default=False)
 
 # Use a more secure approach for database configuration in production.
 if DEBUG:
@@ -45,7 +69,11 @@ else:
         }
     }
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = _env_csv("HAYDEN_DJANGO_ALLOWED_HOSTS")
+if DEBUG and not ALLOWED_HOSTS:
+    ALLOWED_HOSTS = ["localhost", "127.0.0.1", "[::1]"]
+elif not DEBUG and not ALLOWED_HOSTS:
+    raise ImproperlyConfigured("HAYDEN_DJANGO_ALLOWED_HOSTS must list production hostnames when DEBUG is false.")
 
 
 # Application definition

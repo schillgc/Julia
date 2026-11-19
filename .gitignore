@@ -28,3 +28,10 @@ env/
 Thumbs.db
 .vscode/
 .idea/
+
+# Runtime credentials and OAuth tokens
+**/credentials.json
+**/client_secrets.json
+**/token.pickle
+**/token.json
+**/*oauth2*.json

@@ -2,7 +2,7 @@ from financials.assets import annualSalary, dailyPay, hourlyPay, hsaAnnualLimit,
     numberOfDailyWorkHours, numberOfWeeklyWorkDays, rothIRAAnnualLimit, snapMonthlyBenefits, weeklySalary
 from financials.expenses import amazonChaseBankCreditCardBalance, childSupportMonthly, dentalInsuranceWeeklyPremium, \
     epaEstimatedWeeklyGasConsumptionCost, freedomMortgageMonthlyPayment, healthInsuranceWeeklyPremium, \
-    hertzMonthlyCarRental, hoaMonthly, hoaPaidInFullDiscount, loanBalanceToEllie, loanBalanceToMama, \
+    hertzMonthlyCarRental, hoaMonthly, hoaPaidInFullDiscount, familyLoanOneBalance, familyLoanTwoBalance, \
     sprintMonthly, visionInsuranceWeeklyPremium
 from financials.taxes import federalTaxPercentage, localTaxPercentage, medicarePercentage, socialSecurityPercentage, \
     stateTaxPercentage, taxFederal, taxLocal, taxState
@@ -45,8 +45,8 @@ taxes = {"Medicare:": '${:,.2f}'.format(frequency * medicarePercentage),
 print("Taxes:", taxes)
 
 debt = {"Amazon | Chase Bank": '${:,.2f}'.format(amazonChaseBankCreditCardBalance / timeFrequencyDivider),
-        "Ellie": '${:,.2f}'.format(loanBalanceToEllie / timeFrequencyDivider),
-        "Mama": '${:,.2f}'.format(loanBalanceToMama / timeFrequencyDivider)}
+        "Family loan 1": '${:,.2f}'.format(familyLoanOneBalance / timeFrequencyDivider),
+        "Family loan 2": '${:,.2f}'.format(familyLoanTwoBalance / timeFrequencyDivider)}
 print("Debt:", debt)
 
 flexExpenses = {"Gas": '${:,.2f}'.format(epaEstimatedWeeklyGasConsumptionCost * 52 / timeFrequencyDivider)}
@@ -57,7 +57,7 @@ fixedExpenses = {
     "Freedom Mortgage": '${:,.2f}'.format(freedomMortgageMonthlyPayment * 12 / timeFrequencyDivider),
     "Guardian Dental Insurance": '${:,.2f}'.format(dentalInsuranceWeeklyPremium * 52 / timeFrequencyDivider),
     "Guardian Vision Insurance": '${:,.2f}'.format(visionInsuranceWeeklyPremium * 52 / timeFrequencyDivider),
-    "Hayden's Child Support": '${:,.2f}'.format(childSupportMonthly * 12 / timeFrequencyDivider),
+    "Child Support": '${:,.2f}'.format(childSupportMonthly * 12 / timeFrequencyDivider),
     "Hertz Car Rental": '${:,.2f}'.format(hertzMonthlyCarRental * 12 / timeFrequencyDivider),
     "Parkview Condo HOA": '${:,.2f}'.format(hoaPaidInFullDiscount * hoaMonthly * 12 / timeFrequencyDivider),
     "Sprint": '${:,.2f}'.format(sprintMonthly * 12 / timeFrequencyDivider)}

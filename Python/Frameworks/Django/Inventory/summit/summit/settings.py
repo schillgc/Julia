@@ -10,6 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+import os
+from django.core.exceptions import ImproperlyConfigured
+
 from pathlib import Path
 from datetime import timedelta
 
@@ -21,12 +24,38 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-(!pe2v(v_s_b##(c_1rcj4*a20cgv5ke^ru3)5oka=9!k_k@=x'
+# Project-isolated environment settings (INVENTORY).
+def _required_env(name):
+    value = os.environ.get(name, "")
+    if not value.strip():
+        raise ImproperlyConfigured(f"{name} must be set to a non-empty value.")
+    return value
+
+
+def _env_bool(name, default=False):
+    value = os.environ.get(name)
+    if value is None:
+        return default
+    normalized = value.strip().lower()
+    if normalized in {"1", "true", "yes", "on"}:
+        return True
+    if normalized in {"0", "false", "no", "off"}:
+        return False
+    raise ImproperlyConfigured(f"{name} must be a boolean value.")
+
+
+def _env_csv(name):
+    return [part.strip() for part in os.environ.get(name, "").split(",") if part.strip()]
+SECRET_KEY = _required_env("INVENTORY_DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = _env_bool("INVENTORY_DJANGO_DEBUG", default=False)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = _env_csv("INVENTORY_DJANGO_ALLOWED_HOSTS")
+if DEBUG and not ALLOWED_HOSTS:
+    ALLOWED_HOSTS = ["localhost", "127.0.0.1", "[::1]"]
+elif not DEBUG and not ALLOWED_HOSTS:
+    raise ImproperlyConfigured("INVENTORY_DJANGO_ALLOWED_HOSTS must list production hostnames when DEBUG is false.")
 
 
 # Application definition

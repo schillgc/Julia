@@ -10,6 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+import os
+from django.core.exceptions import ImproperlyConfigured
+
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -19,12 +22,38 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-k5aa(6plx05743#x7y*wt$y$k0r7g*ey51+)=03aud2i96@mpr'
+# Project-isolated environment settings (SEMMLAW).
+def _required_env(name):
+    value = os.environ.get(name, "")
+    if not value.strip():
+        raise ImproperlyConfigured(f"{name} must be set to a non-empty value.")
+    return value
+
+
+def _env_bool(name, default=False):
+    value = os.environ.get(name)
+    if value is None:
+        return default
+    normalized = value.strip().lower()
+    if normalized in {"1", "true", "yes", "on"}:
+        return True
+    if normalized in {"0", "false", "no", "off"}:
+        return False
+    raise ImproperlyConfigured(f"{name} must be a boolean value.")
+
+
+def _env_csv(name):
+    return [part.strip() for part in os.environ.get(name, "").split(",") if part.strip()]
+SECRET_KEY = _required_env("SEMMLAW_DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = _env_bool("SEMMLAW_DJANGO_DEBUG", default=False)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = _env_csv("SEMMLAW_DJANGO_ALLOWED_HOSTS")
+if DEBUG and not ALLOWED_HOSTS:
+    ALLOWED_HOSTS = ["localhost", "127.0.0.1", "[::1]"]
+elif not DEBUG and not ALLOWED_HOSTS:
+    raise ImproperlyConfigured("SEMMLAW_DJANGO_ALLOWED_HOSTS must list production hostnames when DEBUG is false.")
 
 # Application definition
 
@@ -121,7 +150,7 @@ STATIC_URL = '/static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-GOOGLE_API_KEY = "AIzaSyCGeG-kWas0HbXWZrcHZveYbByBiV46UCI"
-MAILCHIMP_API_KEY = "369214f33146ca4e60be2a970b1cbef6-us14"
-MAILCHIMP_DATA_CENTER = "us14"
-MAILCHIMP_EMAIL_LIST_ID = "15dc97ed11"
+GOOGLE_API_KEY = os.environ.get("SEMMLAW_GOOGLE_MAPS_API_KEY", "")
+MAILCHIMP_API_KEY = os.environ.get("SEMMLAW_MAILCHIMP_API_KEY", "")
+MAILCHIMP_DATA_CENTER = os.environ.get("SEMMLAW_MAILCHIMP_DATA_CENTER", "")
+MAILCHIMP_EMAIL_LIST_ID = os.environ.get("SEMMLAW_MAILCHIMP_EMAIL_LIST_ID", "")

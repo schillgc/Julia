@@ -1,4 +1,6 @@
 import httplib2
+import os
+from pathlib import Path
 from apiclient.discovery import build
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.file import Storage
@@ -8,7 +10,13 @@ from oauth2client.tools import argparser, run_flow
 # The CLIENT_SECRETS_FILE variable specifies the name of a file that contains
 # the OAuth 2.0 information for this application, including its client_id and
 # client_secret.
-CLIENT_SECRETS_FILE = "client_secrets.json"
+SCRIPT_DIR = Path(__file__).resolve().parent
+CLIENT_SECRETS_FILE = os.environ.get(
+    "YOUTUBE_CLIENT_SECRETS_FILE", str(SCRIPT_DIR / "client_secrets.json")
+)
+OAUTH_STORAGE_FILE = os.environ.get(
+    "YOUTUBE_TOKEN_FILE", str(SCRIPT_DIR / "youtube-api-snippets-oauth2.json")
+)
 
 
 # This OAuth 2.0 access scope allows for full read/write access to the
@@ -31,7 +39,7 @@ def get_authenticated_service(args):
         message=MISSING_CLIENT_SECRETS_MESSAGE
     )
 
-    storage = Storage("youtube-api-snippets-oauth2.json")
+    storage = Storage(OAUTH_STORAGE_FILE)
     credentials = storage.get()
 
     if credentials is None or credentials.invalid:

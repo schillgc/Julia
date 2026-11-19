@@ -1,4 +1,12 @@
+"""Load Oxford Dictionaries API credentials from the local environment."""
 
-# TODO: replace with your own app_id and app_key
-app_id = 'b7f6f8c8'
-app_key = '9d6a59520c16040983c8ff1be3b77a4c'
+import os
+
+app_id = os.environ.get("OXFORD_DICTIONARIES_APP_ID", "")
+app_key = os.environ.get("OXFORD_DICTIONARIES_APP_KEY", "")
+
+if not app_id.strip() or not app_key.strip():
+    raise RuntimeError(
+        "Set OXFORD_DICTIONARIES_APP_ID and OXFORD_DICTIONARIES_APP_KEY "
+        "in your local environment before running this example."
+    )

@@ -10,6 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.1/ref/settings/
 """
 
+from django.core.exceptions import ImproperlyConfigured
+
 import os
 from pathlib import Path
 
@@ -23,12 +25,38 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '+0c5cmmc6lf-#ywc*jdvksk0*s5nx_hzdi0svgphzm#&oo*%%y'
+# Project-isolated environment settings (JOB_ANALYZER).
+def _required_env(name):
+    value = os.environ.get(name, "")
+    if not value.strip():
+        raise ImproperlyConfigured(f"{name} must be set to a non-empty value.")
+    return value
+
+
+def _env_bool(name, default=False):
+    value = os.environ.get(name)
+    if value is None:
+        return default
+    normalized = value.strip().lower()
+    if normalized in {"1", "true", "yes", "on"}:
+        return True
+    if normalized in {"0", "false", "no", "off"}:
+        return False
+    raise ImproperlyConfigured(f"{name} must be a boolean value.")
+
+
+def _env_csv(name):
+    return [part.strip() for part in os.environ.get(name, "").split(",") if part.strip()]
+SECRET_KEY = _required_env("JOB_ANALYZER_DJANGO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = _env_bool("JOB_ANALYZER_DJANGO_DEBUG", default=False)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = _env_csv("JOB_ANALYZER_DJANGO_ALLOWED_HOSTS")
+if DEBUG and not ALLOWED_HOSTS:
+    ALLOWED_HOSTS = ["localhost", "127.0.0.1", "[::1]"]
+elif not DEBUG and not ALLOWED_HOSTS:
+    raise ImproperlyConfigured("JOB_ANALYZER_DJANGO_ALLOWED_HOSTS must list production hostnames when DEBUG is false.")
 
 
 # Application definition

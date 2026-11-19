@@ -38,3 +38,8 @@ For Jupyter notebooks, install Jupyter in the relevant environment and open the 
 - `Python/Frameworks/` — framework-based applications and notebooks
 
 The repository name is retained for compatibility with existing links and history.
+
+
+## Security and local configuration
+
+Review [SECURITY.md](SECURITY.md) before running any application or configuring integrations. Copy [.env.example](.env.example) into an ignored local `.env` file and set only the variables required by the project you are using. Never commit real credentials or personal financial/job-analysis inputs.
