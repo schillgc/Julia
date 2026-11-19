@@ -54,6 +54,32 @@ class PublicRepositorySecurityTests(unittest.TestCase):
                 self.assertNotRegex(source, r"AIza[0-9A-Za-z_-]{30,}")
                 self.assertNotRegex(source, r'''(?i)(?:app_key|api_key|client_secret)\s*[:=]\s*['"][^'"]{12,}['"]''')
 
+    def test_mailchimp_credentials_are_environment_driven_and_never_hardcoded(self):
+        settings = (
+            ROOT / "Python/Frameworks/Django/semmLaw/semmlaw/semmlaw/settings.py"
+        ).read_text(encoding="utf-8")
+        sample = (
+            ROOT / "Python/Console Apps/Utilities/MailChimp API/mailchimp-api.py"
+        ).read_text(encoding="utf-8")
+        template = (ROOT / ".env.example").read_text(encoding="utf-8")
+
+        self.assertRegex(
+            settings,
+            r'MAILCHIMP_API_KEY\s*=\s*os\.environ\.get\("SEMMLAW_MAILCHIMP_API_KEY",\s*""\)',
+        )
+        self.assertIn("MAILCHIMP_TRANSACTIONAL_API_KEY", sample)
+        self.assertRegex(
+            sample,
+            r'os\.environ\.get\("MAILCHIMP_TRANSACTIONAL_API_KEY",\s*""\)',
+        )
+        self.assertIn("SEMMLAW_MAILCHIMP_API_KEY=", template)
+        self.assertIn("MAILCHIMP_TRANSACTIONAL_API_KEY=", template)
+        for source in (settings, sample):
+            self.assertNotRegex(
+                source,
+                r"(?i)(?:[a-f0-9]{32}-us\d+|mc-[a-f0-9]{30,})",
+            )
+
     def test_personal_financial_values_are_loaded_at_runtime(self):
         paths = [
             "Python/Console Apps/Utilities/BCforward Budget/financials/assets.py",
