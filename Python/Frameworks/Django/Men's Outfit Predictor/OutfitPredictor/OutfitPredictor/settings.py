@@ -44,38 +44,38 @@ def _env_csv(name):
 
 # Keep this legacy project isolated from the other Django applications in the
 # portfolio: every project receives its own signing key and host configuration.
-SECRET_KEY = _required_env("OUTFIT_PREDICTOR_DJANGO_SECRET_KEY")
+SECRET_KEY = _required_env("OUTFIT_PREDICTOR_FRAMEWORK_DJANGO_SECRET_KEY")
 
 # Debug is opt-in. Production deployments must supply an explicit host allowlist.
-DEBUG = _env_bool("OUTFIT_PREDICTOR_DJANGO_DEBUG", default=False)
-ALLOWED_HOSTS = _env_csv("OUTFIT_PREDICTOR_DJANGO_ALLOWED_HOSTS")
+DEBUG = _env_bool("OUTFIT_PREDICTOR_FRAMEWORK_DJANGO_DEBUG", default=False)
+ALLOWED_HOSTS = _env_csv("OUTFIT_PREDICTOR_FRAMEWORK_DJANGO_ALLOWED_HOSTS")
 if DEBUG and not ALLOWED_HOSTS:
     ALLOWED_HOSTS = ["localhost", "127.0.0.1", "[::1]"]
 elif not DEBUG and not ALLOWED_HOSTS:
     raise ImproperlyConfigured(
-        "OUTFIT_PREDICTOR_DJANGO_ALLOWED_HOSTS must list production hostnames "
+        "OUTFIT_PREDICTOR_FRAMEWORK_DJANGO_ALLOWED_HOSTS must list production hostnames "
         "when DEBUG is false."
     )
 
-CSRF_TRUSTED_ORIGINS = _env_csv("OUTFIT_PREDICTOR_DJANGO_CSRF_TRUSTED_ORIGINS")
+CSRF_TRUSTED_ORIGINS = _env_csv("OUTFIT_PREDICTOR_FRAMEWORK_DJANGO_CSRF_TRUSTED_ORIGINS")
 
 # Deployment security settings remain configurable for local development,
 # while secure behavior is the default whenever DEBUG is disabled.
 SECURE_SSL_REDIRECT = _env_bool(
-    "OUTFIT_PREDICTOR_DJANGO_SECURE_SSL_REDIRECT", default=not DEBUG
+    "OUTFIT_PREDICTOR_FRAMEWORK_DJANGO_SECURE_SSL_REDIRECT", default=not DEBUG
 )
 SESSION_COOKIE_SECURE = _env_bool(
-    "OUTFIT_PREDICTOR_DJANGO_SESSION_COOKIE_SECURE", default=not DEBUG
+    "OUTFIT_PREDICTOR_FRAMEWORK_DJANGO_SESSION_COOKIE_SECURE", default=not DEBUG
 )
 CSRF_COOKIE_SECURE = _env_bool(
-    "OUTFIT_PREDICTOR_DJANGO_CSRF_COOKIE_SECURE", default=not DEBUG
+    "OUTFIT_PREDICTOR_FRAMEWORK_DJANGO_CSRF_COOKIE_SECURE", default=not DEBUG
 )
 SESSION_COOKIE_HTTPONLY = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = "DENY"
-SECURE_HSTS_SECONDS = int(os.environ.get("OUTFIT_PREDICTOR_DJANGO_HSTS_SECONDS", "0"))
+SECURE_HSTS_SECONDS = int(os.environ.get("OUTFIT_PREDICTOR_FRAMEWORK_DJANGO_HSTS_SECONDS", "0"))
 
-if _env_bool("OUTFIT_PREDICTOR_DJANGO_TRUST_PROXY", default=False):
+if _env_bool("OUTFIT_PREDICTOR_FRAMEWORK_DJANGO_TRUST_PROXY", default=False):
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 
