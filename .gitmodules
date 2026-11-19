@@ -1,0 +1,6 @@
+[submodule "Python/Frameworks/Django/Jaime-Allen"]
+    path = Python/Frameworks/Django/Jaime-Allen
+    url = https://github.com/SchillingEnterprises/Jaime-Allen.git
+[submodule "Python/Frameworks/Django/Renais-Gin"]
+    path = Python/Frameworks/Django/Renais-Gin
+    url = https://github.com/schillgc/Renais-Gin.git
