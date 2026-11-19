@@ -16,6 +16,7 @@ DJANGO_SETTINGS = [
     ("Python/Frameworks/Django/Vintage Print and Distribution/automation/automation/settings.py", "VINTAGE_AUTOMATION"),
     ("Python/Frameworks/Django/semmLaw/semmlaw/semmlaw/settings.py", "SEMMLAW"),
     ("Python/Frameworks/Django/Gymkhana Stampede/KDF/KDF/settings.py", "GYMKHANA"),
+    ("Python/Frameworks/Django/Men's Outfit Predictor/OutfitPredictor/OutfitPredictor/settings.py", "OUTFIT_PREDICTOR_FRAMEWORK"),
     ("Python/Console Apps/Utilities/Men's Outfit Predictor/OutfitPredictor/OutfitPredictor/settings.py", "OUTFIT_PREDICTOR"),
 ]
 
