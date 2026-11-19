@@ -65,19 +65,19 @@ class PublicRepositorySecurityTests(unittest.TestCase):
 
         self.assertRegex(
             settings,
-            r'MAILCHIMP_API_KEY\\s*=\\s*os\\.environ\\.get\\("SEMMLAW_MAILCHIMP_API_KEY",\\s*""\\)',
+            r'MAILCHIMP_API_KEY\s*=\s*os\.environ\.get\("SEMMLAW_MAILCHIMP_API_KEY",\s*""\)',
         )
         self.assertIn("MAILCHIMP_TRANSACTIONAL_API_KEY", sample)
         self.assertRegex(
             sample,
-            r'os\\.environ\\.get\\("MAILCHIMP_TRANSACTIONAL_API_KEY",\\s*""\\)',
+            r'os\.environ\.get\("MAILCHIMP_TRANSACTIONAL_API_KEY",\s*""\)',
         )
         self.assertIn("SEMMLAW_MAILCHIMP_API_KEY=", template)
         self.assertIn("MAILCHIMP_TRANSACTIONAL_API_KEY=", template)
         for source in (settings, sample):
             self.assertNotRegex(
                 source,
-                r"(?i)(?:[a-f0-9]{32}-us\\d+|mc-[a-f0-9]{30,})",
+                r"(?i)(?:[a-f0-9]{32}-us\d+|mc-[a-f0-9]{30,})",
             )
 
     def test_personal_financial_values_are_loaded_at_runtime(self):
