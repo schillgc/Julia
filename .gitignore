@@ -35,3 +35,9 @@ Thumbs.db
 **/token.pickle
 **/token.json
 **/*oauth2*.json
+
+# Private family billing inputs and generated exports
+**/tmobile_config.json
+**/bills.xlsx
+**/tmobile_bills.csv
+**/tmobile_bills.xlsx
