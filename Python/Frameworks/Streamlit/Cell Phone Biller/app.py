@@ -6,6 +6,8 @@ import plotly.graph_objects as go
 from datetime import date, datetime
 import locale
 import json
+import os
+import io
 import functools
 from typing import Dict, List, Optional
 from pathlib import Path
@@ -29,9 +31,8 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Constants
-EXPECTED_TOTAL_BILL = 354.37
-CONFIG_FILE = "tmobile_config.json"
+# Local configuration is intentionally excluded from source control.
+CONFIG_FILE = os.environ.get("TMOBILE_CONFIG_FILE", "tmobile_config.json")
 ALLOWED_TOTAL_DEVIATION = 0.01  # Allow 1 cent deviation due to floating point math
 
 
@@ -75,54 +76,36 @@ class TMobileBillCalculator:
             self._apply_configuration(config)
 
     def get_default_config(self) -> Dict:
-        """Return default configuration"""
+        """Return a synthetic, non-personal starter configuration."""
         return {
-            "family_members": ["Mama", "Ellie", "Blair", "Gavin", "Hayden", "Ian", "Wilder"],
-            "phone_numbers": {
-                "Mama": "(502) 500-5480",
-                "Gavin": "(502) 994-5865",
-                "Blair": "(502) 500-2994",
-                "Ellie": "(805) 453-5242",
-                "Ian": "(302) 270-3860",
-                "Hayden": "(502) 457-1408",
-                "Wilder": "Reserved Line"
-            },
+            "family_members": ["Line A", "Line B"],
+            "phone_numbers": {"Line A": "Not configured", "Line B": "Not configured"},
             "plan_groups": {
-                "group_one": {
-                    "members": ["Gavin", "Mama", "Ellie", "Ian", "Blair"],
-                    "total_cost": 238.00
-                },
-                "group_two": {
-                    "members": ["Wilder", "Hayden"],
-                    "total_cost": 70.00
-                }
+                "group_one": {"members": ["Line A"], "total_cost": 50.00},
+                "group_two": {"members": ["Line B"], "total_cost": 40.00}
             },
             "discounts_config": {
-                "auto_pay": 5.00,
-                "legacy_tmobile_perk": 5.00,
-                "line_on_us": 29.02
+                "auto_pay": 0.00,
+                "legacy_tmobile_perk": 0.00,
+                "legacy_tmobile_perk_members": [],
+                "line_on_us": 0.00,
+                "line_on_us_members": []
             },
             "equipment_config": {
-                "iphone_16_installment": 34.59,
-                "accessories_installment": 8.13,
-                "iphone_16_assigned_to": "Mama",
-                "accessories_assigned_to": "Mama"
+                "iphone_16_installment": 0.00,
+                "accessories_installment": 0.00,
+                "iphone_16_assigned_to": "Line A",
+                "accessories_assigned_to": "Line A"
             },
             "protection_plans": {
-                "protection_360_tier5": 18.00,
-                "protected_members": ["Mama", "Blair", "Gavin", "Ian", "Ellie"]
+                "protection_360_tier5": 0.00,
+                "protected_members": []
             },
             "plan_features": {
-                "unlimited_plus": {
-                    "cost": 10.00,
-                    "assigned_to": "Gavin"
-                }
+                "unlimited_plus": {"cost": 0.00, "assigned_to": "Line A"}
             },
-            "one_time_charges": {
-                "Ian": 3.65,
-                "Hayden": -0.98,
-                "Wilder": -0.98
-            }
+            "one_time_charges": {},
+            "expected_total_bill": None
         }
 
     def _apply_configuration(self, config: Dict):
@@ -136,10 +119,20 @@ class TMobileBillCalculator:
             self.protection_plans = config["protection_plans"]
             self.plan_features = config["plan_features"]
             self.one_time_charges = config["one_time_charges"]
+            configured_total = config.get("expected_total_bill")
+            self.expected_total_bill = (
+                None if configured_total in (None, "") else float(configured_total)
+            )
+            if self.expected_total_bill is not None and self.expected_total_bill < 0:
+                raise ConfigurationError("expected_total_bill must be zero or greater")
 
-            # Calculate derived values - FIXED: Use exact values from bill
-            self.plan_groups["group_one"]["cost_per_member"] = 47.60  # $238.00 / 5
-            self.plan_groups["group_two"]["cost_per_member"] = 35.00  # $70.00 / 2
+            # Derive per-member plan costs from the supplied local configuration.
+            for group_name in ("group_one", "group_two"):
+                group = self.plan_groups[group_name]
+                members = group["members"]
+                if not members:
+                    raise ConfigurationError(f"{group_name} must contain at least one member")
+                group["cost_per_member"] = float(group["total_cost"]) / len(members)
 
         except KeyError as e:
             raise ConfigurationError(f"Missing required configuration key: {e}")
@@ -156,7 +149,8 @@ class TMobileBillCalculator:
                     "equipment_config": self.equipment_config,
                     "protection_plans": self.protection_plans,
                     "plan_features": self.plan_features,
-                    "one_time_charges": self.one_time_charges
+                    "one_time_charges": self.one_time_charges,
+                    "expected_total_bill": self.expected_total_bill
                 }
 
             with open(self.config_file, 'w') as f:
@@ -249,12 +243,11 @@ class TMobileBillCalculator:
         # T-Mobile AutoPay discount for everyone
         total_discount += self.discounts_config["auto_pay"]
 
-        # Legacy T-Mobile Perk discount - only for Gavin
-        if family_member == "Gavin":
+        # Optional member assignments come from the local configuration.
+        if family_member in self.discounts_config.get("legacy_tmobile_perk_members", []):
             total_discount += self.discounts_config["legacy_tmobile_perk"]
 
-        # T-Mobile Line On Us discount for Hayden and Wilder
-        if family_member in ["Hayden", "Wilder"]:
+        if family_member in self.discounts_config.get("line_on_us_members", []):
             total_discount += self.discounts_config["line_on_us"]
 
         return total_discount
@@ -292,6 +285,10 @@ class TMobileBillCalculator:
     def validate_totals(self, all_bills: Dict[str, Dict[str, float]]):
         """Validate that all components sum to expected totals"""
         try:
+            if self.expected_total_bill is None:
+                logger.info("Total reconciliation skipped: configure expected_total_bill in the private local config to enable it.")
+                return
+
             # Calculate expected components from bill
             total_base_plan = sum(bill['base_plan'] for bill in all_bills.values())
             total_equipment = sum(bill['equipment'] for bill in all_bills.values())
@@ -301,12 +298,12 @@ class TMobileBillCalculator:
 
             calculated_total = total_base_plan + total_equipment + total_protection + total_plan_features + total_one_time
 
-            if abs(calculated_total - EXPECTED_TOTAL_BILL) > ALLOWED_TOTAL_DEVIATION:
+            if abs(calculated_total - self.expected_total_bill) > ALLOWED_TOTAL_DEVIATION:
                 error_msg = (
                     f"Total bill validation failed:\n"
                     f"  Calculated: ${calculated_total:.2f}\n"
-                    f"  Expected: ${EXPECTED_TOTAL_BILL:.2f}\n"
-                    f"  Difference: ${calculated_total - EXPECTED_TOTAL_BILL:.2f}\n\n"
+                    f"  Expected: ${self.expected_total_bill:.2f}\n"
+                    f"  Difference: ${calculated_total - self.expected_total_bill:.2f}\n\n"
                     f"Breakdown:\n"
                     f"  Base Plans: ${total_base_plan:.2f}\n"
                     f"  Equipment: ${total_equipment:.2f}\n"
@@ -369,8 +366,9 @@ class TMobileBillCalculator:
 
             df = pd.DataFrame(data)
 
-            # Create Excel file in memory
-            output = pd.ExcelWriter('bills.xlsx', engine='xlsxwriter')
+            # Keep potentially sensitive exports in memory rather than writing them to disk.
+            output_buffer = io.BytesIO()
+            output = pd.ExcelWriter(output_buffer, engine='xlsxwriter')
             df.to_excel(output, index=False, sheet_name='T-Mobile Bills')
 
             # Auto-adjust column widths
@@ -381,9 +379,7 @@ class TMobileBillCalculator:
 
             output.close()
 
-            with open('bills.xlsx', 'rb') as f:
-                excel_data = f.read()
-
+            excel_data = output_buffer.getvalue()
             return excel_data
 
         except Exception as e:
@@ -816,8 +812,14 @@ def display_discount_breakdown(calculator, all_bills):
         # T-Mobile discount types breakdown
         st.subheader("T-Mobile Discount Types")
         auto_pay_total = calculator.discounts_config["auto_pay"] * len(calculator.family_members)
-        tmobile_perk_total = calculator.discounts_config["legacy_tmobile_perk"]
-        line_on_us_total = calculator.discounts_config["line_on_us"] * 2  # Hayden and Wilder
+        tmobile_perk_total = (
+            calculator.discounts_config["legacy_tmobile_perk"]
+            * len(calculator.discounts_config.get("legacy_tmobile_perk_members", []))
+        )
+        line_on_us_total = (
+            calculator.discounts_config["line_on_us"]
+            * len(calculator.discounts_config.get("line_on_us_members", []))
+        )
 
         discount_types = {
             'T-Mobile Discount Type': ['AutoPay', 'Legacy T-Mobile Perk', 'Line On Us'],
@@ -844,10 +846,10 @@ def display_bill_configuration(calculator):
 
         with col1:
             st.subheader("Family Plan Groups")
-            group_one_total = st.number_input("Group 1 Total (Gavin, Mama, Ellie, Ian, Blair)",
+            group_one_total = st.number_input("Group 1 Total",
                                               value=float(calculator.plan_groups["group_one"]["total_cost"]),
                                               step=1.0, min_value=0.0)
-            group_two_total = st.number_input("Group 2 Total (Hayden, Wilder)",
+            group_two_total = st.number_input("Group 2 Total",
                                               value=float(calculator.plan_groups["group_two"]["total_cost"]),
                                               step=1.0, min_value=0.0)
 
@@ -889,18 +891,18 @@ def display_bill_configuration(calculator):
                                          value=float(calculator.plan_features["unlimited_plus"]["cost"]),
                                          step=1.0, min_value=0.0)
 
-        # One-time charges
+        # One-time adjustments are configured per line without hard-coded identities.
         st.subheader("One-time Charges")
-        otc_col1, otc_col2, otc_col3 = st.columns(3)
-        with otc_col1:
-            ian_charges = st.number_input("Ian Charges", value=float(calculator.one_time_charges.get("Ian", 0.0)),
-                                          step=0.1)
-        with otc_col2:
-            hayden_credit = st.number_input("Hayden Credit",
-                                            value=float(calculator.one_time_charges.get("Hayden", 0.0)), step=0.1)
-        with otc_col3:
-            wilder_credit = st.number_input("Wilder Credit",
-                                            value=float(calculator.one_time_charges.get("Wilder", 0.0)), step=0.1)
+        one_time_charge_values = {}
+        charge_columns = st.columns(3)
+        for index, member in enumerate(calculator.family_members):
+            with charge_columns[index % len(charge_columns)]:
+                one_time_charge_values[member] = st.number_input(
+                    f"{member} adjustment",
+                    value=float(calculator.one_time_charges.get(member, 0.0)),
+                    step=0.1,
+                    key=f"one_time_charge_{index}"
+                )
 
         # Update configuration
         if st.form_submit_button("Update T-Mobile Configuration"):
@@ -921,7 +923,9 @@ def display_bill_configuration(calculator):
                     "discounts_config": {
                         "auto_pay": auto_pay,
                         "legacy_tmobile_perk": tmobile_perk,
-                        "line_on_us": line_on_us
+                        "legacy_tmobile_perk_members": calculator.discounts_config.get("legacy_tmobile_perk_members", []),
+                        "line_on_us": line_on_us,
+                        "line_on_us_members": calculator.discounts_config.get("line_on_us_members", [])
                     },
                     "equipment_config": {
                         "iphone_16_installment": iphone_installment,
@@ -939,11 +943,8 @@ def display_bill_configuration(calculator):
                             "assigned_to": calculator.plan_features["unlimited_plus"]["assigned_to"]
                         }
                     },
-                    "one_time_charges": {
-                        "Ian": ian_charges,
-                        "Hayden": -abs(hayden_credit),  # Ensure negative for credits
-                        "Wilder": -abs(wilder_credit)  # Ensure negative for credits
-                    }
+                    "one_time_charges": one_time_charge_values,
+                    "expected_total_bill": calculator.expected_total_bill
                 }
 
                 calculator.save_configuration(new_config)
