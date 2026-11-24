@@ -118,7 +118,7 @@ class PublicRepositorySecurityTests(unittest.TestCase):
         app_source = (biller / "app.py").read_text(encoding="utf-8")
         readme = (biller / "README.md").read_text(encoding="utf-8")
         for source in (app_source, readme):
-            self.assertNotRegex(source, r"\\(\\d{3}\\)\\s*\\d{3}-\\d{4}")
+            self.assertNotRegex(source, r"\(\d{3}\)\s*\d{3}-\d{4}")
             self.assertNotIn("354.37", source)
         self.assertIn('os.environ.get("TMOBILE_CONFIG_FILE"', app_source)
         self.assertIn('"expected_total_bill": None', app_source)
