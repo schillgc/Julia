@@ -1,6 +1,7 @@
 """Regression checks for source-control privacy and configuration boundaries."""
 
 import unittest
+import re
 from pathlib import Path
 
 
@@ -101,6 +102,31 @@ class PublicRepositorySecurityTests(unittest.TestCase):
             if any(part in key for part in ("SECRET_KEY", "API_KEY", "APP_KEY")):
                 self.assertEqual(value, "", msg=f"{key} must remain an empty placeholder")
 
+    def test_cell_biller_private_inputs_are_not_tracked_or_embedded(self):
+        biller = ROOT / "Python/Frameworks/Streamlit/Cell Phone Biller"
+        ignore = (ROOT / ".gitignore").read_text(encoding="utf-8")
+        for pattern in (
+            "**/tmobile_config.json",
+            "**/bills.xlsx",
+            "**/tmobile_bills.csv",
+            "**/tmobile_bills.xlsx",
+        ):
+            self.assertIn(pattern, ignore)
+        self.assertFalse((biller / "tmobile_config.json").exists())
+        self.assertFalse((biller / "bills.xlsx").exists())
+
+        app_source = (biller / "app.py").read_text(encoding="utf-8")
+        readme = (biller / "README.md").read_text(encoding="utf-8")
+        for source in (app_source, readme):
+            self.assertNotRegex(source, r"\\(\\d{3}\\)\\s*\\d{3}-\\d{4}")
+            self.assertNotIn("354.37", source)
+        self.assertIn('os.environ.get("TMOBILE_CONFIG_FILE"', app_source)
+        self.assertIn('"expected_total_bill": None', app_source)
+        self.assertIn("legacy_tmobile_perk_members", app_source)
+        self.assertIn("line_on_us_members", app_source)
+        self.assertIn("io.BytesIO()", app_source)
+        self.assertNotIn("EXPECTED_TOTAL_BILL", app_source)
+
     def test_changed_python_files_compile(self):
         paths = [path for path, _ in DJANGO_SETTINGS] + [
             "Python/Console Apps/Utilities/Google Calendar API/quickstart.py",
@@ -116,6 +142,7 @@ class PublicRepositorySecurityTests(unittest.TestCase):
             "Python/Console Apps/Utilities/Job Analysis/Base/Income/external.py",
             "Python/Console Apps/Utilities/Job Analysis/Positions/Local/MHS/senior_power_bi_developer.py",
             "Python/Console Apps/Utilities/YouTube API/youtube.py",
+            "Python/Frameworks/Streamlit/Cell Phone Biller/app.py",
         ]
         for relative_path in paths:
             with self.subTest(path=relative_path):
