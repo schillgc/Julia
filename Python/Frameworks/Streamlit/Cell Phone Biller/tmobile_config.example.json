@@ -1,0 +1,42 @@
+{
+  "family_members": ["Line A", "Line B"],
+  "phone_numbers": {
+    "Line A": "Not configured",
+    "Line B": "Not configured"
+  },
+  "plan_groups": {
+    "group_one": {
+      "members": ["Line A"],
+      "total_cost": 50.0
+    },
+    "group_two": {
+      "members": ["Line B"],
+      "total_cost": 40.0
+    }
+  },
+  "discounts_config": {
+    "auto_pay": 0.0,
+    "legacy_tmobile_perk": 0.0,
+    "legacy_tmobile_perk_members": [],
+    "line_on_us": 0.0,
+    "line_on_us_members": []
+  },
+  "equipment_config": {
+    "iphone_16_installment": 0.0,
+    "accessories_installment": 0.0,
+    "iphone_16_assigned_to": "Line A",
+    "accessories_assigned_to": "Line A"
+  },
+  "protection_plans": {
+    "protection_360_tier5": 0.0,
+    "protected_members": []
+  },
+  "plan_features": {
+    "unlimited_plus": {
+      "cost": 0.0,
+      "assigned_to": "Line A"
+    }
+  },
+  "one_time_charges": {},
+  "expected_total_bill": 90.0
+}
