@@ -9,5 +9,5 @@ pip==25.1.1
 py-moneyed==3.0
 setuptools==80.9.0
 sqlparse==0.5.3
-typing-extensions==4.14.0
+typing-extensions==4.16.0
 tzdata==2025.2
