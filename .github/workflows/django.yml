@@ -30,7 +30,7 @@ jobs:
           python -m pip install -r requirements.txt
       - name: Run synthetic bill calculator tests
         working-directory: Python/Frameworks/Streamlit/Cell Phone Biller
-        run: python -m pytest -q test_tmobile_calculator.py
+        run: python -m unittest -v test_tmobile_calculator
 
   phone-tracker:
     name: Phone Tracker tests
