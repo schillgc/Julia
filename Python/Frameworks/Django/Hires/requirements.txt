@@ -3,7 +3,7 @@ babel==2.17.0
 Django==5.2.3
 django-address==0.2.8
 django-mathfilters==1.0.0
-django_money==3.5.4
+django_money==3.6.2
 django_phone_field==1.8.1
 pip==25.1.1
 py-moneyed==3.0
