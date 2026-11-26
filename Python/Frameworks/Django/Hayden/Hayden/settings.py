@@ -52,20 +52,32 @@ DEBUG = _env_bool("HAYDEN_DJANGO_DEBUG", default=False)
 # Use a more secure approach for database configuration in production.
 if DEBUG:
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": os.environ.get(
+                "HAYDEN_DJANGO_DB_NAME",
+                os.path.join(BASE_DIR, "db.sqlite3"),
+            ),
+            "OPTIONS": {"timeout": 20},
         }
     }
 else:
+    required_database_values = ("DB_NAME", "DB_USER", "DB_PASSWORD", "DB_HOST")
+    missing_database_values = [
+        name for name in required_database_values if not os.environ.get(name)
+    ]
+    if missing_database_values:
+        raise ImproperlyConfigured(
+            "PostgreSQL requires: " + ", ".join(missing_database_values)
+        )
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.postgresql',
-            'NAME': os.environ.get('DB_NAME'),
-            'USER': os.environ.get('DB_USER'),
-            'PASSWORD': os.environ.get('DB_PASSWORD'),
-            'HOST': os.environ.get('DB_HOST'),
-            'PORT': os.environ.get('DB_PORT'),
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.environ["DB_NAME"],
+            "USER": os.environ["DB_USER"],
+            "PASSWORD": os.environ["DB_PASSWORD"],
+            "HOST": os.environ["DB_HOST"],
+            "PORT": os.environ.get("DB_PORT", "5432"),
         }
     }
 
@@ -127,15 +139,7 @@ WSGI_APPLICATION = 'Hayden.wsgi.application'
 
 GOOGLE_API_KEY = os.environ.get("HAYDEN_GOOGLE_MAPS_API_KEY", "")
 
-# Database
-# https://docs.djangoproject.com/en/3.0/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
+# Database configuration is defined above and is environment-specific.
 
 
 # Password validation
