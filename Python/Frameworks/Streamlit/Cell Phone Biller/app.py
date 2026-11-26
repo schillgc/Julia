@@ -4,7 +4,6 @@ import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 from datetime import date, datetime
-import locale
 import json
 import os
 import io
@@ -16,12 +15,6 @@ import logging
 # Set up logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
-
-# Set locale for currency formatting
-try:
-    locale.setlocale(locale.LC_ALL, 'English_United States.1252')
-except:
-    locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
 
 # Configure the page
 st.set_page_config(
@@ -388,8 +381,8 @@ class TMobileBillCalculator:
 
 
 def format_currency(amount: float) -> str:
-    """Format currency amount"""
-    return locale.currency(amount, grouping=True)
+    """Format USD consistently without depending on the host's installed locales."""
+    return f"${amount:,.2f}"
 
 
 def create_donut_chart(data, title):
