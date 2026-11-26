@@ -1,6 +1,7 @@
 from address.models import Locality, State
 from django.db import models
 from django.urls import reverse
+from django.utils.text import slugify
 from djmoney.models.fields import MoneyField
 from phone_field import PhoneField
 
@@ -12,8 +13,7 @@ class Job(models.Model):
     company = models.CharField(max_length=200,
                                verbose_name="Company Name",
                                blank=True)
-    slug = models.SlugField(default=str(company) + "_" + str(title),
-                            null=True)
+    slug = models.SlugField(blank=True, null=True)
 
     job_sight_city = Locality.name
     job_sight_state = State.code
@@ -87,5 +87,20 @@ class Job(models.Model):
         else:
             return "Unknown"
 
+    def save(self, *args, **kwargs):
+        """Assign a readable, collision-avoiding slug to new or unslugged jobs."""
+        if not self.slug:
+            base_slug = slugify(f"{self.company or ''} {self.title or ''}") or "job"
+            candidate = base_slug
+            suffix = 2
+            jobs = type(self).objects.all()
+            if self.pk is not None:
+                jobs = jobs.exclude(pk=self.pk)
+            while jobs.filter(slug=candidate).exists():
+                candidate = f"{base_slug}-{suffix}"
+                suffix += 1
+            self.slug = candidate
+        super().save(*args, **kwargs)
+
     def get_absolute_url(self):
-        return reverse('job_detail', kwargs={'slug': self.slug})
+        return reverse("Analyst:detail", kwargs={"slug": self.slug})
