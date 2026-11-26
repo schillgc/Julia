@@ -1,96 +1,86 @@
-# tests/test_models.py
-import pytest
+"""Django tests for Hayden's education and careers subprojects."""
 from django.test import TestCase
-from djmoney.models.fields import Money
-from mixer.backend.django import mixer
+from django.urls import reverse
+from moneyed import Money
 
-from Education.models import Institution, Instructor, Credit
+from Education.models import Credit, Instructor, School
+from Job.models import Career
 
 
-class TestInstitution(TestCase):
-    def setUp(self):
-        self.institution = Institution(
-            name='Test Institution',
-            next_year_full_tuition=Money(10000, 'USD'),
-            registration_fee=Money(500, 'USD'),
-            student_activity_fee=Money(250, 'USD'),
-            headmaster='Test Headmaster',
-            address='Test Address',
-            phone_number='555-555-5555',
-            fax_number='555-555-5556',
-            admissions_director='Test Admissions Director',
-            website='http://example.com',
-            application_received=True,
-            application_submitted=True,
-            toured=True,
-            teacher_recommendations_requested=True,
-            teacher_recommendations_submitted=True,
-            accepted=True,
-            financial_aid_requested=True,
-            financial_aid_awarded=Money(5000, 'USD'),
-            description='Test Description',
-            slug='test-institution'
+class HaydenHomeViewTests(TestCase):
+    def test_home_page_loads_with_an_empty_credit_list(self):
+        response = self.client.get("/")
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "base.html")
+        self.assertEqual(list(response.context["credit_list"]), [])
+
+
+class EducationModelTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.school = School.objects.create(
+            name="Example School",
+            slug="example-school",
+            headmaster="Example Headmaster",
+            next_year_full_tuition=Money(10000, "USD"),
+            registration_fee=Money(500, "USD"),
+            student_activity_fee=Money(250, "USD"),
         )
-
-    def test_str(self):
-        self.assertEqual(str(self.institution), 'Test Institution')
-
-
-class TestInstructor(TestCase):
-    def setUp(self):
-        self.instructor = Instructor(
-            first_name='Test',
-            last_name='Instructor',
-            email='<EMAIL>',
-            phone='555-555-5555',
-            title=Instructor.Title.TEACHER,
-            slug='test-instructor'
+        cls.instructor = Instructor.objects.create(
+            first_name="Taylor",
+            last_name="Teacher",
+            email="teacher@example.test",
+            phone="+12025550100",
+            title="Class Instructor",
+            slug="taylor-teacher",
         )
-
-    def test_str(self):
-        self.assertEqual(str(self.instructor), 'Instructor, Test')
-
-
-class TestCredit(TestCase):
-    def setUp(self):
-        self.credit = Credit(
-            school=Institution.objects.first(),
-            name='Test Credit',
-            grade_level=Credit.YearInSchool.SENIOR,
+        cls.credit = Credit.objects.create(
+            school=cls.school,
+            name="Biology",
+            grade_level="Senior",
             subject=Credit.Subject.SCIENCE,
-            course_number=100,
-            section='001',
-            track=Credit.Track.ACADEMIC,
-            clep_exam=False,
-            registered=True,
-            grade_percentage=90,
-            term=Credit.Term.SEMESTER,
-            slug='test-credit'
+            course_number=101,
+            section=1,
+            track="Honors",
+            grade_percentage=95,
+            term="Semester",
+            slug="biology-101",
+        )
+        cls.credit.instructor.add(cls.instructor)
+
+    def test_school_string_representation(self):
+        self.assertEqual(str(self.school), "Example School")
+
+    def test_instructor_string_representation(self):
+        self.assertEqual(str(self.instructor), "Taylor Teacher")
+
+    def test_credit_gpa_and_term_weight_calculations(self):
+        self.assertEqual(self.credit.unweighted_gpa, 4.0)
+        self.assertAlmostEqual(self.credit.weighted_gpa, 5.2)
+        self.assertEqual(self.credit.class_weight, 0.5)
+        self.assertEqual(self.credit.weighted_grade_equivalence, "A+")
+
+
+class CareerModelAndViewTests(TestCase):
+    def setUp(self):
+        self.career = Career.objects.create(
+            profession="Software Engineer",
+            average_salary=Money(95000, "USD"),
+            required_education="Bachelor's Degree",
         )
 
+    def test_career_model_fields_and_string(self):
+        self.assertEqual(str(self.career), "Software Engineer")
+        self.assertEqual(self.career.average_salary, Money(95000, "USD"))
 
-@pytest.mark.django_db
-class TestInstitutionModel:
-    def test_fields_exist(self):
-        institution = mixer.blend(Institution)  # Creating a sample Institution instance with default values
-        assert institution.slug
+    def test_career_list_view(self):
+        response = self.client.get(reverse("Job:career-list"))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Software Engineer")
 
-    def test_institution_model_string_representation(self):
-        institution = mixer.blend(Institution, name='MIT')  # Creating sample Institution instance with specified name
-        assert str(institution) == 'MIT'
-
-    def test_institution_model_get_absolute_url_method(self):
-        institution = mixer.blend(Institution)  # Creating a sample Institution instance
-        url = institution.get_absolute_url()
-        assert url
-
-
-def test_instructor_model_string_representation(self):
-    instructor = mixer.blend(Instructor, first_name='Tom', last_name='Smith')  # Creating sample Instructor instance with specified name
-    assert str(instructor) == 'Tom Smith'
-
-
-def test_instructor_model_get_absolute_url_method(self):
-    instructor = mixer.blend(Instructor)  # Creating a sample Instructor instance
-    url = instructor.get_absolute_url()
-    assert url
+    def test_career_detail_view(self):
+        response = self.client.get(
+            reverse("Job:career-detail", args=[self.career.pk])
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Software Engineer")
