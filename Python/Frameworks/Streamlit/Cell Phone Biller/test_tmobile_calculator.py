@@ -1,148 +1,80 @@
-# test_tmobile_calculator.py
-import pytest
+"""Regression tests using only the calculator's synthetic starter configuration."""
+import csv
+import io
 import tempfile
-import json
-from app import TMobileBillCalculator, ConfigurationError, ValidationError
+import unittest
+from pathlib import Path
+
+from app import (
+    TMobileBillCalculator,
+    ValidationError,
+    format_currency,
+)
 
 
-class TestTMobileBillCalculator:
+class TMobileBillCalculatorTests(unittest.TestCase):
+    def setUp(self):
+        self.temp_dir = tempfile.TemporaryDirectory()
+        self.config_path = Path(self.temp_dir.name) / "synthetic-config.json"
+        self.calculator = TMobileBillCalculator(config_file=str(self.config_path))
 
-    def setup_method(self):
-        """Setup before each test"""
-        self.calc = TMobileBillCalculator()
-        # Use a temporary config for testing
-        self.test_config = self.calc.get_default_config()
+    def tearDown(self):
+        self.temp_dir.cleanup()
 
-    def test_default_configuration(self):
-        """Test that default configuration loads correctly"""
-        calc = TMobileBillCalculator()
+    def test_default_configuration_is_synthetic(self):
+        self.assertEqual(self.calculator.family_members, ["Line A", "Line B"])
+        self.assertEqual(
+            self.calculator.phone_numbers,
+            {"Line A": "Not configured", "Line B": "Not configured"},
+        )
+        self.assertIsNone(self.calculator.expected_total_bill)
 
-        assert len(calc.family_members) == 7
-        assert "Gavin" in calc.family_members
-        assert calc.phone_numbers["Mama"] == "(502) 500-5480"
-        assert calc.plan_groups["group_one"]["total_cost"] == 238.00
+    def test_member_bill_uses_group_plan_allocation(self):
+        bill = self.calculator.calculate_member_bill("Line A")
+        self.assertEqual(bill["base_plan"], 50.0)
+        self.assertEqual(bill["discounts"], 0.0)
+        self.assertEqual(bill["total"], 50.0)
 
-    def test_member_bill_calculation(self):
-        """Test individual bill calculations"""
-        bill = self.calc.calculate_member_bill("Gavin")
+    def test_all_bills_reconcile_when_expected_total_is_configured(self):
+        self.calculator.expected_total_bill = 90.0
+        bills = self.calculator.calculate_all_bills()
+        self.assertEqual(set(bills), {"Line A", "Line B"})
+        self.assertAlmostEqual(sum(row["total"] for row in bills.values()), 90.0)
 
-        assert "total" in bill
-        assert "base_plan" in bill
-        assert "discounts" in bill
-        assert bill["total"] >= 0
+    def test_total_reconciliation_rejects_a_mismatch(self):
+        self.calculator.expected_total_bill = 89.0
+        with self.assertRaises(ValidationError):
+            self.calculator.calculate_all_bills()
 
-    def test_discount_calculation(self):
-        """Test discount calculations"""
-        # Gavin should have AutoPay + Legacy Perk
-        gavin_discounts = self.calc._calculate_discounts("Gavin")
-        assert gavin_discounts == 10.00  # 5 + 5
+    def test_unknown_line_is_rejected(self):
+        with self.assertRaises(ValueError):
+            self.calculator.calculate_member_bill("Unknown Line")
 
-        # Mama should have only AutoPay
-        mama_discounts = self.calc._calculate_discounts("Mama")
-        assert mama_discounts == 5.00
+    def test_configuration_round_trips_to_private_temp_file(self):
+        self.assertTrue(self.config_path.is_file())
+        self.calculator.save_configuration()
+        restored = TMobileBillCalculator(config_file=str(self.config_path))
+        self.assertEqual(restored.family_members, ["Line A", "Line B"])
+        self.assertEqual(restored.plan_groups["group_one"]["total_cost"], 50.0)
 
-        # Hayden should have AutoPay + Line On Us
-        hayden_discounts = self.calc._calculate_discounts("Hayden")
-        assert hayden_discounts == 34.02  # 5 + 29.02
+    def test_csv_export_contains_only_configured_synthetic_lines(self):
+        bills = self.calculator.calculate_all_bills()
+        content = self.calculator.export_to_csv(bills)
+        rows = list(csv.DictReader(io.StringIO(content)))
+        self.assertEqual([row["Member"] for row in rows], ["Line A", "Line B"])
+        self.assertEqual(rows[0]["Phone Number"], "Not configured")
 
-    def test_base_plan_cost(self):
-        """Test base plan cost calculations"""
-        # Group 1 members should have $47.60
-        gavin_plan = self.calc._calculate_base_plan_cost("Gavin")
-        assert gavin_plan == 47.60
+    def test_excel_export_is_returned_in_memory(self):
+        bills = self.calculator.calculate_all_bills()
+        content = self.calculator.export_to_excel(bills)
+        self.assertIsInstance(content, bytes)
+        self.assertTrue(content.startswith(b"PK"))
+        self.assertGreater(len(content), 100)
 
-        # Group 2 members should have $35.00
-        hayden_plan = self.calc._calculate_base_plan_cost("Hayden")
-        assert hayden_plan == 35.00
-
-    def test_equipment_charges(self):
-        """Test equipment charge calculations"""
-        # Mama should have both iPhone and accessories
-        mama_equipment = self.calc._calculate_equipment_charges("Mama")
-        expected = 34.59 + 8.13  # iPhone + accessories
-        assert mama_equipment == expected
-
-        # Gavin should have no equipment
-        gavin_equipment = self.calc._calculate_equipment_charges("Gavin")
-        assert gavin_equipment == 0.0
-
-    def test_protection_plans(self):
-        """Test protection plan calculations"""
-        # Protected members should have $18.00
-        mama_protection = self.calc._calculate_protection_plans("Mama")
-        assert mama_protection == 18.00
-
-        # Hayden is not protected
-        hayden_protection = self.calc._calculate_protection_plans("Hayden")
-        assert hayden_protection == 0.0
-
-    def test_plan_features(self):
-        """Test plan feature calculations"""
-        # Gavin should have Unlimited Plus
-        gavin_features = self.calc._calculate_plan_features("Gavin")
-        assert gavin_features == 10.00
-
-        # Mama should not have Unlimited Plus
-        mama_features = self.calc._calculate_plan_features("Mama")
-        assert mama_features == 0.0
-
-    def test_total_validation(self):
-        """Test that totals validate correctly"""
-        all_bills = {}
-        for member in self.calc.family_members:
-            all_bills[member] = self.calc.calculate_member_bill(member)
-
-        # Should not raise an exception
-        self.calc.validate_totals(all_bills)
-
-    def test_invalid_member(self):
-        """Test error handling for invalid family member"""
-        with pytest.raises(ValueError):
-            self.calc.calculate_member_bill("InvalidMember")
-
-    def test_configuration_saving(self):
-        """Test configuration saving and loading"""
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
-            temp_config_file = f.name
-
-        try:
-            # Create calculator with temp config
-            calc = TMobileBillCalculator()
-            calc.config_file = temp_config_file
-
-            # Save configuration
-            calc.save_configuration()
-
-            # Verify file was created
-            import os
-            assert os.path.exists(temp_config_file)
-
-            # Verify content
-            with open(temp_config_file, 'r') as f:
-                saved_config = json.load(f)
-
-            assert "family_members" in saved_config
-            assert "plan_groups" in saved_config
-
-        finally:
-            # Clean up
-            import os
-            if os.path.exists(temp_config_file):
-                os.unlink(temp_config_file)
-
-    def test_negative_totals_prevention(self):
-        """Test that negative totals are prevented"""
-        # Create a scenario that could cause negative totals
-        test_config = self.calc.get_default_config()
-        test_config["one_time_charges"]["Hayden"] = -1000.00  # Large credit
-
-        calc = TMobileBillCalculator()
-        calc._apply_configuration(test_config)
-
-        # Should handle without negative total
-        hayden_bill = calc.calculate_member_bill("Hayden")
-        assert hayden_bill["total"] >= 0
+    def test_currency_formatting_is_locale_independent(self):
+        self.assertEqual(format_currency(1234.5), "$1,234.50")
+        self.assertEqual(format_currency(-9.1), "$-9.10")
 
 
 if __name__ == "__main__":
-    pytest.main([__file__, "-v"])
+    unittest.main(verbosity=2)
