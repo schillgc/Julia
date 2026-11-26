@@ -18,7 +18,6 @@ jobs:
       HAYDEN_DJANGO_SECRET_KEY: ci-only-not-a-production-secret
       HAYDEN_DJANGO_DEBUG: "true"
       HAYDEN_DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1,testserver
-      HAYDEN_DJANGO_DB_NAME: ${{ runner.temp }}/hayden-ci.sqlite3
     steps:
       - name: Check out source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -41,9 +40,13 @@ jobs:
         run: python manage.py check
       - name: Apply migrations to a disposable CI database
         working-directory: Python/Frameworks/Django/Hayden
+        env:
+          HAYDEN_DJANGO_DB_NAME: ${{ runner.temp }}/hayden-ci.sqlite3
         run: python manage.py migrate --noinput
       - name: Run Hayden application tests
         working-directory: Python/Frameworks/Django/Hayden
+        env:
+          HAYDEN_DJANGO_DB_NAME: ${{ runner.temp }}/hayden-ci.sqlite3
         run: python manage.py test --verbosity 2
 
   streamlit-biller:
