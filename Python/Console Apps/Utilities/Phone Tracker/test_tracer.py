@@ -6,8 +6,9 @@ from tracer import lookup_phone_number
 
 class PhoneNumberLookupTests(unittest.TestCase):
     def test_requires_international_prefix(self):
-        with self.assertRaisesRegex(ValueError, r"leading \\+"):
+        with self.assertRaises(ValueError) as context:
             lookup_phone_number("16502530000")
+        self.assertIn("leading +", str(context.exception))
 
     def test_rejects_empty_input(self):
         with self.assertRaises(ValueError):
