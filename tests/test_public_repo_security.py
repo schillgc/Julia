@@ -2,6 +2,7 @@
 
 import ast
 import os
+import secrets
 import unittest
 import re
 from pathlib import Path
@@ -60,7 +61,8 @@ class PublicRepositorySecurityTests(unittest.TestCase):
             required_env = self.load_project_required_env(relative_path)
             variable = f"{prefix}_DJANGO_SECRET_KEY"
             with self.subTest(path=relative_path, weakness="short"):
-                with patch.dict(os.environ, {variable: "short-secret"}):
+                short_key = "x" * 16
+                with patch.dict(os.environ, {variable: short_key}):
                     with self.assertRaisesRegex(ValueError, "at least 50 characters"):
                         required_env(variable)
             with self.subTest(path=relative_path, weakness="low-diversity"):
@@ -69,10 +71,7 @@ class PublicRepositorySecurityTests(unittest.TestCase):
                     with self.assertRaisesRegex(ValueError, "5 distinct characters"):
                         required_env(variable)
             with self.subTest(path=relative_path, weakness="valid"):
-                valid_key = (
-                    f"portfolio-test-{prefix.lower()}-key-with-at-least-fifty-characters-"
-                    "and-varied-alphabet-2026"
-                )
+                valid_key = secrets.token_urlsafe(64)
                 self.assertGreaterEqual(len(valid_key), 50)
                 self.assertGreaterEqual(len(set(valid_key)), 5)
                 with patch.dict(os.environ, {variable: valid_key}):
