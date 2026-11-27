@@ -1,9 +1,11 @@
 """Regression checks for source-control privacy and configuration boundaries."""
 
 import ast
+import os
 import unittest
 import re
 from pathlib import Path
+from unittest.mock import patch
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -39,6 +41,43 @@ class PublicRepositorySecurityTests(unittest.TestCase):
         self.assertIn('@staff_member_required(login_url="/admin/login/")', views)
         self.assertIn('"file_converter/address.html"', views)
 
+    def load_project_required_env(self, relative_path):
+        """Execute only the project's environment helper without importing Django."""
+        source = (ROOT / relative_path).read_text(encoding="utf-8")
+        tree = ast.parse(source, filename=relative_path)
+        function = next(
+            node for node in tree.body
+            if isinstance(node, ast.FunctionDef) and node.name == "_required_env"
+        )
+        module = ast.Module(body=[function], type_ignores=[])
+        ast.fix_missing_locations(module)
+        namespace = {"os": os, "ImproperlyConfigured": ValueError}
+        exec(compile(module, relative_path, "exec"), namespace)
+        return namespace["_required_env"]
+
+    def test_all_project_signing_key_helpers_enforce_minimum_strength(self):
+        for relative_path, prefix in DJANGO_SETTINGS:
+            required_env = self.load_project_required_env(relative_path)
+            variable = f"{prefix}_DJANGO_SECRET_KEY"
+            with self.subTest(path=relative_path, weakness="short"):
+                with patch.dict(os.environ, {variable: "short-secret"}):
+                    with self.assertRaisesRegex(ValueError, "at least 50 characters"):
+                        required_env(variable)
+            with self.subTest(path=relative_path, weakness="low-diversity"):
+                weak_key = ("A" * 59) + "b"
+                with patch.dict(os.environ, {variable: weak_key}):
+                    with self.assertRaisesRegex(ValueError, "5 distinct characters"):
+                        required_env(variable)
+            with self.subTest(path=relative_path, weakness="valid"):
+                valid_key = (
+                    f"portfolio-test-{prefix.lower()}-key-with-at-least-fifty-characters-"
+                    "and-varied-alphabet-2026"
+                )
+                self.assertGreaterEqual(len(valid_key), 50)
+                self.assertGreaterEqual(len(set(valid_key)), 5)
+                with patch.dict(os.environ, {variable: valid_key}):
+                    self.assertEqual(required_env(variable), valid_key)
+
     def test_django_settings_fail_closed_and_use_project_specific_environment(self):
         for relative_path, prefix in DJANGO_SETTINGS:
             with self.subTest(path=relative_path):
@@ -46,6 +85,8 @@ class PublicRepositorySecurityTests(unittest.TestCase):
                 self.assertIn(f'SECRET_KEY = _required_env("{prefix}_DJANGO_SECRET_KEY")', source)
                 self.assertIn(f'DEBUG = _env_bool("{prefix}_DJANGO_DEBUG", default=False)', source)
                 self.assertIn(f'ALLOWED_HOSTS = _env_csv("{prefix}_DJANGO_ALLOWED_HOSTS")', source)
+                self.assertIn("len(value) < 50", source)
+                self.assertIn("len(set(value)) < 5", source)
                 self.assertNotRegex(source, r"(?m)^SECRET_KEY\s*=\s*['\"]")
                 self.assertNotRegex(source, r"(?m)^DEBUG\s*=\s*True\s*$")
                 self.assertNotRegex(source, r"AIza[0-9A-Za-z_-]{30,}")
