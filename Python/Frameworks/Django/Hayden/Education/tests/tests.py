@@ -1,4 +1,5 @@
 """Django tests for Hayden's education and careers subprojects."""
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 from moneyed import Money
@@ -84,3 +85,57 @@ class CareerModelAndViewTests(TestCase):
         )
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Software Engineer")
+
+
+
+class EducationMutationAuthorizationTests(TestCase):
+    """Education records can be changed only by authenticated staff users."""
+
+    def test_anonymous_get_and_post_are_redirected_for_all_create_routes(self):
+        routes = (
+            "Education:credit-create",
+            "Education:institution-create",
+            "Education:instructor-create",
+        )
+        before = (
+            Credit.objects.count(),
+            School.objects.count(),
+            Instructor.objects.count(),
+        )
+
+        for route_name in routes:
+            url = reverse(route_name)
+            with self.subTest(route=route_name, method="GET"):
+                response = self.client.get(url)
+                self.assertEqual(response.status_code, 302)
+                self.assertTrue(response.url.startswith("/admin/login/"))
+
+            with self.subTest(route=route_name, method="POST"):
+                response = self.client.post(url, data={})
+                self.assertEqual(response.status_code, 302)
+                self.assertTrue(response.url.startswith("/admin/login/"))
+
+        after = (
+            Credit.objects.count(),
+            School.objects.count(),
+            Instructor.objects.count(),
+        )
+        self.assertEqual(after, before)
+
+    def test_authenticated_non_staff_user_cannot_open_create_routes(self):
+        user = get_user_model().objects.create_user(
+            username="non-staff",
+            email="non-staff@example.test",
+            is_staff=False,
+        )
+        self.client.force_login(user)
+
+        for route_name in (
+            "Education:credit-create",
+            "Education:institution-create",
+            "Education:instructor-create",
+        ):
+            with self.subTest(route=route_name):
+                response = self.client.get(reverse(route_name))
+                self.assertEqual(response.status_code, 302)
+                self.assertTrue(response.url.startswith("/admin/login/"))

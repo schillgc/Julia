@@ -1,16 +1,20 @@
+from django.contrib.admin.views.decorators import staff_member_required
 from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
 from .models import Career
 
 
+@method_decorator(staff_member_required(login_url="/admin/login/"), name="dispatch")
 class CareerCreate(CreateView):
     model = Career
     fields = ['profession', 'average_salary', 'required_education']
     success_url = reverse_lazy('Job:career-list')
 
 
+@method_decorator(staff_member_required(login_url="/admin/login/"), name="dispatch")
 class CareerDelete(DeleteView):
     model = Career
     # On success, redirect to the list of careers. The previous URL was incorrect
@@ -30,6 +34,7 @@ class CareerDetailView(DetailView):
     template_name = "Job/career_detail.html"
 
 
+@method_decorator(staff_member_required(login_url="/admin/login/"), name="dispatch")
 class CareerUpdate(UpdateView):
     model = Career
     fields = ['profession', 'average_salary', 'required_education']

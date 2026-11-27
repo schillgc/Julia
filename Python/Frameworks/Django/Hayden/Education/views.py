@@ -1,4 +1,6 @@
+from django.contrib.admin.views.decorators import staff_member_required
 from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
 from django.utils import timezone
 from django.views.generic import DetailView, ListView, CreateView, DeleteView, UpdateView
 
@@ -35,6 +37,7 @@ class AddressView(CreateView):
         return super().form_valid(form)
 
 
+@method_decorator(staff_member_required(login_url="/admin/login/"), name="dispatch")
 class CreditCreateView(CreateView):
     """ Description: Handles the creation of a new "Credit" instance. """
     model = Credit
@@ -43,6 +46,7 @@ class CreditCreateView(CreateView):
     success_url = reverse_lazy('education:credit-detail', kwargs={'slug': Credit.slug})
 
 
+@method_decorator(staff_member_required(login_url="/admin/login/"), name="dispatch")
 class CreditDeleteView(DeleteView):
     """ Description: Handles the deletion of a "Credit" instance. """
     model = Credit
@@ -74,6 +78,7 @@ class CreditIndexView(ListView):
         return math.trunc(stepper * number) / stepper
 
 
+@method_decorator(staff_member_required(login_url="/admin/login/"), name="dispatch")
 class CreditUpdateView(UpdateView):
     """ Description: Handles the update of a specific "Credit" instance. """
     model = Credit
@@ -95,12 +100,14 @@ class IndexView(ListView):
         return context
 
 
+@method_decorator(staff_member_required(login_url="/admin/login/"), name="dispatch")
 class InstitutionCreateView(CreateView):
     """ Description: Handles the creation of a new "Institution" instance. """
     model = School
     template_name = 'education/institution_form.html'
 
 
+@method_decorator(staff_member_required(login_url="/admin/login/"), name="dispatch")
 class InstitutionDeleteView(DeleteView):
     """ Description: Handles the deletion of an "Institution" instance. """
     model = School
@@ -129,18 +136,21 @@ class InstitutionIndexView(ListView):
         return net_tuition
 
 
+@method_decorator(staff_member_required(login_url="/admin/login/"), name="dispatch")
 class InstitutionUpdateView(UpdateView):
     """ Description: Handles the update of a specific "Institution" instance. """
     model = School
     template_name_suffix = '_update_form'
 
 
+@method_decorator(staff_member_required(login_url="/admin/login/"), name="dispatch")
 class InstructorCreateView(CreateView):
     """ Description: Handles the creation of a new "Instructor" instance. """
     model = Instructor
     # template_name = 'Education/instructor_form.html'
 
 
+@method_decorator(staff_member_required(login_url="/admin/login/"), name="dispatch")
 class InstructorDeleteView(DeleteView):
     """ Description: Handles the deletion of an "Instructor" instance. """
     model = Instructor
@@ -165,6 +175,7 @@ class InstructorIndexView(ListView):
         return context
 
 
+@method_decorator(staff_member_required(login_url="/admin/login/"), name="dispatch")
 class InstructorUpdateView(UpdateView):
     """ Description: Handles the update of a specific "Instructor" instance. """
     model = Instructor
