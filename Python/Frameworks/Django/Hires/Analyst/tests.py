@@ -14,7 +14,6 @@ class HiresViewTests(TestCase):
         self.staff_user = get_user_model().objects.create_user(
             username="hires-staff",
             email="hires-staff@example.test",
-            password="test-only-password",
             is_staff=True,
         )
         self.job = Job.objects.create(
