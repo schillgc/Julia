@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
-      HAYDEN_DJANGO_SECRET_KEY: ci-only-not-a-production-secret
+      HAYDEN_DJANGO_SECRET_KEY: ci-hayden-test-key-with-at-least-fifty-characters-and-varied-alphabet-2026
       HAYDEN_DJANGO_DEBUG: "true"
       HAYDEN_DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1,testserver
     steps:
@@ -79,7 +79,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
-      HIRES_DJANGO_SECRET_KEY: ci-only-not-a-production-secret
+      HIRES_DJANGO_SECRET_KEY: ci-hires-test-key-with-at-least-fifty-characters-and-varied-alphabet-2026
       HIRES_DJANGO_DEBUG: "true"
       HIRES_DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1,testserver
     steps:
@@ -117,7 +117,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
-      JOB_ANALYZER_DJANGO_SECRET_KEY: ci-only-not-a-production-secret
+      JOB_ANALYZER_DJANGO_SECRET_KEY: ci-job-analyzer-test-key-with-at-least-fifty-characters-and-varied-alphabet-2026
       JOB_ANALYZER_DJANGO_DEBUG: "true"
       JOB_ANALYZER_DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1,testserver
     steps:
