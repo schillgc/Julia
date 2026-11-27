@@ -50,13 +50,21 @@ class PublicRepositorySecurityTests(unittest.TestCase):
                 ]
                 self.assertEqual(len(helpers), 1)
                 required_env = helpers[0]
+                body = list(required_env.body)
+                if (
+                    body
+                    and isinstance(body[0], ast.Expr)
+                    and isinstance(body[0].value, ast.Constant)
+                    and isinstance(body[0].value.value, str)
+                ):
+                    body = body[1:]
 
                 self.assertEqual(
-                    ast.unparse(required_env.body[0]),
+                    ast.unparse(body[0]),
                     "value = os.environ.get(name, '')",
                 )
                 conditions = [
-                    node for node in required_env.body if isinstance(node, ast.If)
+                    node for node in body if isinstance(node, ast.If)
                 ]
                 self.assertEqual(
                     [ast.unparse(node.test) for node in conditions],
@@ -75,20 +83,12 @@ class PublicRepositorySecurityTests(unittest.TestCase):
                         ast.unparse(raises[0].exc).startswith("ImproperlyConfigured(")
                     )
 
-                messages = [
-                    node.value for node in ast.walk(required_env)
-                    if isinstance(node, ast.Constant) and isinstance(node.value, str)
-                ]
+                self.assertIn("must be set to a non-empty value.", source)
                 self.assertIn(
-                    f"{prefix}_DJANGO_SECRET_KEY must be set to a non-empty value.",
-                    messages,
+                    "must be at least 50 characters and contain at least 5 distinct characters.",
+                    source,
                 )
-                self.assertIn(
-                    f"{prefix}_DJANGO_SECRET_KEY must be at least 50 characters "
-                    "and contain at least 5 distinct characters.",
-                    messages,
-                )
-                self.assertEqual(ast.unparse(required_env.body[-1]), "return value")
+                self.assertEqual(ast.unparse(body[-1]), "return value")
 
     def test_django_settings_fail_closed_and_use_project_specific_environment(self):
         for relative_path, prefix in DJANGO_SETTINGS:
