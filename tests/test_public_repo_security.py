@@ -31,11 +31,11 @@ class PublicRepositorySecurityTests(unittest.TestCase):
 
         self.assertRegex(
             settings,
-            r"'file_converter\\.apps\\.FileConverterConfig',\\s*'django\\.contrib\\.admin',",
+            r"'file_converter\.apps\.FileConverterConfig',\s*'django\.contrib\.admin',",
         )
         self.assertIn("path('<int:address_id>/', views.demographics", urls)
         self.assertIn("def demographics(request, address_id):", views)
-        self.assertIn("@staff_member_required(login_url=\\"/admin/login/\\")", views)
+        self.assertIn('@staff_member_required(login_url="/admin/login/")', views)
         self.assertIn('"file_converter/address.html"', views)
 
     def test_django_settings_fail_closed_and_use_project_specific_environment(self):
