@@ -117,7 +117,11 @@ WSGI_APPLICATION = 'jobanalyzer.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': os.environ.get(
+            "JOB_ANALYZER_DJANGO_DB_NAME",
+            BASE_DIR / 'db.sqlite3',
+        ),
+        'OPTIONS': {"timeout": 20},
     }
 }
 
