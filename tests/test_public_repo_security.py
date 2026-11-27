@@ -74,6 +74,23 @@ class PublicRepositorySecurityTests(unittest.TestCase):
                 self.assertNotRegex(source, r"AIza[0-9A-Za-z_-]{30,}")
                 self.assertNotRegex(source, r'''(?i)(?:app_key|api_key|client_secret)\s*[:=]\s*['"][^'"]{12,}['"]''')
 
+    def test_oxford_dictionary_examples_use_environment_credentials(self):
+        template = (ROOT / ".env.example").read_text(encoding="utf-8")
+        self.assertIn("OXFORD_DICTIONARIES_APP_ID=", template)
+        self.assertIn("OXFORD_DICTIONARIES_APP_KEY=", template)
+
+        for relative_path in (
+            "Python/Console Apps/Utilities/Oxford Dictionary/oxford_dictionary.py",
+            "Python/Console Apps/Utilities/Oxford Dictionary/oxford_dictionary_2.py",
+        ):
+            with self.subTest(path=relative_path):
+                source = (ROOT / relative_path).read_text(encoding="utf-8")
+                self.assertIn('os.environ.get("OXFORD_DICTIONARIES_APP_ID"', source)
+                self.assertIn('os.environ.get("OXFORD_DICTIONARIES_APP_KEY"', source)
+                self.assertIn("timeout=(5, 20)", source)
+                self.assertIn('if __name__ == "__main__":', source)
+                self.assertNotIn("from credentials import", source)
+
     def test_mailchimp_credentials_are_environment_driven_and_never_hardcoded(self):
         settings = (
             ROOT / "Python/Frameworks/Django/semmLaw/semmlaw/semmlaw/settings.py"
