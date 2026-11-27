@@ -23,8 +23,6 @@ class CompanyIndexView(ListView):
 class CompanyDetailView(DetailView):
     model = Company
     template_name = "theanalyzer/company_detail.html"
-    slug_url_kwarg = 'the_slug'
-    slug_field = 'slug'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
