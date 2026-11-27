@@ -41,6 +41,25 @@ class PublicRepositorySecurityTests(unittest.TestCase):
         for pattern in ("**/credentials.json", "**/client_secrets.json", "**/token.pickle", "**/token.json"):
             self.assertIn(pattern, ignore)
 
+    def test_python_credential_modules_and_private_keys_are_ignored(self):
+        ignore = (ROOT / ".gitignore").read_text(encoding="utf-8")
+        for pattern in (
+            "**/credentials.py",
+            "**/secrets.py",
+            "**/*_credentials.py",
+            "**/*_secrets.py",
+            "**/*.pem",
+            "**/*.key",
+            "**/*.p12",
+            "**/*.pfx",
+        ):
+            with self.subTest(pattern=pattern):
+                self.assertIn(pattern, ignore)
+
+        policy = (ROOT / "SECURITY.md").read_text(encoding="utf-8")
+        self.assertIn("Ignore rules do not remove files that are already tracked", policy)
+        self.assertIn("A legacy integration credential module remains tracked", policy)
+
     def test_external_api_samples_do_not_embed_keys(self):
         paths = [
             "Python/Console Apps/Utilities/Oxford Dictionary/credentials.py",
