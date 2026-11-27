@@ -4,7 +4,8 @@ This repository contains multiple independent learning and application projects.
 
 ## Credential handling
 
-- Never commit real environment files, OAuth client JSON, OAuth token caches, API keys, passwords, or signing keys.
+- Never commit real environment files, Python credential/secret modules, OAuth client JSON, OAuth token caches, API keys, passwords, or signing keys.
+- `.gitignore` excludes common Python credential-module and private-key filenames for future files. Ignore rules do not remove files that are already tracked. A legacy integration credential module remains tracked and must be reviewed privately by the owner; do not use it until any embedded values have been checked, rotated at their providers, and moved to environment-based configuration. Its contents are intentionally not copied into public issues, logs, or documentation.
 - Copy `.env.example` to a local `.env` file or export only the variables required by the project being run. The repository ignores real environment files.
 - Each Django application requires its own `<PROJECT>_DJANGO_SECRET_KEY`, debug flag, and host allowlist. Generate a unique random signing key per deployment. Development uses `<PROJECT>_DJANGO_DEBUG=true` and loopback-only hosts; production must set `DEBUG=false` and an explicit comma-separated host allowlist.
 - Google Calendar OAuth client JSON and user token JSON belong outside Git. The old committed pickle token is removed; re-authorize after rotating the OAuth client.
