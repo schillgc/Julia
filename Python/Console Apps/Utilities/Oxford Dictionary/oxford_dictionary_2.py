@@ -1,17 +1,51 @@
-# for more information on how to install requests
-# http://docs.python-requests.org/en/master/user/install/#install
+"""Look up an English word using the Oxford Dictionaries API."""
+
 import json
+import os
+from urllib.parse import quote
+
 import requests
 
-from credentials import app_id, app_key
+
+LANGUAGE = "en"
+DEFAULT_WORD = "euphoria"
 
 
-language = 'en'
-word_id = 'euphoria'
-url = 'https://od-api.oxforddictionaries.com:443/api/v2/entries/' + language + '/' + word_id.lower()
-# url Normalized frequency
-urlFR = 'https://od-api.oxforddictionaries.com:443/api/v2/stats/frequency/word/' + language + '/?corpus=nmc&lemma=' + word_id.lower()
-r = requests.get(url, headers={'app_id': app_id, 'app_key': app_key})
-print("code {}\n".format(r.status_code))
-print("text \n" + r.text)
-print("json \n" + json.dumps(r.json()))
+def main():
+    app_id = os.environ.get("OXFORD_DICTIONARIES_APP_ID", "").strip()
+    app_key = os.environ.get("OXFORD_DICTIONARIES_APP_KEY", "").strip()
+    if not app_id or not app_key:
+        raise SystemExit(
+            "Set OXFORD_DICTIONARIES_APP_ID and OXFORD_DICTIONARIES_APP_KEY "
+            "before running this example."
+        )
+
+    word_id = os.environ.get("OXFORD_DICTIONARIES_WORD", DEFAULT_WORD).strip()
+    if not word_id:
+        raise SystemExit("Set OXFORD_DICTIONARIES_WORD to a non-empty word.")
+
+    url = (
+        "https://od-api.oxforddictionaries.com/api/v2/entries/"
+        f"{LANGUAGE}/{quote(word_id.lower(), safe='')}"
+    )
+    try:
+        response = requests.get(
+            url,
+            headers={"app_id": app_id, "app_key": app_key},
+            timeout=(5, 20),
+        )
+        response.raise_for_status()
+        result = response.json()
+    except requests.HTTPError as error:
+        status = error.response.status_code if error.response is not None else "unknown"
+        raise SystemExit(f"Oxford Dictionaries API returned HTTP {status}.") from None
+    except requests.RequestException:
+        raise SystemExit("Oxford Dictionaries API request failed.") from None
+    except ValueError:
+        raise SystemExit("Oxford Dictionaries API returned invalid JSON.") from None
+
+    print(json.dumps(result, ensure_ascii=False, indent=2))
+
+
+if __name__ == "__main__":
+    main()
