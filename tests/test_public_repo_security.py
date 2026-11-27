@@ -39,6 +39,57 @@ class PublicRepositorySecurityTests(unittest.TestCase):
         self.assertIn('@staff_member_required(login_url="/admin/login/")', views)
         self.assertIn('"file_converter/address.html"', views)
 
+    def test_all_project_signing_key_helpers_enforce_minimum_strength(self):
+        for relative_path, prefix in DJANGO_SETTINGS:
+            with self.subTest(path=relative_path):
+                source = (ROOT / relative_path).read_text(encoding="utf-8")
+                tree = ast.parse(source, filename=relative_path)
+                helpers = [
+                    node for node in tree.body
+                    if isinstance(node, ast.FunctionDef) and node.name == "_required_env"
+                ]
+                self.assertEqual(len(helpers), 1)
+                required_env = helpers[0]
+                body = list(required_env.body)
+                if (
+                    body
+                    and isinstance(body[0], ast.Expr)
+                    and isinstance(body[0].value, ast.Constant)
+                    and isinstance(body[0].value.value, str)
+                ):
+                    body = body[1:]
+
+                self.assertEqual(
+                    ast.unparse(body[0]),
+                    "value = os.environ.get(name, '')",
+                )
+                conditions = [
+                    node for node in body if isinstance(node, ast.If)
+                ]
+                self.assertEqual(
+                    [ast.unparse(node.test) for node in conditions],
+                    [
+                        "not value.strip()",
+                        "len(value) < 50 or len(set(value)) < 5",
+                    ],
+                )
+                for condition in conditions:
+                    raises = [
+                        node for node in ast.walk(condition)
+                        if isinstance(node, ast.Raise)
+                    ]
+                    self.assertEqual(len(raises), 1)
+                    self.assertTrue(
+                        ast.unparse(raises[0].exc).startswith("ImproperlyConfigured(")
+                    )
+
+                self.assertIn("must be set to a non-empty value.", source)
+                self.assertIn(
+                    "must be at least 50 characters and contain at least 5 distinct characters.",
+                    source,
+                )
+                self.assertEqual(ast.unparse(body[-1]), "return value")
+
     def test_django_settings_fail_closed_and_use_project_specific_environment(self):
         for relative_path, prefix in DJANGO_SETTINGS:
             with self.subTest(path=relative_path):
@@ -46,6 +97,8 @@ class PublicRepositorySecurityTests(unittest.TestCase):
                 self.assertIn(f'SECRET_KEY = _required_env("{prefix}_DJANGO_SECRET_KEY")', source)
                 self.assertIn(f'DEBUG = _env_bool("{prefix}_DJANGO_DEBUG", default=False)', source)
                 self.assertIn(f'ALLOWED_HOSTS = _env_csv("{prefix}_DJANGO_ALLOWED_HOSTS")', source)
+                self.assertIn("len(value) < 50", source)
+                self.assertIn("len(set(value)) < 5", source)
                 self.assertNotRegex(source, r"(?m)^SECRET_KEY\s*=\s*['\"]")
                 self.assertNotRegex(source, r"(?m)^DEBUG\s*=\s*True\s*$")
                 self.assertNotRegex(source, r"AIza[0-9A-Za-z_-]{30,}")

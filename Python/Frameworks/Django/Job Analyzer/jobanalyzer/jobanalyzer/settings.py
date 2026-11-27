@@ -30,6 +30,10 @@ def _required_env(name):
     value = os.environ.get(name, "")
     if not value.strip():
         raise ImproperlyConfigured(f"{name} must be set to a non-empty value.")
+    if len(value) < 50 or len(set(value)) < 5:
+        raise ImproperlyConfigured(
+            f"{name} must be at least 50 characters and contain at least 5 distinct characters."
+        )
     return value
 
 
