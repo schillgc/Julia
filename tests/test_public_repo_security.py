@@ -1,5 +1,6 @@
 """Regression checks for source-control privacy and configuration boundaries."""
 
+import ast
 import unittest
 import re
 from pathlib import Path
@@ -73,7 +74,13 @@ class PublicRepositorySecurityTests(unittest.TestCase):
 
         policy = (ROOT / "SECURITY.md").read_text(encoding="utf-8")
         self.assertIn("Ignore rules do not remove files that are already tracked", policy)
-        self.assertIn("A legacy integration credential module remains tracked", policy)
+        self.assertIn("Oxford Dictionary", policy)
+        credential_module = (
+            ROOT / "Python/Console Apps/Utilities/Oxford Dictionary/credentials.py"
+        ).read_text(encoding="utf-8")
+        self.assertIn('os.environ.get("OXFORD_DICTIONARIES_APP_ID", "")', credential_module)
+        self.assertIn('os.environ.get("OXFORD_DICTIONARIES_APP_KEY", "")', credential_module)
+        self.assertNotRegex(credential_module, r"AIza[0-9A-Za-z_-]{30,}")
 
     def test_external_api_samples_do_not_embed_keys(self):
         paths = [
@@ -89,6 +96,35 @@ class PublicRepositorySecurityTests(unittest.TestCase):
                 self.assertNotRegex(source, r"AIza[0-9A-Za-z_-]{30,}")
                 self.assertNotRegex(source, r'''(?i)(?:app_key|api_key|client_secret)\s*[:=]\s*['"][^'"]{12,}['"]''')
 
+    def test_url_calculator_does_not_start_debug_server_on_import(self):
+        relative_path = "Python/Console Apps/Utilities/URL Calculator/url_calculator.py"
+        source = (ROOT / relative_path).read_text(encoding="utf-8")
+        module = ast.parse(source, filename=relative_path)
+        main_function = next(
+            node for node in module.body
+            if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.name == "main"
+        )
+        run_calls = [
+            node for node in ast.walk(module)
+            if isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Attribute)
+            and isinstance(node.func.value, ast.Name)
+            and node.func.value.id == "app"
+            and node.func.attr == "run"
+        ]
+
+        self.assertEqual(len(run_calls), 1)
+        self.assertIn(run_calls[0], ast.walk(main_function))
+        debug_argument = next(
+            (keyword.value for keyword in run_calls[0].keywords if keyword.arg == "debug"),
+            None,
+        )
+        self.assertIsInstance(debug_argument, ast.Constant)
+        self.assertIs(debug_argument.value, False)
+        self.assertIn('os.environ.get("URL_CALCULATOR_HOST", "127.0.0.1")', source)
+        self.assertIn('int(os.environ.get("URL_CALCULATOR_PORT", "8000"))', source)
+        self.assertIn('if __name__ == "__main__":', source)
+        self.assertNotIn("0.0.0.0", source)
     def test_job_search_mailchimp_utility_uses_environment_credentials(self):
         template = (ROOT / ".env.example").read_text(encoding="utf-8")
         self.assertIn("JOB_SEARCH_MAILCHIMP_API_KEY=", template)
@@ -196,6 +232,7 @@ class PublicRepositorySecurityTests(unittest.TestCase):
             "Python/Frameworks/Django/Vintage Print and Distribution/automation/automation/settings.py",
             "Python/Frameworks/Django/Vintage Print and Distribution/automation/file_converter/urls.py",
             "Python/Frameworks/Django/Vintage Print and Distribution/automation/file_converter/views.py",
+            "Python/Console Apps/Utilities/URL Calculator/url_calculator.py",
             "Python/Console Apps/Utilities/Job Search/job_search.py",
             "Python/Console Apps/Utilities/Google Calendar API/quickstart.py",
             "Python/Console Apps/Utilities/Oxford Dictionary/credentials.py",
