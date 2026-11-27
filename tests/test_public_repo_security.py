@@ -1,12 +1,9 @@
 """Regression checks for source-control privacy and configuration boundaries."""
 
 import ast
-import os
-import secrets
 import unittest
 import re
 from pathlib import Path
-from unittest.mock import patch
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -42,40 +39,56 @@ class PublicRepositorySecurityTests(unittest.TestCase):
         self.assertIn('@staff_member_required(login_url="/admin/login/")', views)
         self.assertIn('"file_converter/address.html"', views)
 
-    def load_project_required_env(self, relative_path):
-        """Execute only the project's environment helper without importing Django."""
-        source = (ROOT / relative_path).read_text(encoding="utf-8")
-        tree = ast.parse(source, filename=relative_path)
-        function = next(
-            node for node in tree.body
-            if isinstance(node, ast.FunctionDef) and node.name == "_required_env"
-        )
-        module = ast.Module(body=[function], type_ignores=[])
-        ast.fix_missing_locations(module)
-        namespace = {"os": os, "ImproperlyConfigured": ValueError}
-        exec(compile(module, relative_path, "exec"), namespace)
-        return namespace["_required_env"]
-
     def test_all_project_signing_key_helpers_enforce_minimum_strength(self):
         for relative_path, prefix in DJANGO_SETTINGS:
-            required_env = self.load_project_required_env(relative_path)
-            variable = f"{prefix}_DJANGO_SECRET_KEY"
-            with self.subTest(path=relative_path, weakness="short"):
-                short_key = "x" * 16
-                with patch.dict(os.environ, {variable: short_key}):
-                    with self.assertRaisesRegex(ValueError, "at least 50 characters"):
-                        required_env(variable)
-            with self.subTest(path=relative_path, weakness="low-diversity"):
-                weak_key = ("A" * 59) + "b"
-                with patch.dict(os.environ, {variable: weak_key}):
-                    with self.assertRaisesRegex(ValueError, "5 distinct characters"):
-                        required_env(variable)
-            with self.subTest(path=relative_path, weakness="valid"):
-                valid_key = secrets.token_urlsafe(64)
-                self.assertGreaterEqual(len(valid_key), 50)
-                self.assertGreaterEqual(len(set(valid_key)), 5)
-                with patch.dict(os.environ, {variable: valid_key}):
-                    self.assertEqual(required_env(variable), valid_key)
+            with self.subTest(path=relative_path):
+                source = (ROOT / relative_path).read_text(encoding="utf-8")
+                tree = ast.parse(source, filename=relative_path)
+                helpers = [
+                    node for node in tree.body
+                    if isinstance(node, ast.FunctionDef) and node.name == "_required_env"
+                ]
+                self.assertEqual(len(helpers), 1)
+                required_env = helpers[0]
+
+                self.assertEqual(
+                    ast.unparse(required_env.body[0]),
+                    "value = os.environ.get(name, '')",
+                )
+                conditions = [
+                    node for node in required_env.body if isinstance(node, ast.If)
+                ]
+                self.assertEqual(
+                    [ast.unparse(node.test) for node in conditions],
+                    [
+                        "not value.strip()",
+                        "len(value) < 50 or len(set(value)) < 5",
+                    ],
+                )
+                for condition in conditions:
+                    raises = [
+                        node for node in ast.walk(condition)
+                        if isinstance(node, ast.Raise)
+                    ]
+                    self.assertEqual(len(raises), 1)
+                    self.assertTrue(
+                        ast.unparse(raises[0].exc).startswith("ImproperlyConfigured(")
+                    )
+
+                messages = [
+                    node.value for node in ast.walk(required_env)
+                    if isinstance(node, ast.Constant) and isinstance(node.value, str)
+                ]
+                self.assertIn(
+                    f"{prefix}_DJANGO_SECRET_KEY must be set to a non-empty value.",
+                    messages,
+                )
+                self.assertIn(
+                    f"{prefix}_DJANGO_SECRET_KEY must be at least 50 characters "
+                    "and contain at least 5 distinct characters.",
+                    messages,
+                )
+                self.assertEqual(ast.unparse(required_env.body[-1]), "return value")
 
     def test_django_settings_fail_closed_and_use_project_specific_environment(self):
         for relative_path, prefix in DJANGO_SETTINGS:
