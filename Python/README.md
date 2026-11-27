@@ -11,7 +11,13 @@ By Gavin Schilling
 
 #### URL Calculator local development
 
-Install Flask with `python -m pip install Flask`, then run `url_calculator.py` from its project folder. The server binds to `127.0.0.1:8000` by default and never enables Flask's interactive debugger. Optional `URL_CALCULATOR_HOST` and `URL_CALCULATOR_PORT` environment variables can change the bind address and port. Do not expose the built-in development server directly to the internet.
+Install Flask with `python -m pip install Flask`, then run this from the URL Calculator project folder:
+
+```bash
+python -m flask --app url_calculator run --host 127.0.0.1 --port 8000
+```
+
+The repository contains no embedded development server or debugger. The CLI command is for local testing only; keep the host on loopback and use a production WSGI server if the application is ever deployed.
 
 ### Django
 + [Beargrass Christian Church](https://github.com/schillgc/Python/tree/master/Django/Beargrass_Christian_Church)
