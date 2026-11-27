@@ -59,7 +59,7 @@ elif not DEBUG and not ALLOWED_HOSTS:
 # Application definition
 
 INSTALLED_APPS = [
-    'file_converter.apps.FileConverterConfig'
+    'file_converter.apps.FileConverterConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

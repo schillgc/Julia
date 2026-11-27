@@ -23,6 +23,21 @@ DJANGO_SETTINGS = [
 
 
 class PublicRepositorySecurityTests(unittest.TestCase):
+    def test_vintage_address_records_require_staff_and_route_parameters_match(self):
+        project = "Python/Frameworks/Django/Vintage Print and Distribution/automation/"
+        settings = (ROOT / project / "automation/settings.py").read_text(encoding="utf-8")
+        urls = (ROOT / project / "file_converter/urls.py").read_text(encoding="utf-8")
+        views = (ROOT / project / "file_converter/views.py").read_text(encoding="utf-8")
+
+        self.assertRegex(
+            settings,
+            r"'file_converter\.apps\.FileConverterConfig',\s*'django\.contrib\.admin',",
+        )
+        self.assertIn("path('<int:address_id>/', views.demographics", urls)
+        self.assertIn("def demographics(request, address_id):", views)
+        self.assertIn('@staff_member_required(login_url="/admin/login/")', views)
+        self.assertIn('"file_converter/address.html"', views)
+
     def test_django_settings_fail_closed_and_use_project_specific_environment(self):
         for relative_path, prefix in DJANGO_SETTINGS:
             with self.subTest(path=relative_path):
@@ -165,6 +180,9 @@ class PublicRepositorySecurityTests(unittest.TestCase):
 
     def test_changed_python_files_compile(self):
         paths = [path for path, _ in DJANGO_SETTINGS] + [
+            "Python/Frameworks/Django/Vintage Print and Distribution/automation/automation/settings.py",
+            "Python/Frameworks/Django/Vintage Print and Distribution/automation/file_converter/urls.py",
+            "Python/Frameworks/Django/Vintage Print and Distribution/automation/file_converter/views.py",
             "Python/Console Apps/Utilities/Google Calendar API/quickstart.py",
             "Python/Console Apps/Utilities/Oxford Dictionary/credentials.py",
             "Python/Console Apps/Utilities/Oxford Dictionary/oxford_dictionary.py",
