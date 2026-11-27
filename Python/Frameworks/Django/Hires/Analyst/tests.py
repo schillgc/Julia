@@ -37,7 +37,6 @@ class HiresViewTests(TestCase):
         user = get_user_model().objects.create_user(
             username="hires-non-staff",
             email="hires-non-staff@example.test",
-            password="test-only-password",
             is_staff=False,
         )
         self.client.force_login(user)
