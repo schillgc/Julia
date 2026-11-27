@@ -9,6 +9,10 @@ By Gavin Schilling
 + [Job Analyzer](https://github.com/schillgc/Python/tree/master/Console%20Apps/Utilities/Job_Analysis)
 + [URL Calculator](https://github.com/schillgc/Python/tree/master/Console%20Apps/Utilities/URL%20Calculator)
 
+#### URL Calculator local development
+
+Install Flask with `python -m pip install Flask`, then run `url_calculator.py` from its project folder. The server binds to `127.0.0.1:8000` by default and never enables Flask's interactive debugger. Optional `URL_CALCULATOR_HOST` and `URL_CALCULATOR_PORT` environment variables can change the bind address and port. Do not expose the built-in development server directly to the internet.
+
 ### Django
 + [Beargrass Christian Church](https://github.com/schillgc/Python/tree/master/Django/Beargrass_Christian_Church)
 + [Goodwill](https://github.com/schillgc/Python/tree/master/Django/Goodwill)
