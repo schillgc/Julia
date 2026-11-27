@@ -1,5 +1,3 @@
-import os
-
 from flask import Flask
 from flask import render_template
 
@@ -53,12 +51,3 @@ def divide(num1, num2):
     return render_template("divide.html", **context)
 
 
-def main():
-    """Run the local development server with safe defaults."""
-    host = os.environ.get("URL_CALCULATOR_HOST", "127.0.0.1").strip() or "127.0.0.1"
-    port = int(os.environ.get("URL_CALCULATOR_PORT", "8000"))
-    app.run(host=host, port=port, debug=False)
-
-
-if __name__ == "__main__":
-    main()
