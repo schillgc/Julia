@@ -30,6 +30,14 @@ Thumbs.db
 .idea/
 
 # Runtime credentials and OAuth tokens
+**/credentials.py
+**/secrets.py
+**/*_credentials.py
+**/*_secrets.py
+**/*.pem
+**/*.key
+**/*.p12
+**/*.pfx
 **/credentials.json
 **/client_secrets.json
 **/token.pickle
