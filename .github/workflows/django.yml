@@ -112,6 +112,45 @@ jobs:
         env:
           HIRES_DJANGO_DB_NAME: ${{ runner.temp }}/hires-ci.sqlite3
         run: python manage.py test --verbosity 2
+  job-analyzer-django:
+    name: Job Analyzer private-data checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      JOB_ANALYZER_DJANGO_SECRET_KEY: ci-only-not-a-production-secret
+      JOB_ANALYZER_DJANGO_DEBUG: "true"
+      JOB_ANALYZER_DJANGO_ALLOWED_HOSTS: localhost,127.0.0.1,testserver
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Set up Python
+        uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: "Python/Frameworks/Django/Job Analyzer/requirements.txt"
+      - name: Install Job Analyzer dependencies
+        working-directory: Python/Frameworks/Django/Job Analyzer/jobanalyzer
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r ../requirements.txt
+      - name: Compile Job Analyzer source
+        working-directory: Python/Frameworks/Django/Job Analyzer/jobanalyzer
+        run: python -m compileall -q .
+      - name: Run Django system checks
+        working-directory: Python/Frameworks/Django/Job Analyzer/jobanalyzer
+        run: python manage.py check
+      - name: Apply migrations to a disposable CI database
+        working-directory: Python/Frameworks/Django/Job Analyzer/jobanalyzer
+        env:
+          JOB_ANALYZER_DJANGO_DB_NAME: ${{ runner.temp }}/job-analyzer-ci.sqlite3
+        run: python manage.py migrate --noinput
+      - name: Run Job Analyzer application tests
+        working-directory: Python/Frameworks/Django/Job Analyzer/jobanalyzer
+        env:
+          JOB_ANALYZER_DJANGO_DB_NAME: ${{ runner.temp }}/job-analyzer-ci.sqlite3
+        run: python manage.py test --verbosity 2
+
   phone-tracker:
     name: Phone Tracker tests
     runs-on: ubuntu-latest

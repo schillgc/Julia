@@ -1,6 +1,8 @@
+from django.contrib.admin.views.decorators import staff_member_required
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
 from django.utils import timezone
 from django.views.generic import TemplateView
 from django.views.generic.detail import DetailView
@@ -11,16 +13,16 @@ from .forms import CompanyForm, ContactForm
 from .models import Company, Position
 
 
+@method_decorator(staff_member_required(login_url="/admin/login/"), name="dispatch")
 class CompanyIndexView(ListView):
     model = Company
     paginate_by = 100
 
 
+@method_decorator(staff_member_required(login_url="/admin/login/"), name="dispatch")
 class CompanyDetailView(DetailView):
     model = Company
     template_name = "theanalyzer/company_detail.html"
-    slug_url_kwarg = 'the_slug'
-    slug_field = 'slug'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -42,6 +44,7 @@ class ContactView(FormView):
         return super().form_valid(form)
 
 
+@method_decorator(staff_member_required(login_url="/admin/login/"), name="dispatch")
 class LogoImage(TemplateView):
     form = CompanyForm
     template_name = 'company_logo.html'
@@ -58,6 +61,7 @@ class LogoImage(TemplateView):
         return self.post(request, *args, **kwargs)
 
 
+@method_decorator(staff_member_required(login_url="/admin/login/"), name="dispatch")
 class PositionDetailView(DetailView):
     model = Position
     template_name = "theanalyzer/position_detail.html"
@@ -69,6 +73,7 @@ class PositionDetailView(DetailView):
         return render(request, 'position_list.html', {'position_list': position_list})
 
 
+@method_decorator(staff_member_required(login_url="/admin/login/"), name="dispatch")
 class PositionIndexView(ListView):
     model = Position
     paginate_by = 100
