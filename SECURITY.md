@@ -10,7 +10,7 @@ This repository contains multiple independent learning and application projects.
 - Each Django application requires its own `<PROJECT>_DJANGO_SECRET_KEY`, debug flag, and host allowlist. Generate a unique random signing key per deployment. Development uses `<PROJECT>_DJANGO_DEBUG=true` and loopback-only hosts; production must set `DEBUG=false` and an explicit comma-separated host allowlist.
 - Google Calendar OAuth client JSON and user token JSON belong outside Git. The old committed pickle token is removed; re-authorize after rotating the OAuth client.
 - Keep YouTube OAuth client material and token caches local and ignored.
-- Set Oxford Dictionaries, Mailchimp, and OpenAI credentials in the environment. Code examples fail closed when required credentials are absent.
+- Set Oxford Dictionaries, Mailchimp, and OpenAI credentials in the environment. The Oxford Dictionary examples no longer import the tracked legacy credential module; they fail closed when the two required Oxford environment variables are absent. The tracked module still requires private owner review and rotation of any values found inside.
 - Budget and job-analysis amounts are read from local environment variables. Do not put personal financial, compensation, or family information in tracked source files.
 
 ## Exposure response
