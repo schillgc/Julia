@@ -89,6 +89,19 @@ class PublicRepositorySecurityTests(unittest.TestCase):
                 self.assertNotRegex(source, r"AIza[0-9A-Za-z_-]{30,}")
                 self.assertNotRegex(source, r'''(?i)(?:app_key|api_key|client_secret)\s*[:=]\s*['"][^'"]{12,}['"]''')
 
+    def test_job_search_mailchimp_utility_uses_environment_credentials(self):
+        template = (ROOT / ".env.example").read_text(encoding="utf-8")
+        self.assertIn("JOB_SEARCH_MAILCHIMP_API_KEY=", template)
+        self.assertIn("JOB_SEARCH_MAILCHIMP_USERNAME=", template)
+
+        script = (
+            ROOT / "Python/Console Apps/Utilities/Job Search/job_search.py"
+        ).read_text(encoding="utf-8")
+        self.assertIn('os.environ.get("JOB_SEARCH_MAILCHIMP_API_KEY"', script)
+        self.assertIn('os.environ.get("JOB_SEARCH_MAILCHIMP_USERNAME"', script)
+        self.assertIn('if __name__ == "__main__":', script)
+        self.assertNotIn("from credentials import", script)
+
     def test_oxford_dictionary_examples_use_environment_credentials(self):
         template = (ROOT / ".env.example").read_text(encoding="utf-8")
         self.assertIn("OXFORD_DICTIONARIES_APP_ID=", template)
@@ -183,6 +196,7 @@ class PublicRepositorySecurityTests(unittest.TestCase):
             "Python/Frameworks/Django/Vintage Print and Distribution/automation/automation/settings.py",
             "Python/Frameworks/Django/Vintage Print and Distribution/automation/file_converter/urls.py",
             "Python/Frameworks/Django/Vintage Print and Distribution/automation/file_converter/views.py",
+            "Python/Console Apps/Utilities/Job Search/job_search.py",
             "Python/Console Apps/Utilities/Google Calendar API/quickstart.py",
             "Python/Console Apps/Utilities/Oxford Dictionary/credentials.py",
             "Python/Console Apps/Utilities/Oxford Dictionary/oxford_dictionary.py",
